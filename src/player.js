@@ -110,17 +110,18 @@ class Player extends EventTarget {
     this.stereo = stereo;
   }
 
-  load(href_or_entry, play = true) {
+  load(url_or_entry, play = true) {
     if (this.loading) return;
     this.loading = true;
-    const href = typeof href_or_entry === 'number' ? this._playlist[href_or_entry] : href_or_entry;
-    if (typeof href_or_entry === 'number') {
-      this._entry = href_or_entry;
-      this.loop = this.loop;
-    }
-    this.dispatchEvent(new CustomEvent('entry', { detail: { entry: this.entry, href } }));
-    const url = `media/${href}`;
-    fetch(url, { headers: { Range: 'bytes=0-1279' } }).then(response => response.arrayBuffer()).then(header => {
+    const url = typeof url_or_entry === 'number' ? this._playlist[url_or_entry] : url_or_entry;
+    this._entry = typeof url_or_entry === 'number' ? url_or_entry : null;
+    this.loop = this.loop;
+    this.dispatchEvent(new CustomEvent('entry', { detail: { entry: this.entry, url } }));
+    fetch(url, { headers: { Range: 'bytes=0-1279' } }).then(response => {
+      if (!response.headers.get('Content-Type').startsWith('audio/'))
+        throw new Error('invalid content type');
+      return response.arrayBuffer();
+    }).then(header => {
       this.replayGain = flacGainValue(readFlacMeta(header, "replaygain_album_gain"));
       console.log({ replayGain: this.replayGain });
       this.audio.src = url;

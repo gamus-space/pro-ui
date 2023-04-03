@@ -3,16 +3,13 @@
 import { loadDb } from './db.js';
 import { player } from './player.js';
 import { playlistController } from './playlist.js';
+import { dialogOptions } from './utils.js';
 
 $('#libraryDialog').dialog({
+  ...dialogOptions,
   width: 400,
   height: 400,
   position: { my: "right", at: "right-5% center", of: window },
-  beforeClose: function (e) {
-    e.preventDefault();
-    const c = $(this).dialog("option", "classes.ui-dialog");
-    $(this).dialog("option", "classes.ui-dialog", c === 'hidden' ? '' : 'hidden');
-  },
   resize: (e, { size: { height } }) => {
     $('#library_wrapper .dataTables_scrollBody').css('max-height', height - 132 + 5);
   },
@@ -29,7 +26,7 @@ loadDb().then(data => {
       `,
       game: track.game,
       title: track.title,
-      href: track.href,
+      url: track.url,
     })),
     columns: [
       { name: "play", data: "play", title: "Play", orderable: false },
@@ -44,7 +41,7 @@ loadDb().then(data => {
     createdRow: (row, data) => {
       $('td', row).eq(0).find('button').click(event => {
         event.stopPropagation();
-        player.load(data.href);
+        player.load(data.url);
       });
     },
     language: {
@@ -95,8 +92,8 @@ loadDb().then(data => {
     unselectAll();
   });
 
-  player.addEventListener('entry', ({ detail: { href } }) => {
+  player.addEventListener('entry', ({ detail: { url } }) => {
     $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active');
-    $('#library').DataTable().rows((row, data) => data.href === href).nodes().to$().find('button.listen').addClass('ui-state-active');
+    $('#library').DataTable().rows((row, data) => data.url === url).nodes().to$().find('button.listen').addClass('ui-state-active');
   });
 });

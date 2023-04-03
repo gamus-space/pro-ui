@@ -1,5 +1,16 @@
 'use strict';
 
+export const dialogOptions = {
+  closeText: 'Minimize',
+  beforeClose: function (e) {
+    e.preventDefault();
+    const open = $(this).dialog("option", "classes.ui-dialog") === 'hidden';
+    $(this).dialog("option", "classes.ui-dialog", open ? '' : 'hidden');
+    $(this).dialog("option", "resizable", open);
+    $(this).parent().find('.ui-dialog-titlebar-close').attr('title', open ? 'Minimize' : 'Restore');
+  },
+};
+
 export function readFlacMeta(header, fieldName) {
   const array = new Uint8Array(header);
   const field = `${fieldName}=`.split('').map(c => c.charCodeAt(0));

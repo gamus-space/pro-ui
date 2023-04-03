@@ -17,7 +17,11 @@ h1 {
   font-size: 0.8em;
 }
 .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close .ui-icon::before {
-  content: '✖';
+  content: '▬';
+}
+.ui-dialog.hidden .ui-dialog-titlebar .ui-dialog-titlebar-close .ui-icon::before {
+  content: '▭';
+  font-size: 1.3em;
 }
 
 #playerDialog .ui-button-icon-only {

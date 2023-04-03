@@ -1,16 +1,13 @@
 'use strict';
 
 import { player } from './player.js';
+import { dialogOptions } from './utils.js';
 
 $('#playlistDialog').dialog({
+  ...dialogOptions,
   width: 400,
   height: 400,
   position: { my: "left", at: "left+5% center", of: window },
-  beforeClose: function (e) {
-    e.preventDefault();
-    const c = $(this).dialog("option", "classes.ui-dialog");
-    $(this).dialog("option", "classes.ui-dialog", c === 'hidden' ? '' : 'hidden');
-  },
   resize: (e, { size: { height } }) => {
     $('#playlist_wrapper .dataTables_scrollBody').css('max-height', height - 132 + 5);
   },
@@ -123,9 +120,9 @@ class PlaylistController {
   updatePlaylist() {
     player.setPlaylist(this.playlist.slice(), this.entry);
   }
-  add({ href, game, title }) {
+  add({ url, game, title }) {
     this.entry = undefined;
-    this.playlist.push(href);
+    this.playlist.push(url);
     this.table.row.add({ play: this.play, no: this.playlist.length, title: `${game} - ${title}` }).draw(false);
     this.updatePlaylist();
   }
@@ -134,7 +131,7 @@ class PlaylistController {
     const indexes = new Set(this.table.rows('.selected').data().toArray().map(row => row.no-1));
     if (indexes.has(player.entry)) this.entry = null;
     if (this.entry != null) this.entry -= [...indexes].filter(i => i < player.entry).length;
-    this.playlist = this.playlist.filter((href, i) => !indexes.has(i));
+    this.playlist = this.playlist.filter((_, i) => !indexes.has(i));
     this.table.rows('.selected').remove().draw(false);
     this.renumber();
     this.updatePlaylist();
