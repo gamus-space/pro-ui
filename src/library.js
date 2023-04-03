@@ -1,6 +1,6 @@
 'use strict';
 
-import { loadDb } from './db.js';
+import { db, loadDb } from './db.js';
 import { player } from './player.js';
 import { playlistController } from './playlist.js';
 import { dialogOptions, time } from './utils.js';
@@ -44,6 +44,7 @@ loadDb().then(data => {
     createdRow: (row, data) => {
       $('td', row).eq(0).find('button').click(event => {
         event.stopPropagation();
+        player.replayGain = db[data.url].replayGain?.album;
         player.load(data.url);
       });
     },

@@ -1,7 +1,5 @@
 'use strict';
 
-import { readFlacMeta, flacGainValue } from './utils.js'
-
 class Player extends EventTarget {
   // audioContext
   // audio
@@ -91,7 +89,8 @@ class Player extends EventTarget {
     Object.defineProperty(this, 'replayGain', {
       get() { return replayGain; },
       set(v) {
-        replayGain = v;
+        replayGain = v ?? 0;
+        console.log({ replayGain });
         replayGainNode.gain.value = Math.pow(10, replayGain/20);
       },
     });
@@ -113,23 +112,15 @@ class Player extends EventTarget {
   load(url_or_entry, play = true) {
     if (this.loading) return;
     this.loading = true;
+
     const url = typeof url_or_entry === 'number' ? this._playlist[url_or_entry] : url_or_entry;
     this._entry = typeof url_or_entry === 'number' ? url_or_entry : null;
     this.loop = this.loop;
     this.dispatchEvent(new CustomEvent('entry', { detail: { entry: this.entry, url } }));
-    fetch(url, { headers: { Range: 'bytes=0-1279' } }).then(response => {
-      if (!response.headers.get('Content-Type').startsWith('audio/'))
-        throw new Error('invalid content type');
-      return response.arrayBuffer();
-    }).then(header => {
-      this.replayGain = flacGainValue(readFlacMeta(header, "replaygain_album_gain"));
-      console.log({ replayGain: this.replayGain });
-      this.audio.src = url;
-      if (play)
-        this.audio.play();
-    }).finally(() => {
-      this.loading = false;
-    });
+
+    this.audio.src = url;
+    if (play) this.audio.play();
+    this.loading = false;
   }
 }
 

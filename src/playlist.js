@@ -1,5 +1,6 @@
 'use strict';
 
+import { db } from './db.js';
 import { player } from './player.js';
 import { dialogOptions, time } from './utils.js';
 
@@ -27,9 +28,10 @@ setTimeout(() => {
     scrollY: $('#playlistDialog').parent()[0].clientHeight - 132,
     scrollCollapse: true,
     dom: '<"operations">flrt<"info"><"status">p',
-    createdRow: (row) => {
+    createdRow: (row, data) => {
       $('td', row).eq(0).find('button').click(event => {
         event.stopPropagation();
+        player.replayGain = db[data.url].replayGain?.album;
         player.load($('#playlist').DataTable().row(row).index());
       });
     },
@@ -133,7 +135,7 @@ class PlaylistController {
   add({ url, game, title, time, timeSec }) {
     this.entry = undefined;
     this.playlist.push(url);
-    this.table.row.add({ play: this.play, no: this.playlist.length, title: `${game} - ${title}`, time, timeSec }).draw(false);
+    this.table.row.add({ play: this.play, no: this.playlist.length, title: `${game} - ${title}`, time, timeSec, url }).draw(false);
     this.updatePlaylist();
   }
   remove() {
