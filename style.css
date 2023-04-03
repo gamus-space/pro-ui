@@ -422,7 +422,7 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   z-index: 1000;
   background: #5c5c5ccc;
   opacity: 1;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;

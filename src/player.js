@@ -127,10 +127,13 @@ class Player extends EventTarget {
     this.loop = this.loop;
     this.dispatchEvent(new CustomEvent('entry', { detail: { entry: this.entry, ...data } }));
 
-    this.replayGain = data.replayGain;
-    this.audio.src = data.url;
-    if (play) this.audio.play();
-    this.loading = false;
+    this.audioContext.resume().then(() => {
+      this.replayGain = data.replayGain;
+      this.audio.src = data.url;
+      if (play) this.audio.play();
+    }).finally(() => {
+      this.loading = false;
+    });
   }
 }
 

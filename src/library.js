@@ -84,7 +84,7 @@ loadDb().then(data => {
   $('#library tbody').on('click', 'button.listen', (event) => {
     event.stopPropagation();
     const data = $('#library').DataTable().row($(event.target).parents('tr')).data();
-    player.load({ url: data.url, replayGain: db[data.url].replayGain?.album });
+    player.load(playerEntry(data));
   });
 
   $('#libraryDialog .operations').append($(`
@@ -301,11 +301,11 @@ loadDb().then(data => {
     const data = $('#library').DataTable().rows('.selected').data().toArray();
     setPlaylist([
       ...player.playlist,
-      ...data.map(playlistEntry),
+      ...data.map(playerEntry),
     ], undefined);
     unselectAll();
   });
-  function playlistEntry({ url, game, title, timeSec }) {
+  function playerEntry({ url, game, title, timeSec }) {
     return { url, game, title, time: timeSec, replayGain: db[url].replayGain?.album };
   }
 
