@@ -1,6 +1,6 @@
 'use strict';
 
-const db = [
+const data = [
   { href: 'Battle Arena Toshinden/Track 1.flac', game: 'Battle Arena Toshinden', title: 'Track 1' },
   { href: 'Battle Arena Toshinden/Track 2.flac', game: 'Battle Arena Toshinden', title: 'Track 2' },
   { href: 'Battle Arena Toshinden/Track 3.flac', game: 'Battle Arena Toshinden', title: 'Track 3' },
@@ -61,6 +61,9 @@ const db = [
   { href: 'Tomb Raider - Unfinished Business/Track 3.flac', game: 'Tomb Raider: Unfinished Business', title: 'Track 3' },
 ];
 
+export var db;
+
 export function loadDb() {
-  return Promise.resolve(db);
+  db = Object.fromEntries(data.map(track => [track.href, track]));
+  return Promise.resolve(data);
 }

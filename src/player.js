@@ -2,7 +2,7 @@
 
 import { readFlacMeta, flacGainValue } from './utils.js'
 
-export class Player {
+class Player {
   // audioContext
   // audio
   // loading
@@ -11,7 +11,7 @@ export class Player {
   // entry
 
   constructor() {
-    this.playlist = [];
+    this._playlist = [];
     this.entry = null;
     this.loading = false;
     this.handlers = {};
@@ -35,6 +35,14 @@ export class Player {
     });
 
     Object.seal(this);
+  }
+
+  get playlist() {
+    return this._playlist;
+  }
+  set playlist(v) {
+    this._playlist = v;
+    this.handlers.playlist?.({ playlist: this._playlist });
   }
 
   initialize(audio) {
@@ -104,3 +112,5 @@ export class Player {
     });
   }
 }
+
+export const player = new Player();
