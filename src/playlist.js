@@ -10,12 +10,20 @@ $('#playlistDialog').dialog({
   height: 400,
   position: { my: "left", at: "left+5% center", of: window },
   resize: (e, { size: { height } }) => {
-    $('#playlist_wrapper .dataTables_scrollBody').css('max-height', height - 132 + 5);
+    resizeTable(height);
   },
 });
 $('.ui-dialog-titlebar button').blur();
 
+function resizeTable(height) {
+  const body = $('#playlist_wrapper .dataTables_scrollBody');
+  body.css('max-height', height - body.position().top - 64 + 5);
+}
+
 setTimeout(() => {
+  setTimeout(() => {
+    resizeTable($('#playlistDialog').parent().height());
+  });
   $('#playlist').DataTable({
     columns: [
       { name: "play", data: "play", title: "Play", orderable: false, width: "10%" },
@@ -25,6 +33,7 @@ setTimeout(() => {
     ],
     order: [1, 'asc'],
     paging: false,
+    scrollX: true,
     scrollY: $('#playlistDialog').parent()[0].clientHeight - 132,
     scrollCollapse: true,
     dom: '<"operations">flrt<"info"><"status">p',

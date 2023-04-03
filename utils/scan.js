@@ -106,6 +106,8 @@ const db = tree(dir)
       time,
       size,
       replayGain,
+      platform: headers.metadata?.['Platform'],
+      year: headers.metadata?.['DATE'],
     };
   });
 console.log(JSON.stringify(db, null, 2));

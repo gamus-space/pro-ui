@@ -19,3 +19,10 @@ export function time(t) {
   const hr = Math.floor(minHr / 60);
   return `${hr === 0 ? '' : hr + ':'}${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
 }
+
+export function size(bytes) {
+  if (bytes == null) return bytes;
+  const kb = Math.round(bytes / 1024 * 10) / 10;
+  const mb = Math.round(kb / 1024 * 10) / 10;
+  return kb < 500 ? `${kb} kB` : `${mb} MB`;
+}
