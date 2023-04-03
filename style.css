@@ -100,6 +100,10 @@ h1 {
 #libraryDialog input[type=search]::-webkit-search-cancel-button {
   filter: grayscale(100%);
 }
+#libraryDialog .info {
+  float: left;
+  padding-top: 0.75em;
+}
 #libraryDialog .status {
   float: right;
   padding-top: 0.75em;
@@ -149,6 +153,10 @@ h1 {
 }
 #playlistDialog input[type=search]::-webkit-search-cancel-button {
   filter: grayscale(100%);
+}
+#playlistDialog .info {
+  float: left;
+  padding-top: 0.75em;
 }
 #playlistDialog .status {
   float: right;

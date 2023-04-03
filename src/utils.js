@@ -11,6 +11,13 @@ export const dialogOptions = {
   },
 };
 
+export function time(t) {
+  t = Math.floor(t)
+  const sec = t % 60;
+  const min = Math.floor(t/60);
+  return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+
 export function readFlacMeta(header, fieldName) {
   const array = new Uint8Array(header);
   const field = `${fieldName}=`.split('').map(c => c.charCodeAt(0));

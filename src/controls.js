@@ -2,7 +2,7 @@
 
 import { db } from './db.js';
 import { player } from './player.js';
-import { dialogOptions } from './utils.js';
+import { dialogOptions, time } from './utils.js';
 
 class Controls {
   constructor() {
@@ -40,7 +40,7 @@ class Controls {
   }
   set duration(v) {
     this._duration = v;
-    $('.duration').text(this.time(v));
+    $('.duration').text(time(v));
     $('.controls .seek').slider('option', 'max', this._duration);
   }
   get position() {
@@ -48,16 +48,9 @@ class Controls {
   }
   set position(v) {
     this._position = v;
-    $('.position').text(this.time(v));
+    $('.position').text(time(v));
     if (!this.seeking)
       $('.controls .seek').slider('value', this._position);
-  }
-
-  time(t) {
-    t = Math.floor(t)
-    const sec = t % 60;
-    const min = Math.floor(t/60);
-    return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
   }
 }
 

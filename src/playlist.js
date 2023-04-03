@@ -1,7 +1,7 @@
 'use strict';
 
 import { player } from './player.js';
-import { dialogOptions } from './utils.js';
+import { dialogOptions, time } from './utils.js';
 
 $('#playlistDialog').dialog({
   ...dialogOptions,
@@ -20,23 +20,25 @@ setTimeout(() => {
       { name: "play", data: "play", title: "Play", orderable: false, width: "10%" },
       { name: "no", data: "no", title: "No", orderable: false, width: "10%" },
       { name: "title", data: "title", title: "Title", orderable: false },
+      { name: "time", data: "time", title: "Time", orderable: false, width: "10%" },
     ],
     order: [1, 'asc'],
     paging: false,
     scrollY: $('#playlistDialog').parent()[0].clientHeight - 132,
     scrollCollapse: true,
-    dom: '<"operations">flrti<"status">p',
+    dom: '<"operations">flrt<"info"><"status">p',
     createdRow: (row) => {
       $('td', row).eq(0).find('button').click(event => {
         event.stopPropagation();
         player.load($('#playlist').DataTable().row(row).index());
       });
     },
-    language: {
-      infoFiltered: '(_MAX_ total)',
+    initComplete: () => {
+      updateInfo();
     },
   }).on('search.dt', () => {
     unselectAll();
+    updateInfo();
   });
 
   $('#playlistDialog .operations').append($(`
@@ -57,6 +59,14 @@ setTimeout(() => {
     </button>
   `));
 
+  function rowsStats(selector, zero) {
+    const rows = $('#playlist').DataTable().rows(selector);
+    const total = time(rows.data().toArray().map(data => data.timeSec).reduce((total, time) => total+(time??0), 0));
+    return !zero && rows[0].length === 0 ? null : `${rows[0].length} [${total}]`;
+  }
+  function updateInfo() {
+    $('#playlistDialog .info').text(`Showing ${rowsStats({ search: 'applied' }, true)} tracks`);
+  };
   const updateSelection = () => {
     const disabled = $('#playlist').DataTable().$('tr.selected').length === 0;
     const firstSelected = $('#playlist').DataTable().$('tr').filter(':first.selected').length > 0;
@@ -64,8 +74,8 @@ setTimeout(() => {
     $('#playlistDialog .remove').button({ disabled });
     $('#playlistDialog .moveUp').button({ disabled: disabled || firstSelected });
     $('#playlistDialog .moveDown').button({ disabled: disabled || lastSelected });
-    const selected = $('#playlist').DataTable().rows('.selected')[0].length;
-    $('#playlistDialog .status').text(selected === 0 ? '' : `${selected} selected`);
+    const stats = rowsStats('.selected', false);
+    $('#playlistDialog .status').text(stats == null ? '' : `Selected: ${stats}`);
   };
   updateSelection();
   const unselectAll = () => {
@@ -120,10 +130,10 @@ class PlaylistController {
   updatePlaylist() {
     player.setPlaylist(this.playlist.slice(), this.entry);
   }
-  add({ url, game, title }) {
+  add({ url, game, title, time, timeSec }) {
     this.entry = undefined;
     this.playlist.push(url);
-    this.table.row.add({ play: this.play, no: this.playlist.length, title: `${game} - ${title}` }).draw(false);
+    this.table.row.add({ play: this.play, no: this.playlist.length, title: `${game} - ${title}`, time, timeSec }).draw(false);
     this.updatePlaylist();
   }
   remove() {

@@ -3,7 +3,7 @@
 import { loadDb } from './db.js';
 import { player } from './player.js';
 import { playlistController } from './playlist.js';
-import { dialogOptions } from './utils.js';
+import { dialogOptions, time } from './utils.js';
 
 $('#libraryDialog').dialog({
   ...dialogOptions,
@@ -26,29 +26,33 @@ loadDb().then(data => {
       `,
       game: track.game,
       title: track.title,
+      timeSec: track.time,
+      time: track.time ? time(track.time) : '',
       url: track.url,
     })),
     columns: [
       { name: "play", data: "play", title: "Play", orderable: false },
       { name: "game", data: "game", title: "Game" },
       { name: "title", data: "title", title: "Title" },
+      { name: "time", data: "time", title: "Time" },
     ],
     order: [1, 'asc'],
     paging: false,
     scrollY: $('#libraryDialog').parent()[0].clientHeight - 132,
     scrollCollapse: true,
-    dom: '<"operations">flrti<"status">p',
+    dom: '<"operations">flrt<"info"><"status">p',
     createdRow: (row, data) => {
       $('td', row).eq(0).find('button').click(event => {
         event.stopPropagation();
         player.load(data.url);
       });
     },
-    language: {
-      infoFiltered: '(_MAX_ total)',
+    initComplete: () => {
+      updateInfo();
     },
   }).on('search.dt', () => {
     unselectAll();
+    updateInfo();
   });
 
   $('#libraryDialog .operations').append($(`
@@ -63,10 +67,18 @@ loadDb().then(data => {
     </button>
   `));
 
+  function rowsStats(selector, zero) {
+    const rows = $('#library').DataTable().rows(selector);
+    const total = time(rows.data().toArray().map(data => data.timeSec).reduce((total, time) => total+(time??0), 0));
+    return !zero && rows[0].length === 0 ? null : `${rows[0].length} [${total}]`;
+  }
+  function updateInfo() {
+    $('#libraryDialog .info').text(`Showing ${rowsStats({ search: 'applied' }, true)} tracks`);
+  };
   const updateSelection = () => {
     $('#libraryDialog .addToPlaylist').button({ disabled: $('#library').DataTable().$('tr.selected').length === 0 });
-    const selected = $('#library').DataTable().rows('.selected')[0].length;
-    $('#libraryDialog .status').text(selected === 0 ? '' : `${selected} selected`);
+    const stats = rowsStats('.selected', false);
+    $('#libraryDialog .status').text(stats == null ? '' : `Selected: ${stats}`);
   };
   updateSelection();
   const unselectAll = () => {
