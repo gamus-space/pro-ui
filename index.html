@@ -18,6 +18,11 @@
 </head>
 
 <body>
+  <div id="desktop">
+    <button class="background ui-button ui-button-icon-only">
+      <span class="ui-icon ui-icon-image"></span>
+    </button>
+  </div>
   <div id="playerDialog" title="player">
     <div class="info">
       <div class="game row major">game</div>
@@ -160,6 +165,26 @@
       <thead />
       <tbody />
     </table>
+  </div>
+  <div id="backgroundDialog" title="background">
+    <div class="controls">
+      <label class="cover ui-button-icon-only">
+        <span class="ui-icon ui-icon-arrow-4"></span>
+        <input type="checkbox" name="cover" />
+      </label>
+      <label class="contain ui-button-icon-only">
+        <span class="ui-icon ui-icon-arrow-4-diag"></span>
+        <input type="checkbox" name="contain" />
+      </label>
+      <span class="name">
+        <a href="#" target="_blank">-</a>
+      </span>
+      <button class="reset ui-button ui-button-icon-only">
+        <span class="ui-icon ui-icon-closethick"></span>
+      </button>
+    </div>
+    <div id="backgrounds">
+    </div>
   </div>
 </body>
 

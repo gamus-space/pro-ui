@@ -7,3 +7,7 @@ import './playlist.js';
 
 $('#miniPlayerDialog').dialog('moveToTop');
 $('#playerDialog').dialog('moveToTop');
+
+$('#desktop .background').click(() => {
+  import('./background.js');
+});

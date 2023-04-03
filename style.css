@@ -3,7 +3,7 @@ body {
   /* background: linear-gradient(#59b4d4, #f58400b0, #000) fixed; */
   /* background: linear-gradient(#59b4d4, #59b4d4 30%, #f58400b0 85%, #000 85%, #777) fixed; */
   background: conic-gradient(at -10% 40%, #59b4d4 20%, #f58400b0 25%, #000 30%, #777 50%) fixed;
-  background-size: cover;
+  background-position: center;
 }
 
 body .ui-widget {
@@ -30,6 +30,14 @@ body .ui-widget {
 }
 .ui-widget-header {
   background-size: 60px 150px !important;
+}
+
+#desktop {
+  text-align: center;
+}
+#desktop button {
+  width: 2rem;
+  height: 2rem;
 }
 
 #playerDialog {
@@ -373,4 +381,38 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 #playlist .ui-button-icon-only {
   width: 1.5rem;
   height: 1.5rem;
+}
+
+#backgroundDialog {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#backgroundDialog #backgrounds {
+  overflow-y: scroll;
+}
+#backgroundDialog .controls {
+  margin: 1rem;
+  display: flex;
+  align-items: center;
+}
+#backgroundDialog .cover,
+#backgroundDialog .contain,
+#backgroundDialog .reset {
+  width: 2rem;
+  height: 2rem;
+}
+#backgroundDialog .name {
+  margin: 0 2rem;
+}
+
+#backgroundDialog .block {
+  display: inline-block;
+  width: 22%;
+  min-width: 4rem;
+  height: 4rem;
+  margin: 5px;
+}
+#backgroundDialog .block img {
+  width: 100%;
 }
