@@ -1,7 +1,5 @@
 'use strict';
 
-// replay gain: 10^(replaygain_album_gain/20)
-
 const db = [
   { href: 'Battle Arena Toshinden/Track 1.flac', title: 'Battle Arena Toshinden - Track 1' },
   { href: 'Battle Arena Toshinden/Track 2.flac', title: 'Battle Arena Toshinden - Track 2' },
@@ -62,33 +60,7 @@ const db = [
   { href: 'Tomb Raider - Unfinished Business/Track 2.flac', title: 'Tomb Raider: Unfinished Business - Track 2' },
   { href: 'Tomb Raider - Unfinished Business/Track 3.flac', title: 'Tomb Raider: Unfinished Business - Track 3' },
 ];
-db.forEach(track => {
-  $('#library').append($('<li>').append(
-    $('<a>', { href: '#', text: track.title, 'data-href': track.href } )
-  ));
-});
-$('#library').on('click', event => {
-  if (event.target.nodeName !== 'A') return;
-  event.preventDefault();
-  play(event.target.attributes['data-href'].value);
-});
 
-const htmlPlayer = $('#htmlPlayer');
-console.log(htmlPlayer[0]);
-htmlPlayer.on('canplay', () => {
-  console.log('canplay');
-});
-htmlPlayer.on('play', () => {
-  console.log('play');
-});
-htmlPlayer.on('ended', () => {
-  console.log('ended');
-});
-
-function play(href) {
-  console.log('play', href);
-  const track = db.find(track => track.href === href);
-  $('#title').text(track.title);
-  htmlPlayer[0].src = `media/${href}`;
-  htmlPlayer[0].play();
+export function loadDb() {
+  return Promise.resolve(db);
 }
