@@ -52,9 +52,14 @@ h1 {
   width: 100px;
   margin: 0 0.5rem;
 }
-.controls .scale {
-  margin: 0 0.75rem;
+.controls .group .scale {
   display: flex;
+}
+.controls .group.group1 .scale {
+  margin: 0 1rem;
+}
+.controls .group.group2 .scale {
+  margin: 0 0.70rem;
 }
 .controls .icon-group {
   flex-grow: 1;
@@ -77,6 +82,11 @@ h1 {
 }
 .controls .icon-group.stereo-full {
   text-align: right;
+}
+.controls .ui-slider .ui-slider-handle {
+  width: 0.8em;
+  height: 0.8em;
+  top: -0.06em;
 }
 
 .entry h2 {

@@ -109,10 +109,10 @@ $('.controls .seek').slider({
   value: 0,
   min: 0,
   max: 0,
-  step: 1,
+  step: 0.1,
   orientation: "horizontal",
   range: "min",
-  animate: "fast",
+  animate: false,
 });
 $('.controls .volume').slider({
   value: player.volume,
@@ -121,7 +121,7 @@ $('.controls .volume').slider({
   step: 0.01,
   orientation: "horizontal",
   range: "min",
-  animate: "fast",
+  animate: false,
 });
 $('.controls .stereo').slider({
   value: player.stereo,
@@ -129,23 +129,28 @@ $('.controls .stereo').slider({
   max: 1,
   step: 0.01,
   orientation: "horizontal",
-  animate: "fast",
+  animate: false,
 });
 
 $('.volume-min').click(() => {
   $('.controls .volume').slider('value', 0);
+  $('.controls .volume').trigger('slide', { value: 0 });
 });
 $('.volume-max').click(() => {
   $('.controls .volume').slider('value', 1);
+  $('.controls .volume').trigger('slide', { value: 1 });
 });
 $('.stereo-rev').click(() => {
   $('.controls .stereo').slider('value', -1);
+  $('.controls .stereo').trigger('slide', { value: -1 });
 });
 $('.mono').click(() => {
   $('.controls .stereo').slider('value', 0);
+  $('.controls .stereo').trigger('slide', { value: 0 });
 });
 $('.stereo-full').click(() => {
   $('.controls .stereo').slider('value', 1);
+  $('.controls .stereo').trigger('slide', { value: 1 });
 });
 
 $('.play').click(() => {
@@ -157,14 +162,29 @@ $('.loop').change(() => {
   player.loop = controls.loop;
   localStorage.setItem('loop', controls.loop);
 });
+const fixSlider = (event) => {
+  const handleSize = 0.8;
+  const handle = $(event.target).find('.ui-slider-handle');
+  const pos = parseInt(handle[0].style['left']);
+  handle.css('margin-left', `-${handleSize*(pos+10)/100}em`);
+}
+fixSlider({ target: $('.controls .volume') });
+$('.controls .volume').on('slidechange', fixSlider);
+$('.controls .volume').on('slide', fixSlider);
 $('.controls .volume').on('slide', (e, { value }) => {
   player.volume = value;
   localStorage.setItem('volume', value);
 });
+fixSlider({ target: $('.controls .stereo') });
+$('.controls .stereo').on('slidechange', fixSlider);
+$('.controls .stereo').on('slide', fixSlider);
 $('.controls .stereo').on('slide', (e, { value }) => {
   player.stereo = value;
   localStorage.setItem('stereo', value);
 });
+fixSlider({ target: $('.controls .seek') });
+$('.controls .seek').on('slidechange', fixSlider);
+$('.controls .seek').on('slide', fixSlider);
 $('.controls .seek').on('slidestart', () => {
   controls.seeking = true;
 });
