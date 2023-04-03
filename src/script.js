@@ -1,11 +1,12 @@
 'use strict';
 
+import { player } from './player.js';
+
+import './login.js';
 import './controls_mini.js';
 import './controls.js';
 import './library.js';
 import './playlist.js';
-import { player } from './player.js';
-
 $('#miniPlayerDialog').dialog('moveToTop');
 $('#playerDialog').dialog('moveToTop');
 
