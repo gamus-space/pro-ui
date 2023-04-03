@@ -58,19 +58,21 @@ loadDb().then(data => {
     scrollY: $('#libraryDialog').parent()[0].clientHeight - 132,
     scrollCollapse: true,
     dom: '<"operations">flrt<"info"><"status">p',
-    createdRow: (row, data) => {
-      $('td', row).eq(0).find('button').click(event => {
-        event.stopPropagation();
-        player.replayGain = db[data.url].replayGain?.album;
-        player.load(data.url);
-      });
-    },
     initComplete: () => {
       updateInfo();
     },
   }).on('search.dt', () => {
     unselectAll();
     updateInfo();
+  });
+
+  $('#library tbody').on('focus', 'button', (event) => {
+    event.stopPropagation();
+  });
+  $('#library tbody').on('click', 'button.listen', (event) => {
+    event.stopPropagation();
+    const data = $('#library').DataTable().row($(event.target).parents('tr')).data();
+    player.load({ url: data.url, replayGain: db[data.url].replayGain?.album });
   });
 
   $('#libraryDialog .operations').append($(`

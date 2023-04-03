@@ -37,19 +37,24 @@ setTimeout(() => {
     scrollY: $('#playlistDialog').parent()[0].clientHeight - 132,
     scrollCollapse: true,
     dom: '<"operations">flrt<"info"><"status">p',
-    createdRow: (row, data) => {
-      $('td', row).eq(0).find('button').click(event => {
-        event.stopPropagation();
-        player.replayGain = db[data.url].replayGain?.album;
-        player.load($('#playlist').DataTable().row(row).index());
-      });
-    },
     initComplete: () => {
       updateInfo();
+    },
+    language: {
+      emptyTable: "Playlist empty",
     },
   }).on('search.dt', () => {
     unselectAll();
     updateInfo();
+  });
+
+  $('#playlist tbody').on('focus', 'button', (event) => {
+    event.stopPropagation();
+  });
+  $('#playlist tbody').on('click', 'button.listen', (event) => {
+    event.stopPropagation();
+    const data = $('#playlist').DataTable().row($(event.target).parents('tr')).data();
+    player.load(data.no-1);
   });
 
   $('#playlistDialog .operations').append($(`
@@ -139,7 +144,7 @@ class PlaylistController {
     this.table = table;
   }
   updatePlaylist() {
-    player.setPlaylist(this.playlist.slice(), this.entry);
+    player.setPlaylist(this.playlist.map(url => ({ url, replayGain: db[url].replayGain?.album })), this.entry);
   }
   add({ url, game, title, time, timeSec }) {
     this.entry = undefined;

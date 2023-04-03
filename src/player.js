@@ -109,16 +109,17 @@ class Player extends EventTarget {
     this.stereo = stereo;
   }
 
-  load(url_or_entry, play = true) {
+  load(data_or_entry, play = true) {
     if (this.loading) return;
     this.loading = true;
 
-    const url = typeof url_or_entry === 'number' ? this._playlist[url_or_entry] : url_or_entry;
-    this._entry = typeof url_or_entry === 'number' ? url_or_entry : null;
+    const data = typeof data_or_entry === 'number' ? this._playlist[data_or_entry] : data_or_entry;
+    this._entry = typeof data_or_entry === 'number' ? data_or_entry : null;
     this.loop = this.loop;
-    this.dispatchEvent(new CustomEvent('entry', { detail: { entry: this.entry, url } }));
+    this.dispatchEvent(new CustomEvent('entry', { detail: { entry: this.entry, ...data } }));
 
-    this.audio.src = url;
+    this.replayGain = data.replayGain;
+    this.audio.src = data.url;
     if (play) this.audio.play();
     this.loading = false;
   }
