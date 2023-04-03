@@ -3,6 +3,9 @@
 import { loadDb } from './db.js';
 import { readFlacMeta, flacGainValue } from './utils.js'
 
+let replayGain = 0;
+let stereoSeparation = 1;
+
 let db = [];
 loadDb().then(data => {
   db = data;
@@ -32,8 +35,32 @@ htmlPlayer.on('ended', () => {
 
 const audioContext = new AudioContext();
 const audioInput = audioContext.createMediaElementSource(htmlPlayer[0]);
-const gainNode = audioContext.createGain();
-audioInput.connect(gainNode).connect(audioContext.destination);
+const replayGainNode = audioContext.createGain();
+audioInput.connect(replayGainNode);
+const splitter = audioContext.createChannelSplitter(2);
+replayGainNode.connect(splitter);
+const gainL1 = audioContext.createGain();
+const gainL2 = audioContext.createGain();
+const gainR1 = audioContext.createGain();
+const gainR2 = audioContext.createGain();
+splitter.connect(gainL1, 0);
+splitter.connect(gainL2, 0);
+splitter.connect(gainR1, 1);
+splitter.connect(gainR2, 1);
+const merger = audioContext.createChannelMerger(2);
+gainL1.connect(merger, 0, 0);
+gainR1.connect(merger, 0, 0);
+gainL2.connect(merger, 0, 1);
+gainR2.connect(merger, 0, 1);
+merger.connect(audioContext.destination);
+updateNodes();
+function updateNodes() {
+  replayGainNode.gain.value = Math.pow(10, replayGain/20);
+  gainL1.gain.value = (1+stereoSeparation)/2;
+  gainL2.gain.value = (1-stereoSeparation)/2;
+  gainR1.gain.value = (1-stereoSeparation)/2;
+  gainR2.gain.value = (1+stereoSeparation)/2;
+}
 
 let loading = false;
 function play(href) {
@@ -44,9 +71,9 @@ function play(href) {
   $('#title').text(track.title);
   const url = `media/${href}`;
   fetch(url, { headers: { Range: 'bytes=0-1279' } }).then(response => response.arrayBuffer()).then(header => {
-    const replayGain = flacGainValue(readFlacMeta(header, "replaygain_album_gain"));
+    replayGain = flacGainValue(readFlacMeta(header, "replaygain_album_gain"));
     console.log({ replayGain });
-    gainNode.gain.value = Math.pow(10, replayGain/20);
+    updateNodes();
     htmlPlayer[0].src = url;
     htmlPlayer[0].play();
   }).finally(() => {
