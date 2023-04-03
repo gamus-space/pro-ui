@@ -2,42 +2,83 @@ h1 {
   text-align: center;
 }
 
-#htmlPlayer {
-  width: 100%;
-  min-width: 300px;
-}
-
 .ui-dialog.ui-widget.ui-widget-content {
   border: 1px solid black;
-  border-radius: 0;
 }
-
 .ui-dialog.hidden {
-  height: 36px !important;
+  height: 2.25em !important;
 }
-
 .ui-dialog.hidden .ui-dialog-content {
   visibility: hidden;
 }
-
-.ui-dialog .ui-dialog-titlebar {
-  border: 1px solid black;
-  border-radius: 0;
-  background: #fff;
-}
-
-.ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close {
-  border: 1px solid black;
-  border-radius: 0;
-  background: #fff;
-}
-
 .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close .ui-icon {
   background: none;
   text-indent: 0;
   font-size: 0.8em;
 }
-
 .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close .ui-icon::before {
   content: '✖';
 }
+
+.controls .ui-button-icon-only {
+  height: 2rem;
+}
+.controls .ui-visual-focus {
+  box-shadow: none;
+}
+
+.controls .row {
+  margin: 1rem 0;
+}
+.controls .group {
+  display: inline-block;
+}
+.controls .seek {
+  display: inline-block;
+  width: 100px;
+  margin: 0 1rem;
+}
+.controls .volume {
+  display: inline-block;
+  width: 100px;
+  margin: 0 0.5rem;
+}
+.controls .stereo {
+  display: inline-block;
+  width: 100px;
+  margin: 0 0.5rem;
+}
+.controls .scale {
+  margin: 0 0.75rem;
+  display: flex;
+}
+.controls .icon-group {
+  flex-grow: 1;
+}
+.controls .icon-group > * {
+  margin: -6px;
+}
+.controls .icon-group.volume-min {
+  text-align: left;
+}
+.controls .icon-group.volume-max {
+  text-align: right;
+}
+.controls .icon-group.stereo-rev {
+  text-align: left;
+}
+.controls .icon-group.mono {
+  text-align: center;
+  padding-left: 3px;
+}
+.controls .icon-group.stereo-full {
+  text-align: right;
+}
+
+/*
+  Font Settings -> Size: 0.8em
+  Corner Radius -> Corners: 0
+  Clickable: active state -> Background: #777
+  Clickable: active state -> Border: #000
+  Header/Toolbar -> Border: #000
+*/

@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <title>GAMUS pro-to</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="jquery-ui.css">
   <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
   <script type="module" src="src/script.js"></script>
@@ -15,7 +15,50 @@
 <body>
   <h1>proto</h1>
   <div id="playerDialog" title="player">
-    <audio id="htmlPlayer" controls></audio>
+    <div class="controls">
+      <div class="row">
+        <label class="loop ui-button-icon-only">
+          <span class="ui-icon ui-icon-arrowrefresh-1-n"></span>
+          <input type="checkbox" />
+        </label>
+        <button class="play ui-button ui-button-icon-only">
+          <span class="ui-icon ui-icon-play"></span>
+        </button>
+        <span class="position">0:00</span>
+        /
+        <span class="duration">0:00</span>
+        <span class="seek"></span>
+      </div>
+      <div class="row">
+        <span class="group">
+          <div class="volume"></div>
+          <div class="scale">
+            <span class="icon-group volume-min">
+              <span class="ui-icon ui-icon-volume-off"></span>
+            </span>
+            <span class="icon-group volume-max">
+              <span class="ui-icon ui-icon-volume-on"></span>
+            </span>
+          </div>
+        </span>
+        <span class="group">
+          <div class="stereo"></div>
+          <div class="scale">
+            <span class="icon-group stereo-rev">
+              <span class="ui-icon ui-icon-triangle-1-e"></span>
+              <span class="ui-icon ui-icon-triangle-1-w"></span>
+            </span>
+            <span class="icon-group mono">
+              <span class="ui-icon ui-icon-bullet"></span>
+            </span>
+            <span class="icon-group stereo-full">
+              <span class="ui-icon ui-icon-triangle-1-w"></span>
+              <span class="ui-icon ui-icon-triangle-1-e"></span>
+            </span>
+          </div>
+        </span>
+      </div>
+    </div>
     <h2 id="title">-</h2>
   </div>
   <div id="libraryDialog" title="library">
