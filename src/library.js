@@ -7,9 +7,9 @@ import { dialogOptions, size, time } from './utils.js';
 
 $('#libraryDialog').dialog({
   ...dialogOptions,
-  width: 400,
+  width: 450,
   height: 400,
-  position: { my: "right", at: "right-5% center", of: window },
+  position: { my: "right", at: "right-2% center", of: window },
   resize: (e, { size: { height } }) => {
     resizeTable(height);
   },
@@ -20,6 +20,14 @@ function resizeTable(height) {
   const body = $('#library_wrapper .dataTables_scrollBody');
   body.css('max-height', height - body.position().top - 64 + 5);
 }
+
+const KIND_MAPPING = {
+  track: 'T',
+  short: 'S',
+  jingle: 'J',
+  ambient: 'A',
+  story: 'Y',
+};
 
 loadDb().then(data => {
   setTimeout(() => {
@@ -41,11 +49,13 @@ loadDb().then(data => {
       url: track.url,
       platform: track.platform,
       year: track.year,
+      kind: KIND_MAPPING[track.kind] ?? '?',
     })),
     columns: [
       { name: "play", data: "play", title: "Play", orderable: false },
       { name: "game", data: "game", title: "Game" },
       { name: "track", data: "track", title: "#" },
+      { name: "kind", data: "kind", title: "?" },
       { name: "title", data: "title", title: "Title" },
       { name: "platform", data: "platform", title: "Platform" },
       { name: "year", data: "year", title: "Year" },
@@ -88,15 +98,23 @@ loadDb().then(data => {
     <select class="columnSelector">
       <option value="game" data-checked="checked">Game</option>
       <option value="track" data-checked="checked"># track</option>
+      <option value="kind" data-checked="checked">? kind</option>
       <option value="title" data-checked="checked">Title</option>
       <option value="platform" data-checked="checked">Platform</option>
       <option value="year" data-checked="checked">Year</option>
       <option value="time" data-checked="checked">Time</option>
       <option value="size" data-checked="checked">Size</option>
     </select>
+    <select class="kindSelector">
+      <option value="track" data-checked="checked">Track</option>
+      <option value="short" data-checked="checked">Short</option>
+      <option value="jingle" data-checked="checked">Jingle</option>
+      <option value="ambient" data-checked="checked">Ambient</option>
+      <option value="story" data-checked="checked">storY</option>
+    </select>
   `));
 
-  $.widget("custom.columnsselectmenu", $.ui.selectmenu, {
+  $.widget("custom.iconsselectmenu", $.ui.selectmenu, {
     _renderItem: function(ul, item) {
       var li = $("<li>"),
       wrapper = $("<div>", { text: item.label });
@@ -110,21 +128,37 @@ loadDb().then(data => {
       return li.append(wrapper).appendTo(ul);
     }
   });
-  $(".columnSelector").columnsselectmenu({
+  $(".columnSelector").iconsselectmenu({
     icons: { button: "ui-icon-gear" },
     select: (event, { item }) => {
       selectColumn(item, !item.element.attr("data-checked"));
     },
-  }).columnsselectmenu("menuWidget").addClass("ui-menu-icons");
-  function selectColumn(item, selected) {
+  }).iconsselectmenu("menuWidget").addClass("ui-menu-icons");
+  $(".kindSelector").iconsselectmenu({
+    icons: { button: "ui-icon-wrench" },
+    select: (event, { item }) => {
+      selectKind(item, !item.element.attr("data-checked"));
+    },
+  }).iconsselectmenu("menuWidget").addClass("ui-menu-icons");
+  function toggleIcon(item, selected) {
     item.element.attr("data-checked", selected ? 'checked' : null);
     const menuId = `${item.element.parent().attr('id')}-menu`;
     $(`ul[id=${menuId}] *[data-value=${item.value}]`)
       .toggleClass("ui-icon-check", selected)
       .toggleClass("ui-icon-closethick", !selected);
+  }
+  function selectColumn(item, selected) {
+    toggleIcon(item, selected);
     $('#library').DataTable().column(`${item.value}:name`).visible(selected);
   }
-  ['platform', 'year', 'size'].forEach(column => {
+  const selectedKinds = Object.fromEntries(Object.keys(KIND_MAPPING).map(kind => [kind, true]));
+  function selectKind(item, selected) {
+    toggleIcon(item, selected);
+    selectedKinds[item.value] = selected;
+    const regexp = Object.entries(selectedKinds).filter(([kind, selected]) => selected).map(([kind]) => KIND_MAPPING[kind] ?? '\\?').join('|');
+    $('#library').DataTable().column('kind:name').search(regexp === '' ? '.^' : regexp, true).draw();
+  }
+  ['platform', 'year', 'size', 'kind'].forEach(column => {
     selectColumn({ value: column, element: $(`.columnSelector option[value=${column}]`) }, false);
   });
 

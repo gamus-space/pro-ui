@@ -6,9 +6,9 @@ import { dialogOptions, time } from './utils.js';
 
 $('#playlistDialog').dialog({
   ...dialogOptions,
-  width: 400,
+  width: 450,
   height: 400,
-  position: { my: "left", at: "left+5% center", of: window },
+  position: { my: "left", at: "left+2% center", of: window },
   resize: (e, { size: { height } }) => {
     resizeTable(height);
   },
