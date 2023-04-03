@@ -61,33 +61,35 @@ class Controls {
 }
 
 const controls = new Controls();
-player.on('canplay', () => {
+player.addEventListener('canplay', () => {
   controls.canplay = true;
   controls.duration = player.duration;
 });
-player.on('play', () => {
+player.addEventListener('play', () => {
   controls.paused = false;
 });
-player.on('pause', () => {
+player.addEventListener('pause', () => {
   controls.paused = true;
 });
-player.on('ended', () => {
+player.addEventListener('ended', () => {
 });
-player.on('timeupdate', (e) => {
+player.addEventListener('timeupdate', (e) => {
   controls.position = player.currentTime;
 });
-player.on('entry', ({ href }) => {
+player.addEventListener('entry', ({ detail: { href } }) => {
   const track = db[href];
   $('.title').text(`${track.game} - ${track.title}`);
   updateEntry();
 });
-player.on('playlist', ({ playlist }) => {
+player.addEventListener('playlist', ({ detail: { playlist } }) => {
   $('.entry .total').text(playlist.length);
   updateEntry();
 });
 function updateEntry() {
   $('.entry').toggle(player.entry != null);
   $('.entry .pos').text(player.entry+1);
+  $('.previous').button('option', 'disabled', player.entry == null || player.entry == 0);
+  $('.next').button('option', 'disabled', player.entry == null || player.entry >= player.playlist.length-1);
 }
 
 $('#playerDialog').dialog({
@@ -105,6 +107,8 @@ $('input[type=checkbox]').checkboxradio({
   icon: false,
 });
 $('.play').button({ disabled: true });
+$('.previous').button({ disabled: true });
+$('.next').button({ disabled: true });
 $('.controls .seek').slider({
   value: 0,
   min: 0,
@@ -171,4 +175,13 @@ $('.controls .seek').on('slidestop', () => {
 $('.controls .seek').on('slidechange', (e, { value }) => {
   if (!e.originalEvent) return;
   player.currentTime = value;
+});
+
+$('.previous').click(() => {
+  if (player.entry == null) return;
+  player.load(player.entry-1);
+});
+$('.next').click(() => {
+  if (player.entry == null) return;
+  player.load(player.entry+1);
 });

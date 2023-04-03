@@ -20,20 +20,19 @@ $('.ui-dialog-titlebar button').blur();
 setTimeout(() => {
   $('#playlist').DataTable({
     columns: [
-      { name: "play", data: "play", title: "Play", orderable: false },
-      { name: "no", data: "no", title: "No", orderable: false },
-      { name: "href", data: "href", title: "href", orderable: false },
+      { name: "play", data: "play", title: "Play", orderable: false, width: "10%" },
+      { name: "no", data: "no", title: "No", orderable: false, width: "10%" },
+      { name: "title", data: "title", title: "Title", orderable: false },
     ],
     order: [1, 'asc'],
     paging: false,
     scrollY: $('#playlistDialog').parent()[0].clientHeight - 132,
     scrollCollapse: true,
     dom: '<"operations">flrti<"status">p',
-    createdRow: (row, data) => {
+    createdRow: (row) => {
       $('td', row).eq(0).find('button').click(event => {
         event.stopPropagation();
-        player.entry = $('#playlist').DataTable().row(row).index();
-        player.load(data.href, true);
+        player.load($('#playlist').DataTable().row(row).index());
       });
     },
     language: {
@@ -42,6 +41,7 @@ setTimeout(() => {
   }).on('search.dt', () => {
     unselectAll();
   });
+
   $('#playlistDialog .operations').append($(`
     <button class="selectAll ui-button ui-button-icon-only">
       <span class="ui-icon ui-icon-bullet"></span>
@@ -59,6 +59,7 @@ setTimeout(() => {
       <span class="ui-icon ui-icon-circle-triangle-s"></span>
     </button>
   `));
+
   const updateSelection = () => {
     const disabled = $('#playlist').DataTable().$('tr.selected').length === 0;
     const firstSelected = $('#playlist').DataTable().$('tr').filter(':first.selected').length > 0;
@@ -97,6 +98,12 @@ setTimeout(() => {
     playlistController.moveDown();
     updateSelection();
   });
+
+  player.addEventListener('entry', ({ detail: { entry } }) => {
+    $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active');
+    $('#playlist').DataTable().rows((row, data) => data.no-1 === entry).nodes().to$().find('button.listen').addClass('ui-state-active');
+  });
+
   playlistController.init($('#playlist').DataTable());
 });
 
@@ -108,22 +115,25 @@ class PlaylistController {
         <span class="ui-icon ui-icon-circle-triangle-e"></span>
       </button>
     `;
+    this.entry = undefined;
   }
   init(table) {
     this.table = table;
   }
   updatePlaylist() {
-    player.playlist = this.playlist.slice();
+    player.setPlaylist(this.playlist.slice(), this.entry);
   }
-  add(href) {
+  add({ href, game, title }) {
+    this.entry = undefined;
     this.playlist.push(href);
-    this.table.row.add({ play: this.play, no: this.playlist.length, href }).draw(false);
+    this.table.row.add({ play: this.play, no: this.playlist.length, title: `${game} - ${title}` }).draw(false);
     this.updatePlaylist();
   }
   remove() {
+    this.entry = player.entry;
     const indexes = new Set(this.table.rows('.selected').data().toArray().map(row => row.no-1));
-    if (indexes.has(player.entry)) player.entry = null;
-    if (player.entry != null) player.entry -= [...indexes].filter(i => i < player.entry).length;
+    if (indexes.has(player.entry)) this.entry = null;
+    if (this.entry != null) this.entry -= [...indexes].filter(i => i < player.entry).length;
     this.playlist = this.playlist.filter((href, i) => !indexes.has(i));
     this.table.rows('.selected').remove().draw(false);
     this.renumber();
@@ -135,20 +145,25 @@ class PlaylistController {
     });
   }
   moveRow(from, to) {
-    if (player.entry === from) player.entry = to;
-    else if (player.entry === to) player.entry = from;
+    if (player.entry === from) this.entry = to;
+    else if (player.entry === to) this.entry = from;
     const entry1 = this.playlist[from];
     const entry2 = this.playlist[to];
     this.playlist[from] = entry2;
     this.playlist[to] = entry1;
-    const href1 = this.table.cell(from, 'href:name').data();
-    const href2 = this.table.cell(to, 'href:name').data();
-    this.table.cell(from, 'href:name').data(href2);
-    this.table.cell(to, 'href:name').data(href1);
+    const title1 = this.table.cell(from, 'title:name').data();
+    const title2 = this.table.cell(to, 'title:name').data();
+    this.table.cell(from, 'title:name').data(title2);
+    this.table.cell(to, 'title:name').data(title1);
+    const active1 = this.table.cell(from, 'play:name').nodes().to$().find('button.ui-state-active').length > 0;
+    const active2 = this.table.cell(to, 'play:name').nodes().to$().find('button.ui-state-active').length > 0;
+    this.table.cell(from, 'play:name').nodes().to$().find('button').toggleClass('ui-state-active', active2);
+    this.table.cell(to, 'play:name').nodes().to$().find('button').toggleClass('ui-state-active', active1);
     $(this.table.row(from).node()).removeClass('selected');
     $(this.table.row(to).node()).addClass('selected');
   }
   moveUp() {
+    this.entry = player.entry;
     this.table.rows('.selected').indexes().toArray().forEach(i => {
       this.moveRow(i, i-1);
     });
@@ -156,6 +171,7 @@ class PlaylistController {
     this.updatePlaylist();
   }
   moveDown() {
+    this.entry = player.entry;
     this.table.rows('.selected').indexes().toArray().reverse().forEach(i => {
       this.moveRow(i, i+1);
     });

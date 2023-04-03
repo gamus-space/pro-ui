@@ -20,10 +20,10 @@ h1 {
   content: '✖';
 }
 
-.controls .ui-button-icon-only {
+#playerDialog .ui-button-icon-only {
   height: 2rem;
 }
-.controls .ui-visual-focus {
+#playerDialog .ui-visual-focus {
   box-shadow: none;
 }
 
@@ -73,6 +73,11 @@ h1 {
 }
 .controls .icon-group.stereo-full {
   text-align: right;
+}
+
+.entry h2 {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 #libraryDialog {

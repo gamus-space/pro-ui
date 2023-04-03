@@ -2,47 +2,65 @@
 
 import { readFlacMeta, flacGainValue } from './utils.js'
 
-class Player {
+class Player extends EventTarget {
   // audioContext
   // audio
   // loading
-  // handlers
   // playlist
   // entry
+  // loop
 
   constructor() {
+    super();
     this._playlist = [];
-    this.entry = null;
+    this._entry = null;
+    this._loop = false;
     this.loading = false;
-    this.handlers = {};
     this.initialize(new Audio());
 
     ['play', 'pause'].forEach(method => {
       this[method] = () => { this.audio[method](); };
     });
     ['canplay', 'play', 'pause', 'ended', 'timeupdate'].forEach(event => {
-      this.audio.addEventListener(event, () => { this.handlers[event]?.(); });
+      this.audio.addEventListener(event, e => { this.dispatchEvent(new CustomEvent(e.type)); });
     });
-    ['loop', 'volume', 'duration', 'currentTime'].forEach(field => {
+    ['volume', 'duration', 'currentTime'].forEach(field => {
       Object.defineProperty(this, field, {
         get() { return this.audio[field]; },
         set(v) { this.audio[field] = v; },
       });
     });
     this.audio.addEventListener('ended', () => {
-      if (this.entry != null && this.entry < this.playlist.length-1)
-        this.load(this.playlist[++this.entry], true);
+      if (this.entry == null) return;
+      if (this.entry < this.playlist.length-1)
+        this.load(this.entry+1);
+      if (this.entry === this.playlist.length-1 && this.loop)
+        this.load(0);
     });
 
     Object.seal(this);
   }
 
+  get entry() {
+    return this._entry;
+  }
   get playlist() {
     return this._playlist;
   }
-  set playlist(v) {
-    this._playlist = v;
-    this.handlers.playlist?.({ playlist: this._playlist });
+  setPlaylist(playlist, entry) {
+    this._playlist = playlist;
+    if (entry !== undefined) {
+      this._entry = entry;
+      this.loop = this.loop;
+    }
+    this.dispatchEvent(new CustomEvent('playlist', { detail: { playlist: this._playlist, entry: this._entry } }));
+  }
+  get loop() {
+    return this._loop;
+  }
+  set loop(v) {
+    this._loop = v;
+    this.audio.loop = this._entry == null ? v : false;
   }
 
   initialize(audio) {
@@ -92,14 +110,15 @@ class Player {
     this.stereo = stereo;
   }
 
-  on(event, handler) {
-    this.handlers[event] = handler;
-  }
-
-  load(href, play) {
-    this.handlers.entry?.({ entry: this.entry, href });
+  load(href_or_entry, play = true) {
     if (this.loading) return;
     this.loading = true;
+    const href = typeof href_or_entry === 'number' ? this._playlist[href_or_entry] : href_or_entry;
+    if (typeof href_or_entry === 'number') {
+      this._entry = href_or_entry;
+      this.loop = this.loop;
+    }
+    this.dispatchEvent(new CustomEvent('entry', { detail: { entry: this.entry, href } }));
     const url = `media/${href}`;
     fetch(url, { headers: { Range: 'bytes=0-1279' } }).then(response => response.arrayBuffer()).then(header => {
       this.replayGain = flacGainValue(readFlacMeta(header, "replaygain_album_gain"));

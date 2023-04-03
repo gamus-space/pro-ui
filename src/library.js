@@ -44,8 +44,7 @@ loadDb().then(data => {
     createdRow: (row, data) => {
       $('td', row).eq(0).find('button').click(event => {
         event.stopPropagation();
-        player.entry = null;
-        player.load(data.href, true);
+        player.load(data.href);
       });
     },
     language: {
@@ -54,6 +53,7 @@ loadDb().then(data => {
   }).on('search.dt', () => {
     unselectAll();
   });
+
   $('#libraryDialog .operations').append($(`
     <button class="selectAll ui-button ui-button-icon-only">
       <span class="ui-icon ui-icon-bullet"></span>
@@ -65,6 +65,7 @@ loadDb().then(data => {
       <span class="ui-icon ui-icon-circle-plus"></span>
     </button>
   `));
+
   const updateSelection = () => {
     $('#libraryDialog .addToPlaylist').button({ disabled: $('#library').DataTable().$('tr.selected').length === 0 });
     const selected = $('#library').DataTable().rows('.selected')[0].length;
@@ -89,8 +90,13 @@ loadDb().then(data => {
   $('#libraryDialog .addToPlaylist').click(() => {
     const data = $('#library').DataTable().rows('.selected').data().toArray();
     data.forEach(row => {
-      playlistController.add(row.href);
+      playlistController.add(row);
     });
     unselectAll();
+  });
+
+  player.addEventListener('entry', ({ detail: { href } }) => {
+    $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active');
+    $('#library').DataTable().rows((row, data) => data.href === href).nodes().to$().find('button.listen').addClass('ui-state-active');
   });
 });
