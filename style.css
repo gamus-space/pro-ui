@@ -1,0 +1,43 @@
+h1 {
+  text-align: center;
+}
+
+#htmlPlayer {
+  width: 100%;
+  min-width: 300px;
+}
+
+.ui-dialog.ui-widget.ui-widget-content {
+  border: 1px solid black;
+  border-radius: 0;
+}
+
+.ui-dialog.hidden {
+  height: 36px !important;
+}
+
+.ui-dialog.hidden .ui-dialog-content {
+  visibility: hidden;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+  border: 1px solid black;
+  border-radius: 0;
+  background: #fff;
+}
+
+.ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close {
+  border: 1px solid black;
+  border-radius: 0;
+  background: #fff;
+}
+
+.ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close .ui-icon {
+  background: none;
+  text-indent: 0;
+  font-size: 0.8em;
+}
+
+.ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close .ui-icon::before {
+  content: '✖';
+}

@@ -80,3 +80,24 @@ function play(href) {
     loading = false;
   });
 }
+
+$('#playerDialog').dialog({
+  width: 'auto',
+  position: { my: "left", at: "left+10% center", of: window },
+  beforeClose: function (e, ui) {
+    e.preventDefault();
+    const c = $(this).dialog("option", "classes.ui-dialog");
+    $(this).dialog("option", "classes.ui-dialog", c === 'hidden' ? '' : 'hidden');
+  },
+});
+$('#libraryDialog').dialog({
+  width: 400,
+  height: 200,
+  position: { my: "right", at: "right-10% center", of: window },
+  beforeClose: function (e, ui) {
+    e.preventDefault();
+    const c = $(this).dialog("option", "classes.ui-dialog");
+    $(this).dialog("option", "classes.ui-dialog", c === 'hidden' ? '' : 'hidden');
+  },
+});
+$('.ui-dialog-titlebar button').blur();
