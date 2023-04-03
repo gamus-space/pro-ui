@@ -2,6 +2,7 @@
 
 import { db } from './db.js';
 import { player } from './player.js';
+import { setPlayerOptions } from './script.js';
 import { dialogOptions, initDialog, time, trackTitle } from './utils.js';
 
 class Controls {
@@ -147,9 +148,6 @@ $('#miniPlayerDialog .controls .stereo').slider({
   orientation: "horizontal",
 });
 
-player.volume = localStorage.getItem('volume') == null ? 1 : parseFloat(localStorage.getItem('volume'));
-player.stereo = localStorage.getItem('stereo') == null ? 1 : parseFloat(localStorage.getItem('stereo'));;
-player.loop = localStorage.getItem('loop') === 'true';
 controls.loop = player.loop;
 controls.volume = player.volume;
 controls.stereo = player.stereo;
@@ -186,8 +184,7 @@ $('#miniPlayerDialog .play').click(() => {
 });
 $('#miniPlayerDialog .loop').change(() => {
   controls.loop = !controls.loop;
-  player.loop = controls.loop;
-  localStorage.setItem('loop', controls.loop);
+  setPlayerOptions({ loop: controls.loop });
 });
 const fixSlider = (event) => {
   const handleSize = 0.8;
@@ -199,15 +196,13 @@ fixSlider({ target: $('#miniPlayerDialog .controls .volume') });
 $('#miniPlayerDialog .controls .volume').on('slidechange', fixSlider);
 $('#miniPlayerDialog .controls .volume').on('slide', fixSlider);
 $('#miniPlayerDialog .controls .volume').on('slide', (e, { value }) => {
-  player.volume = value;
-  localStorage.setItem('volume', value);
+  setPlayerOptions({ volume: value });
 });
 fixSlider({ target: $('#miniPlayerDialog .controls .stereo') });
 $('#miniPlayerDialog .controls .stereo').on('slidechange', fixSlider);
 $('#miniPlayerDialog .controls .stereo').on('slide', fixSlider);
 $('#miniPlayerDialog .controls .stereo').on('slide', (e, { value }) => {
-  player.stereo = value;
-  localStorage.setItem('stereo', value);
+  setPlayerOptions({ stereo: value });
 });
 fixSlider({ target: $('#miniPlayerDialog .controls .seek') });
 $('#miniPlayerDialog .controls .seek').on('slidechange', fixSlider);

@@ -2,7 +2,7 @@
 
 import { db, loadDb } from './db.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
-import { playlistController } from './playlist.js';
+import { setPlaylist } from './script.js';
 import { dialogOptions, initDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
@@ -299,9 +299,10 @@ loadDb().then(data => {
   });
   $('#libraryDialog .addToPlaylist').click(() => {
     const data = $('#library').DataTable().rows('.selected').data().toArray();
-    data.forEach(row => {
-      playlistController.add(row);
-    });
+    setPlaylist([
+      ...player.playlist.map(({ url }) => url),
+      ...data.map(({ url }) => url),
+    ], undefined);
     unselectAll();
   });
 
@@ -316,5 +317,4 @@ loadDb().then(data => {
     $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active');
     $('#library').DataTable().rows((row, data) => data.url === url).nodes().to$().find('button.listen').addClass('ui-state-active');
   });
-  playlistController.restorePlaylist();
 });

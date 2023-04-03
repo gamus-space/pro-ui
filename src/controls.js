@@ -2,6 +2,7 @@
 
 import { db } from './db.js';
 import { player } from './player.js';
+import { setPlayerOptions } from './script.js';
 import { dialogOptions, initDialog, time } from './utils.js';
 
 class Controls {
@@ -131,10 +132,6 @@ class Controls {
   }
 }
 
-player.volume = localStorage.getItem('volume') == null ? 1 : parseFloat(localStorage.getItem('volume'));
-player.stereo = localStorage.getItem('stereo') == null ? 1 : parseFloat(localStorage.getItem('stereo'));;
-player.loop = localStorage.getItem('loop') === 'true';
-
 const controls = new Controls();
 player.addEventListener('canplay', () => {
   controls.canplay = true;
@@ -189,8 +186,7 @@ $('#playerDialog .next').click(() => {
 });
 $('#playerDialog .loop').change(() => {
   controls.loop = !controls.loop;
-  player.loop = controls.loop;
-  localStorage.setItem('loop', controls.loop);
+  setPlayerOptions({ loop: controls.loop });
 });
 
 $('#playerDialog .seek').on('slidestart', () => {
@@ -204,12 +200,10 @@ $('#playerDialog .seek').on('slidechange', (e, { value }) => {
   player.currentTime = value;
 });
 $('#playerDialog .volume').on('slide', (e, { value }) => {
-  player.volume = value;
-  localStorage.setItem('volume', value);
+  setPlayerOptions({ volume: value });
 });
 $('#playerDialog .stereo').on('slide', (e, { value }) => {
-  player.stereo = value;
-  localStorage.setItem('stereo', value);
+  setPlayerOptions({ stereo: value });
 });
 
 const setValue = (slider, value) => {

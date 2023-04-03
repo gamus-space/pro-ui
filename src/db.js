@@ -9,6 +9,17 @@ export function loadDb() {
     data => data.map(entry => ({ ...entry, url: `${BASE_URL}/${entry.url}` }))
   ).then(data => {
     db = Object.fromEntries(data.map(track => [track.url, track]));
+    loadedHandlers.forEach(handler => handler());
+    loadedHandlers = undefined;
     return data;
   });
+}
+
+var loadedHandlers = [];
+export function dbLoaded(handler) {
+  if (db) {
+    handler();
+    return;
+  }
+  loadedHandlers.push(handler);
 }

@@ -2,6 +2,7 @@
 
 import { db } from './db.js';
 import { player } from './player.js';
+import { setPlaylist } from './script.js';
 import { dialogOptions, initDialog, time, trackTitle } from './utils.js';
 
 $('#playlistDialog').dialog({
@@ -30,6 +31,8 @@ setTimeout(() => {
       { name: "no", data: "no", title: "No", orderable: false, width: "10%" },
       { name: "title", data: "title", title: "Title", orderable: false },
       { name: "time", data: "time", title: "Time", orderable: false, width: "10%" },
+      { name: "timeSec", data: "timeSec", title: "Time Sec", visible: false },
+      { name: "url", data: "url", title: "URL", visible: false },
     ],
     order: [1, 'asc'],
     paging: false,
@@ -132,6 +135,8 @@ setTimeout(() => {
 
 class PlaylistController {
   constructor() {
+    this._skipUpdate = false;
+    this._skipScroll = true;
     this.playlist = [];
     this.play = `
       <button class="listen ui-button ui-button-icon-only">
@@ -139,30 +144,46 @@ class PlaylistController {
       </button>
     `;
     this.entry = undefined;
+    player.addEventListener('playlist', ({ detail: { playlist } }) => {
+      if (this._skipUpdate) {
+        this._skipUpdate = false;
+        return;
+      }
+      if (!this.playlist.every((url, i) => url === playlist[i].url)) {
+        this.table.clear();
+        this.playlist = [];
+      }
+      this.addUrls(playlist.slice(this.playlist.length).map(({ url }) => url));
+      if (!this._skipScroll) {
+        this.table.row(':last').node()?.scrollIntoView();
+      }
+      this._skipScroll = false;
+    });
+    this.addUrls(player.playlist.map(({ url }) => url));
   }
   init(table) {
     this.table = table;
   }
-  restorePlaylist() {
-    JSON.parse(localStorage.getItem('playlist') ?? '[]').forEach(url => {
+  addUrls(urls) {
+    urls.forEach(url => {
       const track = db[url];
       if (!track) return;
-      playlistController.add({
+      this.add({
         ...track,
         timeSec: track.time,
         time: track.time ? time(track.time) : '',
       });
     });
+    this.table?.draw(false);
   }
   updatePlaylist() {
-    player.setPlaylist(this.playlist.map(url => ({ url, replayGain: db[url].replayGain?.album })), this.entry);
-    localStorage.setItem('playlist', JSON.stringify(this.playlist));
+    this._skipUpdate = true;
+    setPlaylist(this.playlist, this.entry);
   }
   add({ url, game, title, time, timeSec }) {
     this.entry = undefined;
     this.playlist.push(url);
-    this.table.row.add({ play: this.play, no: this.playlist.length, title: trackTitle({ game, title }), time, timeSec, url }).draw(false);
-    this.updatePlaylist();
+    this.table.row.add({ play: this.play, no: this.playlist.length, title: trackTitle({ game, title }), time, timeSec, url });
   }
   remove() {
     this.entry = player.entry;
@@ -186,10 +207,12 @@ class PlaylistController {
     const entry2 = this.playlist[to];
     this.playlist[from] = entry2;
     this.playlist[to] = entry1;
-    const title1 = this.table.cell(from, 'title:name').data();
-    const title2 = this.table.cell(to, 'title:name').data();
-    this.table.cell(from, 'title:name').data(title2);
-    this.table.cell(to, 'title:name').data(title1);
+    ['title', 'time', 'timeSec', 'url'].forEach(field => {
+      const v1 = this.table.cell(from, `${field}:name`).data();
+      const v2 = this.table.cell(to, `${field}:name`).data();
+      this.table.cell(from, `${field}:name`).data(v2);
+      this.table.cell(to, `${field}:name`).data(v1);
+    });
     const active1 = this.table.cell(from, 'play:name').nodes().to$().find('button.ui-state-active').length > 0;
     const active2 = this.table.cell(to, 'play:name').nodes().to$().find('button.ui-state-active').length > 0;
     this.table.cell(from, 'play:name').nodes().to$().find('button').toggleClass('ui-state-active', active2);
