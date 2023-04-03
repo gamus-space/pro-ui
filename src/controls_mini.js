@@ -1,6 +1,5 @@
 'use strict';
 
-import { db } from './db.js';
 import { player } from './player.js';
 import { setPlayerOptions } from './script.js';
 import { dialogOptions, initDialog, time, trackTitle } from './utils.js';
@@ -88,8 +87,7 @@ player.addEventListener('ended', () => {
 player.addEventListener('timeupdate', (e) => {
   controls.position = player.currentTime;
 });
-player.addEventListener('entry', ({ detail: { url } }) => {
-  const track = db[url];
+player.addEventListener('entry', ({ detail: track }) => {
   $('#miniPlayerDialog .title').text(trackTitle(track));
   updateEntry();
 });

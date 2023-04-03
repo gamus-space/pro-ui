@@ -300,11 +300,14 @@ loadDb().then(data => {
   $('#libraryDialog .addToPlaylist').click(() => {
     const data = $('#library').DataTable().rows('.selected').data().toArray();
     setPlaylist([
-      ...player.playlist.map(({ url }) => url),
-      ...data.map(({ url }) => url),
+      ...player.playlist,
+      ...data.map(playlistEntry),
     ], undefined);
     unselectAll();
   });
+  function playlistEntry({ url, game, title, timeSec }) {
+    return { url, game, title, time: timeSec, replayGain: db[url].replayGain?.album };
+  }
 
   Object.entries(currentColumns).forEach(([column, selected]) => {
     selectColumn({ value: column, element: $(`.columnSelector option[value='${column}']`) }, selected);

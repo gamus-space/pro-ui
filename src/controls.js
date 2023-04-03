@@ -146,13 +146,14 @@ player.addEventListener('pause', () => {
 player.addEventListener('timeupdate', (e) => {
   controls.position = player.currentTime;
 });
-player.addEventListener('entry', ({ detail: { url } }) => {
-  const track = db[url];
+player.addEventListener('entry', ({ detail: track }) => {
+  const dbTrack = db?.[track.url];
   $('#playerDialog .info').toggle(true)
     .find('.game').text(track.game).end()
     .find('.track').text(track.title).end()
-    .find('.platform').text(track.platform).end()
-    .find('.year').text(track.year).end();
+    .find('.misc').toggle(!!dbTrack).end()
+    .find('.platform').text(dbTrack?.platform ?? '').end()
+    .find('.year').text(dbTrack?.year ?? '').end();
   updateEntry();
 });
 player.addEventListener('playlist', ({ detail: { playlist } }) => {

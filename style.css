@@ -205,10 +205,10 @@ body .ui-widget {
   display: flex;
 }
 #miniPlayerDialog .controls .group.group1 .scale {
-  margin: 0 1rem;
+  margin: -0.3rem 1rem;
 }
 #miniPlayerDialog .controls .group.group2 .scale {
-  margin: 0 0.70rem;
+  margin: -0.3rem 0.70rem;
 }
 #miniPlayerDialog .controls .group.group3 {
   vertical-align: top;
@@ -245,8 +245,9 @@ body .ui-widget {
 }
 #miniPlayerDialog .entry h2 {
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: sub;
   margin-right: 1rem;
+  margin-top: 0;
 }
 
 #libraryDialog {

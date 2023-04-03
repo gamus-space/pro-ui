@@ -1,6 +1,5 @@
 'use strict';
 
-import { db } from './db.js';
 import { player } from './player.js';
 import { setPlaylist } from './script.js';
 import { dialogOptions, initDialog, time, trackTitle } from './utils.js';
@@ -153,37 +152,36 @@ class PlaylistController {
         this.table.clear();
         this.playlist = [];
       }
-      this.addUrls(playlist.slice(this.playlist.length).map(({ url }) => url));
+      this.addPlaylist(playlist.slice(this.playlist.length));
       if (!this._skipScroll) {
         this.table.row(':last').node()?.scrollIntoView();
       }
       this._skipScroll = false;
     });
-    this.addUrls(player.playlist.map(({ url }) => url));
   }
   init(table) {
     this.table = table;
+    this.addPlaylist(player.playlist);
   }
-  addUrls(urls) {
-    urls.forEach(url => {
-      const track = db[url];
-      if (!track) return;
-      this.add({
-        ...track,
-        timeSec: track.time,
+  addPlaylist(playlist) {
+    if (!this.table) return;
+    this.entry = undefined;
+    playlist.forEach(track => {
+      this.playlist.push(track);
+      this.table.row.add({
+        play: this.play,
+        no: this.playlist.length,
+        title: trackTitle(track),
         time: track.time ? time(track.time) : '',
+        timeSec: track.time,
+        url: track.url,
       });
     });
-    this.table?.draw(false);
+    this.table.draw(false);
   }
   updatePlaylist() {
     this._skipUpdate = true;
     setPlaylist(this.playlist, this.entry);
-  }
-  add({ url, game, title, time, timeSec }) {
-    this.entry = undefined;
-    this.playlist.push(url);
-    this.table.row.add({ play: this.play, no: this.playlist.length, title: trackTitle({ game, title }), time, timeSec, url });
   }
   remove() {
     this.entry = player.entry;
@@ -201,8 +199,8 @@ class PlaylistController {
     });
   }
   moveRow(from, to) {
-    if (player.entry === from) this.entry = to;
-    else if (player.entry === to) this.entry = from;
+    if (this.entry === from) this.entry = to;
+    else if (this.entry === to) this.entry = from;
     const entry1 = this.playlist[from];
     const entry2 = this.playlist[to];
     this.playlist[from] = entry2;
