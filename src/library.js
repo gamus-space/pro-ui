@@ -96,21 +96,37 @@ loadDb().then(data => {
       <span class="ui-icon ui-icon-circle-plus"></span>
     </button>
     <select class="columnSelector">
-      <option value="game" data-checked="checked">Game</option>
-      <option value="track" data-checked="checked"># track</option>
-      <option value="kind" data-checked="checked">? kind</option>
-      <option value="title" data-checked="checked">Title</option>
-      <option value="platform" data-checked="checked">Platform</option>
-      <option value="year" data-checked="checked">Year</option>
-      <option value="time" data-checked="checked">Time</option>
-      <option value="size" data-checked="checked">Size</option>
+      <optgroup label="Columns">
+        <option value="game" data-checked="checked">Game</option>
+        <option value="track" data-checked="checked"># track</option>
+        <option value="kind" data-checked="checked">? kind</option>
+        <option value="title" data-checked="checked">Title</option>
+        <option value="platform" data-checked="checked">Platform</option>
+        <option value="year" data-checked="checked">Year</option>
+        <option value="time" data-checked="checked">Time</option>
+        <option value="size" data-checked="checked">Size</option>
+      </optgroup>
+      <optgroup label="Selection">
+        <option data-role="selectAll" data-icon="circle-plus">Select all</option>
+        <option data-role="unselectAll" data-icon="circle-minus">Unselect all</option>
+        <option data-role="invertSelection" data-icon="circle-close">Invert</option>
+        <option data-role="reset" data-icon="help">Set defaults</option>
+      </optgroup>
     </select>
     <select class="kindSelector">
-      <option value="track" data-checked="checked">Track</option>
-      <option value="short" data-checked="checked">Short</option>
-      <option value="jingle" data-checked="checked">Jingle</option>
-      <option value="ambient" data-checked="checked">Ambient</option>
-      <option value="story" data-checked="checked">storY</option>
+      <optgroup label="Kinds">
+        <option value="track" data-checked="checked">Track</option>
+        <option value="short" data-checked="checked">Short</option>
+        <option value="jingle" data-checked="checked">Jingle</option>
+        <option value="ambient" data-checked="checked">Ambient</option>
+        <option value="story" data-checked="checked">storY</option>
+      </optgroup>
+      <optgroup label="Selection">
+        <option data-role="selectAll" data-icon="circle-plus">Select all</option>
+        <option data-role="unselectAll" data-icon="circle-minus">Unselect all</option>
+        <option data-role="invertSelection" data-icon="circle-close">Invert</option>
+        <option data-role="reset" data-icon="help">Set defaults</option>
+      </optgroup>
     </select>
   `));
 
@@ -123,7 +139,7 @@ loadDb().then(data => {
       $("<span>", {
         style: item.element.attr("data-style"),
         'data-value': item.value,
-        class: "ui-icon " + (!!item.element.attr("data-checked") ? "ui-icon-check" : "ui-icon-closethick"),
+        class: "ui-icon ui-icon-" + (item.element.attr("data-icon") || (!!item.element.attr("data-checked") ? "check" : "closethick")),
       }).appendTo(wrapper);
       return li.append(wrapper).appendTo(ul);
     }
@@ -142,25 +158,58 @@ loadDb().then(data => {
   }).iconsselectmenu("menuWidget").addClass("ui-menu-icons");
   function toggleIcon(item, selected) {
     item.element.attr("data-checked", selected ? 'checked' : null);
-    const menuId = `${item.element.parent().attr('id')}-menu`;
+    const menuId = `${item.element.parents('select').attr('id')}-menu`;
     $(`ul[id=${menuId}] *[data-value=${item.value}]`)
       .toggleClass("ui-icon-check", selected)
       .toggleClass("ui-icon-closethick", !selected);
   }
+  function selectMultiple(item, select, defaults) {
+    const handlers = {
+      selectAll: () => true,
+      unselectAll: () => false,
+      invertSelection: option => !$(option).attr("data-checked"),
+      reset: option => defaults[option.value],
+    }
+    if (item.element.attr('data-role')) {
+      item.element.parents('optgroup').prev().children().toArray().forEach(option => {
+        select({ value: option.value, element: $(option) }, handlers[item.element.attr('data-role')](option));
+      });
+      return true;
+    }
+    return false;
+  }
+
+  const DEFAULT_COLUMNS = {
+    game: true,
+    track: true,
+    kind: false,
+    title: true,
+    platform: false,
+    year: false,
+    time: true,
+    size: false,
+  };
   function selectColumn(item, selected) {
+    if (selectMultiple(item, selectColumn, DEFAULT_COLUMNS)) return;
     toggleIcon(item, selected);
     $('#library').DataTable().column(`${item.value}:name`).visible(selected);
   }
+
+  const DEFAULT_KINDS = {
+    track: true,
+    short: true,
+    jingle: true,
+    ambient: true,
+    story: true,
+  };
   const selectedKinds = Object.fromEntries(Object.keys(KIND_MAPPING).map(kind => [kind, true]));
   function selectKind(item, selected) {
+    if (selectMultiple(item, selectKind, DEFAULT_KINDS)) return;
     toggleIcon(item, selected);
     selectedKinds[item.value] = selected;
     const regexp = Object.entries(selectedKinds).filter(([kind, selected]) => selected).map(([kind]) => KIND_MAPPING[kind] ?? '\\?').join('|');
     $('#library').DataTable().column('kind:name').search(regexp === '' ? '.^' : regexp, true).draw();
   }
-  ['platform', 'year', 'size', 'kind'].forEach(column => {
-    selectColumn({ value: column, element: $(`.columnSelector option[value=${column}]`) }, false);
-  });
 
   function rowsStats(selector, zero) {
     const rows = $('#library').DataTable().rows(selector);
@@ -197,6 +246,13 @@ loadDb().then(data => {
       playlistController.add(row);
     });
     unselectAll();
+  });
+
+  Object.entries(DEFAULT_COLUMNS).forEach(([column, selected]) => {
+    selectColumn({ value: column, element: $(`.columnSelector option[value='${column}']`) }, selected);
+  });
+  Object.entries(DEFAULT_KINDS).forEach(([kind, selected]) => {
+    selectKind({ value: kind, element: $(`.kindSelector option[value='${kind}']`) }, selected);
   });
 
   player.addEventListener('entry', ({ detail: { url } }) => {
