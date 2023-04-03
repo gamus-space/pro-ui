@@ -143,8 +143,20 @@ class PlaylistController {
   init(table) {
     this.table = table;
   }
+  restorePlaylist() {
+    JSON.parse(localStorage.getItem('playlist') ?? '[]').forEach(url => {
+      const track = db[url];
+      if (!track) return;
+      playlistController.add({
+        ...track,
+        timeSec: track.time,
+        time: track.time ? time(track.time) : '',
+      });
+    });
+  }
   updatePlaylist() {
     player.setPlaylist(this.playlist.map(url => ({ url, replayGain: db[url].replayGain?.album })), this.entry);
+    localStorage.setItem('playlist', JSON.stringify(this.playlist));
   }
   add({ url, game, title, time, timeSec }) {
     this.entry = undefined;

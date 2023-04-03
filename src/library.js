@@ -216,10 +216,16 @@ loadDb().then(data => {
     time: true,
     size: false,
   };
+  const currentColumns = {
+    ...DEFAULT_COLUMNS,
+    ...JSON.parse(localStorage.getItem('columns') ?? '{}'),
+  };
   function selectColumn(item, selected) {
     if (selectMultiple(item, selectColumn, DEFAULT_COLUMNS)) return;
     toggleIcon(item, selected);
     $('#library').DataTable().column(`${item.value}:name`).visible(selected);
+    currentColumns[item.value] = selected;
+    localStorage.setItem('columns', JSON.stringify(currentColumns));
   }
 
   const DEFAULT_KINDS = {
@@ -229,6 +235,10 @@ loadDb().then(data => {
     ambient: true,
     story: true,
   };
+  const currentKinds = {
+    ...DEFAULT_KINDS,
+    ...JSON.parse(localStorage.getItem('kinds') ?? '{}'),
+  };
   const selectedKinds = Object.fromEntries(Object.keys(KIND_MAPPING).map(kind => [kind, true]));
   function selectKind(item, selected) {
     if (selectMultiple(item, selectKind, DEFAULT_KINDS)) return;
@@ -236,6 +246,8 @@ loadDb().then(data => {
     selectedKinds[item.value] = selected;
     const regexp = Object.entries(selectedKinds).filter(([kind, selected]) => selected).map(([kind]) => KIND_MAPPING[kind] ?? '\\?').join('|');
     $('#library').DataTable().column('kind:name').search(regexp === '' ? '.^' : regexp, true).draw();
+    currentKinds[item.value] = selected;
+    localStorage.setItem('kinds', JSON.stringify(currentKinds));
   }
 
   function rowsStats(selector, zero) {
@@ -277,10 +289,10 @@ loadDb().then(data => {
     unselectAll();
   });
 
-  Object.entries(DEFAULT_COLUMNS).forEach(([column, selected]) => {
+  Object.entries(currentColumns).forEach(([column, selected]) => {
     selectColumn({ value: column, element: $(`.columnSelector option[value='${column}']`) }, selected);
   });
-  Object.entries(DEFAULT_KINDS).forEach(([kind, selected]) => {
+  Object.entries(currentKinds).forEach(([kind, selected]) => {
     selectKind({ value: kind, element: $(`.kindSelector option[value='${kind}']`) }, selected);
   });
 
@@ -288,4 +300,5 @@ loadDb().then(data => {
     $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active');
     $('#library').DataTable().rows((row, data) => data.url === url).nodes().to$().find('button.listen').addClass('ui-state-active');
   });
+  playlistController.restorePlaylist();
 });

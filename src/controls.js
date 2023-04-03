@@ -93,6 +93,12 @@ $('#playerDialog').dialog({
 });
 $('.ui-dialog-titlebar button').blur();
 
+player.volume = localStorage.getItem('volume') == null ? 1 : parseFloat(localStorage.getItem('volume'));
+player.stereo = localStorage.getItem('stereo') == null ? 1 : parseFloat(localStorage.getItem('stereo'));;
+player.loop = localStorage.getItem('loop') === 'true';
+controls.loop = player.loop;
+
+$('.loop input').prop('checked', player.loop);
 $('input[type=checkbox]').checkboxradio({
   icon: false,
 });
@@ -109,7 +115,7 @@ $('.controls .seek').slider({
   animate: "fast",
 });
 $('.controls .volume').slider({
-  value: 1,
+  value: player.volume,
   min: 0,
   max: 1,
   step: 0.01,
@@ -118,7 +124,7 @@ $('.controls .volume').slider({
   animate: "fast",
 });
 $('.controls .stereo').slider({
-  value: 1,
+  value: player.stereo,
   min: -1,
   max: 1,
   step: 0.01,
@@ -149,12 +155,15 @@ $('.play').click(() => {
 $('.loop').change(() => {
   controls.loop = !controls.loop;
   player.loop = controls.loop;
+  localStorage.setItem('loop', controls.loop);
 });
 $('.controls .volume').on('slide', (e, { value }) => {
   player.volume = value;
+  localStorage.setItem('volume', value);
 });
 $('.controls .stereo').on('slide', (e, { value }) => {
   player.stereo = value;
+  localStorage.setItem('stereo', value);
 });
 $('.controls .seek').on('slidestart', () => {
   controls.seeking = true;
