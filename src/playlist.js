@@ -2,7 +2,7 @@
 
 import { db } from './db.js';
 import { player } from './player.js';
-import { dialogOptions, time, trackTitle } from './utils.js';
+import { dialogOptions, initDialog, time, trackTitle } from './utils.js';
 
 $('#playlistDialog').dialog({
   ...dialogOptions($('#playlistDialog')),
@@ -13,11 +13,11 @@ $('#playlistDialog').dialog({
     resizeTable(height);
   },
 });
-$('.ui-dialog-titlebar button').blur();
+initDialog($('#playlistDialog'));
 
 function resizeTable(height) {
   const body = $('#playlist_wrapper .dataTables_scrollBody');
-  body.css('max-height', height - body.position().top - 64 + 5);
+  body.css('max-height', height - body.position().top - 70);
 }
 
 setTimeout(() => {

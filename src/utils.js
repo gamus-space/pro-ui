@@ -13,8 +13,17 @@ export const dialogOptions = element => ({
     $(this).dialog("option", "classes.ui-dialog", open ? '' : 'hidden');
     $(this).dialog("option", "resizable", open && !$(this).hasClass('fixed'));
     $(this).parent().find('.ui-dialog-titlebar-close').attr('title', open ? 'Minimize' : 'Restore');
+    $(this).parent().find('.ui-dialog-titlebar button .ui-icon')
+      .toggleClass('ui-icon-minusthick', open)
+      .toggleClass('ui-icon-triangle-1-s', !open);
   },
 });
+
+export function initDialog(element) {
+  element.parent().find('.ui-dialog-titlebar button')
+    .blur()
+    .find('.ui-icon').removeClass('ui-icon-closethick').addClass('ui-icon-minusthick');
+}
 
 export function time(t) {
   t = Math.floor(t)

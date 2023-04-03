@@ -2,7 +2,7 @@
 
 import { db } from './db.js';
 import { player } from './player.js';
-import { dialogOptions, time, trackTitle } from './utils.js';
+import { dialogOptions, initDialog, time, trackTitle } from './utils.js';
 
 class Controls {
   constructor() {
@@ -108,7 +108,7 @@ $('#miniPlayerDialog').dialog({
   width: 'auto',
   position: { my: "center", at: "center-15%", of: window },
 });
-$('.ui-dialog-titlebar button').blur();
+initDialog($('#miniPlayerDialog'));
 
 $('#miniPlayerDialog input[type=checkbox]').checkboxradio({
   icon: false,
@@ -116,31 +116,35 @@ $('#miniPlayerDialog input[type=checkbox]').checkboxradio({
 $('#miniPlayerDialog .play').button({ disabled: true });
 $('#miniPlayerDialog .previous').button({ disabled: true });
 $('#miniPlayerDialog .next').button({ disabled: true });
+const sliderSettings = {
+  classes: { "ui-slider-range": "ui-state-active" },
+  animate: false,
+};
 $('#miniPlayerDialog .controls .seek').slider({
+  ...sliderSettings,
   value: 0,
   min: 0,
   max: 0,
   step: 0.1,
   orientation: "horizontal",
   range: "min",
-  animate: false,
 });
 $('#miniPlayerDialog .controls .volume').slider({
+  ...sliderSettings,
   value: 0,
   min: 0,
   max: 1,
   step: 0.01,
   orientation: "horizontal",
   range: "min",
-  animate: false,
 });
 $('#miniPlayerDialog .controls .stereo').slider({
+  ...sliderSettings,
   value: 0,
   min: -1,
   max: 1,
   step: 0.01,
   orientation: "horizontal",
-  animate: false,
 });
 
 player.volume = localStorage.getItem('volume') == null ? 1 : parseFloat(localStorage.getItem('volume'));
@@ -189,7 +193,7 @@ const fixSlider = (event) => {
   const handleSize = 0.8;
   const handle = $(event.target).find('.ui-slider-handle');
   const pos = parseInt(handle[0].style['left']);
-  handle.css('margin-left', `-${handleSize*(pos+10)/100}em`);
+  handle.css('margin-left', `-${handleSize*(pos+1)/100}em`);
 }
 fixSlider({ target: $('#miniPlayerDialog .controls .volume') });
 $('#miniPlayerDialog .controls .volume').on('slidechange', fixSlider);

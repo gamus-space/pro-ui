@@ -3,7 +3,7 @@
 import { db, loadDb } from './db.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
 import { playlistController } from './playlist.js';
-import { dialogOptions, size, time, trackTitle } from './utils.js';
+import { dialogOptions, initDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
   ...dialogOptions($('#libraryDialog')),
@@ -14,11 +14,11 @@ $('#libraryDialog').dialog({
     resizeTable(height);
   },
 });
-$('.ui-dialog-titlebar button').blur();
+initDialog($('#libraryDialog'));
 
 function resizeTable(height) {
   const body = $('#library_wrapper .dataTables_scrollBody');
-  body.css('max-height', height - body.position().top - 64 + 5);
+  body.css('max-height', height - body.position().top - 70);
 }
 
 const KIND_MAPPING = {
@@ -149,12 +149,21 @@ loadDb().then(data => {
         class: "ui-icon ui-icon-" + (item.element.attr("data-icon") || (!!item.element.attr("data-checked") ? "check" : "closethick")),
       }).appendTo(wrapper);
       return li.append(wrapper).appendTo(ul);
-    }
+    },
+    superClose: $.ui.selectmenu.prototype.close,
+    close() {
+      if (!this.dontClose) this.superClose();
+      this.dontClose = false;
+    },
+    preventClose() {
+      this.dontClose = true;
+    },
   });
   $(".columnSelector").iconsselectmenu({
     icons: { button: "ui-icon-gear" },
     select: (event, { item }) => {
       selectColumn(item, !item.element.attr("data-checked"));
+      $(".columnSelector").iconsselectmenu('preventClose');
     },
     classes: {
       "ui-selectmenu-menu": "groups"
@@ -164,6 +173,7 @@ loadDb().then(data => {
     icons: { button: "ui-icon-wrench" },
     select: (event, { item }) => {
       selectKind(item, !item.element.attr("data-checked"));
+      $(".kindSelector").iconsselectmenu('preventClose');
     },
     classes: {
       "ui-selectmenu-menu": "groups"

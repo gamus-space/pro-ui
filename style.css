@@ -1,27 +1,35 @@
-h1 {
-  text-align: center;
+body {
+  /* background-color: #777; */
+  /* background: linear-gradient(#59b4d4, #f58400b0, #000) fixed; */
+  /* background: linear-gradient(#59b4d4, #59b4d4 30%, #f58400b0 85%, #000 85%, #777) fixed; */
+  background: conic-gradient(at -10% 40%, #59b4d4 20%, #f58400b0 25%, #000 30%, #777 50%) fixed;
+  background-size: cover;
 }
 
+body .ui-widget {
+  font-family: Kanit,Segoe UI,Arial,sans-serif;
+  font-weight: 200;
+}
+.ui-dialog .ui-dialog-title {
+  font-weight: normal;
+}
 .ui-dialog.ui-widget.ui-widget-content {
   border: 1px solid black;
 }
 .ui-dialog.hidden {
-  height: 2.25em !important;
+  height: 2.70em !important;
 }
 .ui-dialog.hidden .ui-dialog-content {
   visibility: hidden;
 }
-.ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close .ui-icon {
-  background: none;
-  text-indent: 0;
-  font-size: 0.8em;
+.ui-slider.ui-slider-vertical {
+  background-position: 25% 50%;
 }
-.ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close .ui-icon::before {
-  content: '▬';
+.ui-state-active {
+  font-weight: normal !important;
 }
-.ui-dialog.hidden .ui-dialog-titlebar .ui-dialog-titlebar-close .ui-icon::before {
-  content: '▭';
-  font-size: 1.3em;
+.ui-widget-header {
+  background-size: 60px 150px !important;
 }
 
 #playerDialog {
@@ -145,7 +153,7 @@ h1 {
 #playerDialog .seek.ui-slider .ui-slider-handle {
   width: 1.5rem;
   height: 1.5rem;
-  top: -0.06rem;
+  top: 0rem;
 }
 #playerDialog .volume,
 #playerDialog .stereo {
@@ -155,7 +163,7 @@ h1 {
 #playerDialog .stereo.ui-slider .ui-slider-handle {
   width: 0.8rem;
   height: 0.8rem;
-  left: -0.06rem;
+  left: 0rem;
 }
 
 #miniPlayerDialog .ui-button-icon-only {
@@ -194,6 +202,12 @@ h1 {
 #miniPlayerDialog .controls .group.group2 .scale {
   margin: 0 0.70rem;
 }
+#miniPlayerDialog .controls .group.group3 {
+  vertical-align: top;
+}
+#miniPlayerDialog .controls .group.group3 .scale {
+  justify-content: center;
+}
 #miniPlayerDialog .controls .icon-group {
   flex-grow: 1;
 }
@@ -219,11 +233,12 @@ h1 {
 #miniPlayerDialog .controls .ui-slider .ui-slider-handle {
   width: 0.8em;
   height: 0.8em;
-  top: -0.06em;
+  top: 0em;
 }
 #miniPlayerDialog .entry h2 {
   display: inline-block;
   vertical-align: middle;
+  margin-right: 1rem;
 }
 
 #libraryDialog {
@@ -258,6 +273,9 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 #libraryDialog .dataTables_filter {
   padding-top: 0.3rem;
 }
+#libraryDialog input[type=search] {
+  color: white;
+}
 #libraryDialog input[type=search]::-webkit-search-cancel-button {
   filter: grayscale(100%);
 }
@@ -273,23 +291,26 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 #library td {
   padding: 4px;
 }
+#library tr.even td,
 #library tr.even td.sorting_1 {
   box-shadow: none;
 }
+#library tr.odd td,
 #library tr.odd td.sorting_1 {
-  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 2%);
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 5%);
 }
+#library tr:hover td,
 #library tr:hover td.sorting_1 {
-  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 4%);
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 10%);
 }
 #library tr.selected td {
-  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%);
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
 }
 #library tr.selected:hover td {
-  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%) !important;
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%) !important;
 }
 #library tr.selected td.sorting_1 {
-  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%);
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
 }
 #library .ui-button-icon-only {
   width: 1.5rem;
@@ -310,7 +331,8 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   padding-top: 0.3rem;
 }
 #playlistDialog input[type=search] {
-  width: 8rem; /* TODO */
+  width: 8rem;
+  color: white;
 }
 #playlistDialog input[type=search]::-webkit-search-cancel-button {
   filter: grayscale(100%);
@@ -327,33 +349,28 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 #playlist td {
   padding: 4px;
 }
+#playlist tr.even td,
 #playlist tr.even td.sorting_1 {
   box-shadow: none;
 }
+#playlist tr.odd td,
 #playlist tr.odd td.sorting_1 {
-  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 2%);
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 5%);
 }
+#playlist tr:hover td,
 #playlist tr:hover td.sorting_1 {
-  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 4%);
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 10%);
 }
 #playlist tr.selected td {
-  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%);
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
 }
 #playlist tr.selected:hover td {
-  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%) !important;
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%) !important;
 }
 #playlist tr.selected td.sorting_1 {
-  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%);
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
 }
 #playlist .ui-button-icon-only {
   width: 1.5rem;
   height: 1.5rem;
 }
-
-/*
-  Font Settings -> Size: 0.8em
-  Corner Radius -> Corners: 0
-  Clickable: active state -> Background: #777
-  Clickable: active state -> Border: #000
-  Header/Toolbar -> Border: #000
-*/

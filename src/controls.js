@@ -2,7 +2,7 @@
 
 import { db } from './db.js';
 import { player } from './player.js';
-import { dialogOptions, time } from './utils.js';
+import { dialogOptions, initDialog, time } from './utils.js';
 
 class Controls {
   constructor() {
@@ -30,38 +30,42 @@ class Controls {
     });
     this.loop = player.loop;
 
+    const sliderSettings = {
+      classes: { "ui-slider-range": "ui-state-active" },
+      animate: false,
+    };
     $('#playerDialog .seek').slider({
+      ...sliderSettings,
       value: 0,
       min: 0,
       max: 0,
       step: 0.1,
       orientation: "horizontal",
       range: "min",
-      animate: false,
     });
     $('#playerDialog .volume').slider({
+      ...sliderSettings,
       value: 0,
       min: 0,
       max: 1,
       step: 0.01,
       orientation: "vertical",
       range: "min",
-      animate: false,
     });
     this.volume = player.volume;
     $('#playerDialog .stereo').slider({
+      ...sliderSettings,
       value: 0,
       min: -1,
       max: 1,
       step: 0.01,
       orientation: "vertical",
-      animate: false,
     });
     this.stereo = player.stereo;
     const fixSlider = (handleSize, ref) => (event) => {
       const handle = $(event.target).find('.ui-slider-handle');
       const pos = parseInt(handle[0].style[ref]);
-      handle.css(`margin-${ref}`, `-${handleSize*(pos+5)/100}rem`);
+      handle.css(`margin-${ref}`, `-${handleSize*(pos+1)/100}rem`);
     };
     const initSlider = (fix, slider) => {
       fix({ target: slider });
@@ -234,4 +238,4 @@ $('#playerDialog').dialog({
   height: 'auto',
   position: { my: "center", at: "center+15%", of: window },
 });
-$('.ui-dialog-titlebar button').blur();
+initDialog($('#playerDialog'));

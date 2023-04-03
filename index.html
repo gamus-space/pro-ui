@@ -4,10 +4,13 @@
 
 <head>
   <meta charset="utf-8">
-  <title>GAMUS pro-to</title>
+  <title>proto</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="jquery-ui.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/dataTables.jqueryui.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;400;700&display=swap" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
@@ -15,7 +18,6 @@
 </head>
 
 <body>
-  <h1>proto</h1>
   <div id="playerDialog" title="player">
     <div class="info">
       <div class="game row major">game</div>
@@ -80,19 +82,28 @@
     </div>
   </div>
   <div id="miniPlayerDialog" title="mini player" class="fixed">
+    <h2 class="title">-</h2>
     <div class="controls">
       <div class="row">
-        <label class="loop ui-button-icon-only">
-          <span class="ui-icon ui-icon-arrowrefresh-1-n"></span>
-          <input type="checkbox" />
-        </label>
-        <button class="play ui-button ui-button-icon-only">
-          <span class="ui-icon ui-icon-play"></span>
-        </button>
-        <span class="position">0:00</span>
-        /
-        <span class="duration">0:00</span>
-        <span class="seek"></span>
+        <span class="group group3">
+          <label class="loop ui-button-icon-only">
+            <span class="ui-icon ui-icon-arrowrefresh-1-n"></span>
+            <input type="checkbox" />
+          </label>
+          <button class="play ui-button ui-button-icon-only">
+            <span class="ui-icon ui-icon-play"></span>
+          </button>
+        </span>
+        <span class="group group3">
+          <div class="seek"></div>
+          <div class="scale">
+            <span>
+              <span class="position">0:00</span>
+              /
+              <span class="duration">0:00</span>
+            </span>
+          </div>
+        </span>
       </div>
       <div class="row">
         <span class="group group1">
@@ -124,7 +135,6 @@
         </span>
       </div>
     </div>
-    <h2 class="title">-</h2>
     <div class="entry" style="display: none">
       <h2>
         <span class="pos"></span>
