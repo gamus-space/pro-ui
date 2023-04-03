@@ -5,7 +5,7 @@ import { player } from './player.js';
 import { dialogOptions, time, trackTitle } from './utils.js';
 
 $('#playlistDialog').dialog({
-  ...dialogOptions,
+  ...dialogOptions($('#playlistDialog')),
   width: 400,
   height: 400,
   position: { my: "left", at: "left+2% center", of: window },

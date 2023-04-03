@@ -24,72 +24,204 @@ h1 {
   font-size: 1.3em;
 }
 
-#playerDialog .ui-button-icon-only {
+#playerDialog {
+  display: grid;
+  grid-template:
+    "status plpa info vol  ster" 6rem
+    "entry  nav  info time time" minmax(3rem, auto)
+    "seek   seek seek seek seek" 3rem
+  /  3rem   6rem auto 3rem 3rem;
+  place-items: center;
+  margin: 1rem;
+}
+#playerDialog .plpa {
+  grid-area: plpa;
+}
+#playerDialog .plpa .play {
+  width: 2rem;
+  height: 2rem;
+  transform: scale(2);
+}
+#playerDialog .info {
+  display: none;
+  grid-area: info;
+  /* border: 1px dashed gray; */
+  place-self: stretch;
+  padding: 0.2rem 1rem;
+}
+#playerDialog .info .row.major {
+  margin-top: 0.8rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+#playerDialog .info .row.minor {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+}
+#playerDialog .time {
+  grid-area: time;
+}
+#playerDialog .status {
+  grid-area: status;
+}
+#playerDialog .status .loop {
+  width: 2rem;
   height: 2rem;
 }
-#playerDialog .ui-visual-focus {
-  box-shadow: none;
+#playerDialog .seek {
+  grid-area: seek;
+  justify-self: stretch;
+}
+#playerDialog .vol {
+  grid-area: vol;
+  display: grid;
+  grid-template:
+    "volume max" 1fr
+    "volume min" 1fr
+  / 1fr 1fr
+}
+#playerDialog .vol .volume {
+  grid-area: volume;
+  height: 5rem;
+}
+#playerDialog .vol .volume-min {
+  grid-area: min;
+  align-self: end;
+}
+#playerDialog .vol .volume-max {
+  grid-area: max;
+  align-self: start;
+}
+#playerDialog .ster {
+  grid-area: ster;
+  display: grid;
+  grid-template:
+    "stereo max" 1fr
+    "stereo med" 1fr
+    "stereo min" 1fr
+  / 1fr 1fr
+}
+#playerDialog .ster .stereo {
+  grid-area: stereo;
+  height: 5rem;
+}
+#playerDialog .ster .stereo-rev {
+  grid-area: min;
+  align-self: end;
+}
+#playerDialog .ster .mono {
+  grid-area: med;
+  align-self: center;
+}
+#playerDialog .ster .stereo-full {
+  grid-area: max;
+  align-self: start;
+}
+#playerDialog .ster .icon-group {
+  white-space: nowrap;
+  margin: -0.1em 0.2em;
+  text-align: center;
+}
+#playerDialog .ster .icon-group * {
+  margin: 0 -0.5em;
+}
+#playerDialog .entry {
+  grid-area: entry;
+  display: none;
+  font-size: 1rem;
+  font-weight: bold;
+}
+#playerDialog .nav {
+  grid-area: nav;
+  display: none;
+}
+#playerDialog .nav button {
+  width: 2rem;
+  height: 2rem;
+}
+#playerDialog .seek {
+  height: 1.5rem;
+}
+#playerDialog .seek.ui-slider .ui-slider-handle {
+  width: 1.5rem;
+  height: 1.5rem;
+  top: -0.06rem;
+}
+#playerDialog .volume,
+#playerDialog .stereo {
+  width: 0.8rem;
+}
+#playerDialog .volume.ui-slider .ui-slider-handle,
+#playerDialog .stereo.ui-slider .ui-slider-handle {
+  width: 0.8rem;
+  height: 0.8rem;
+  left: -0.06rem;
 }
 
-.controls .row {
+#miniPlayerDialog .ui-button-icon-only {
+  height: 2rem;
+}
+#miniPlayerDialog .ui-visual-focus {
+  box-shadow: none;
+}
+#miniPlayerDialog .controls .row {
   margin: 1rem 0;
 }
-.controls .group {
+#miniPlayerDialog .controls .group {
   display: inline-block;
 }
-.controls .seek {
+#miniPlayerDialog .controls .seek {
   display: inline-block;
   width: 100px;
   margin: 0 1rem;
 }
-.controls .volume {
+#miniPlayerDialog .controls .volume {
   display: inline-block;
   width: 100px;
   margin: 0 0.5rem;
 }
-.controls .stereo {
+#miniPlayerDialog .controls .stereo {
   display: inline-block;
   width: 100px;
   margin: 0 0.5rem;
 }
-.controls .group .scale {
+#miniPlayerDialog .controls .group .scale {
   display: flex;
 }
-.controls .group.group1 .scale {
+#miniPlayerDialog .controls .group.group1 .scale {
   margin: 0 1rem;
 }
-.controls .group.group2 .scale {
+#miniPlayerDialog .controls .group.group2 .scale {
   margin: 0 0.70rem;
 }
-.controls .icon-group {
+#miniPlayerDialog .controls .icon-group {
   flex-grow: 1;
 }
-.controls .icon-group > * {
+#miniPlayerDialog .controls .icon-group > * {
   margin: -6px;
 }
-.controls .icon-group.volume-min {
+#miniPlayerDialog .controls .icon-group.volume-min {
   text-align: left;
 }
-.controls .icon-group.volume-max {
+#miniPlayerDialog .controls .icon-group.volume-max {
   text-align: right;
 }
-.controls .icon-group.stereo-rev {
+#miniPlayerDialog .controls .icon-group.stereo-rev {
   text-align: left;
 }
-.controls .icon-group.mono {
+#miniPlayerDialog .controls .icon-group.mono {
   text-align: center;
   padding-left: 3px;
 }
-.controls .icon-group.stereo-full {
+#miniPlayerDialog .controls .icon-group.stereo-full {
   text-align: right;
 }
-.controls .ui-slider .ui-slider-handle {
+#miniPlayerDialog .controls .ui-slider .ui-slider-handle {
   width: 0.8em;
   height: 0.8em;
   top: -0.06em;
 }
-
-.entry h2 {
+#miniPlayerDialog .entry h2 {
   display: inline-block;
   vertical-align: middle;
 }
@@ -116,7 +248,7 @@ h1 {
   margin-top: -8px;
   margin-left: -8px;
 }
-body .ui-selectmenu-menu .ui-menu .ui-selectmenu-optgroup {
+body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   text-align: center;
   padding: 0.5em;
 }

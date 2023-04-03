@@ -4,16 +4,17 @@ export function trackTitle({ game, title }) {
   return `${game} - ${title}`;
 }
 
-export const dialogOptions = {
+export const dialogOptions = element => ({
   closeText: 'Minimize',
+  resizable: !element.hasClass('fixed'),
   beforeClose: function (e) {
     e.preventDefault();
     const open = $(this).dialog("option", "classes.ui-dialog") === 'hidden';
     $(this).dialog("option", "classes.ui-dialog", open ? '' : 'hidden');
-    $(this).dialog("option", "resizable", open);
+    $(this).dialog("option", "resizable", open && !$(this).hasClass('fixed'));
     $(this).parent().find('.ui-dialog-titlebar-close').attr('title', open ? 'Minimize' : 'Restore');
   },
-};
+});
 
 export function time(t) {
   t = Math.floor(t)

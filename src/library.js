@@ -6,7 +6,7 @@ import { playlistController } from './playlist.js';
 import { dialogOptions, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
-  ...dialogOptions,
+  ...dialogOptions($('#libraryDialog')),
   width: 500,
   height: 400,
   position: { my: "right", at: "right-2% center", of: window },
@@ -156,11 +156,17 @@ loadDb().then(data => {
     select: (event, { item }) => {
       selectColumn(item, !item.element.attr("data-checked"));
     },
+    classes: {
+      "ui-selectmenu-menu": "groups"
+    },
   }).iconsselectmenu("menuWidget").addClass("ui-menu-icons");
   $(".kindSelector").iconsselectmenu({
     icons: { button: "ui-icon-wrench" },
     select: (event, { item }) => {
       selectKind(item, !item.element.attr("data-checked"));
+    },
+    classes: {
+      "ui-selectmenu-menu": "groups"
     },
   }).iconsselectmenu("menuWidget").addClass("ui-menu-icons");
   $(".downloadSelector").iconsselectmenu({

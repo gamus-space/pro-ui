@@ -22,7 +22,7 @@ class Player extends EventTarget {
     ['canplay', 'play', 'pause', 'ended', 'timeupdate'].forEach(event => {
       this.audio.addEventListener(event, e => { this.dispatchEvent(new CustomEvent(e.type)); });
     });
-    ['volume', 'duration', 'currentTime'].forEach(field => {
+    ['duration', 'currentTime'].forEach(field => {
       Object.defineProperty(this, field, {
         get() { return this.audio[field]; },
         set(v) { this.audio[field] = v; },
@@ -59,6 +59,14 @@ class Player extends EventTarget {
   set loop(v) {
     this._loop = v;
     this.audio.loop = this._entry == null ? v : false;
+    this.dispatchEvent(new CustomEvent('update', { detail: { loop: this._loop } }));
+  }
+  get volume() {
+    return this.audio.volume;
+  }
+  set volume(v) {
+    this.audio.volume = v;
+    this.dispatchEvent(new CustomEvent('update', { detail: { volume: v } }));
   }
 
   initialize(audio) {
@@ -104,6 +112,7 @@ class Player extends EventTarget {
         gainL2.gain.value = (1-stereo)/2;
         gainR1.gain.value = (1-stereo)/2;
         gainR2.gain.value = (1+stereo)/2;
+        this.dispatchEvent(new CustomEvent('update', { detail: { stereo } }));
       },
     });
     this.stereo = stereo;
