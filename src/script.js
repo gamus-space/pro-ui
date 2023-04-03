@@ -6,16 +6,32 @@ import { Player } from './player.js';
 let db = [];
 loadDb().then(data => {
   db = data;
-  db.forEach(track => {
-    $('#library').append($('<li>').append(
-      $('<a>', { href: '#', text: track.title, 'data-href': track.href } )
-    ));
+  $('#library').DataTable({
+    data: db.map(track => ({
+      play: `
+        <button class="listen ui-button ui-button-icon-only">
+          <span class="ui-icon ui-icon-circle-triangle-e"></span>
+        </button>
+      `,
+      game: track.game,
+      title: track.title,
+      href: track.href,
+    })),
+    columns: [
+      { name: "play", data: "play", title: "Play", orderable: false },
+      { name: "game", data: "game", title: "Game" },
+      { name: "title", data: "title", title: "Title" },
+    ],
+    order: [1, 'asc'],
+    paging: false,
+    scrollY: $('#libraryDialog').parent()[0].clientHeight - 5 - 120,
+    scrollCollapse: true,
+    createdRow: (row, data, index) => {
+      $('td', row).eq(0).find('button').click(() => {
+        play(data.href);
+      });
+    },
   });
-});
-$('#library').on('click', event => {
-  if (event.target.nodeName !== 'A') return;
-  event.preventDefault();
-  play(event.target.attributes['data-href'].value);
 });
 
 class Controls {
@@ -97,13 +113,13 @@ function play(href) {
   player.load(href, true);
   console.log('play', href);
   const track = db.find(track => track.href === href);
-  $('#title').text(track.title);
+  $('#title').text(`${track.game} - ${track.title}`);
 }
 
 $('#playerDialog').dialog({
   width: 'auto',
   position: { my: "left", at: "left+10% center", of: window },
-  beforeClose: function (e, ui) {
+  beforeClose: function (e) {
     e.preventDefault();
     const c = $(this).dialog("option", "classes.ui-dialog");
     $(this).dialog("option", "classes.ui-dialog", c === 'hidden' ? '' : 'hidden');
@@ -111,12 +127,15 @@ $('#playerDialog').dialog({
 });
 $('#libraryDialog').dialog({
   width: 400,
-  height: 200,
+  height: 400,
   position: { my: "right", at: "right-10% center", of: window },
-  beforeClose: function (e, ui) {
+  beforeClose: function (e) {
     e.preventDefault();
     const c = $(this).dialog("option", "classes.ui-dialog");
     $(this).dialog("option", "classes.ui-dialog", c === 'hidden' ? '' : 'hidden');
+  },
+  resize: (e, { size: { height } }) => {
+    $('#library_wrapper .dataTables_scrollBody').css('max-height', height - 5 - 120 + 5);
   },
 });
 $('.ui-dialog-titlebar button').blur();

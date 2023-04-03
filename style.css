@@ -75,6 +75,28 @@ h1 {
   text-align: right;
 }
 
+#libraryDialog {
+  overflow: hidden;
+}
+
+#library td {
+  padding: 4px;
+}
+#library tr.even td.sorting_1 {
+  box-shadow: none;
+}
+#library tr.odd td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 2%);
+}
+#library tr:hover td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 4%);
+}
+
+#library .ui-button-icon-only {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 /*
   Font Settings -> Size: 0.8em
   Corner Radius -> Corners: 0
