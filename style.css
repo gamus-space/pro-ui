@@ -78,6 +78,23 @@ h1 {
 #libraryDialog {
   overflow: hidden;
 }
+#libraryDialog .ui-button-icon-only {
+  width: 2rem;
+  height: 2rem;
+}
+#libraryDialog .operations {
+  display: inline-block;
+}
+#libraryDialog .dataTables_filter {
+  padding-top: 0.3rem;
+}
+#libraryDialog input[type=search]::-webkit-search-cancel-button {
+  filter: grayscale(100%);
+}
+#libraryDialog .status {
+  float: right;
+  padding-top: 0.75em;
+}
 
 #library td {
   padding: 4px;
@@ -91,8 +108,66 @@ h1 {
 #library tr:hover td.sorting_1 {
   box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 4%);
 }
-
+#library tr.selected td {
+  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%);
+}
+#library tr.selected:hover td {
+  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%) !important;
+}
+#library tr.selected td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%);
+}
 #library .ui-button-icon-only {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+#playlistDialog {
+  overflow: hidden;
+}
+#playlistDialog .ui-button-icon-only {
+  width: 2rem;
+  height: 2rem;
+}
+#playlistDialog .operations {
+  display: inline-block;
+}
+#playlistDialog .dataTables_filter {
+  padding-top: 0.3rem;
+}
+#playlistDialog input[type=search] {
+  width: 8rem; /* TODO */
+}
+#playlistDialog input[type=search]::-webkit-search-cancel-button {
+  filter: grayscale(100%);
+}
+#playlistDialog .status {
+  float: right;
+  padding-top: 0.75em;
+}
+
+#playlist td {
+  padding: 4px;
+}
+#playlist tr.even td.sorting_1 {
+  box-shadow: none;
+}
+#playlist tr.odd td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 2%);
+}
+#playlist tr:hover td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 4%);
+}
+#playlist tr.selected td {
+  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%);
+}
+#playlist tr.selected:hover td {
+  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%) !important;
+}
+#playlist tr.selected td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(0 0 0 / 50%);
+}
+#playlist .ui-button-icon-only {
   width: 1.5rem;
   height: 1.5rem;
 }

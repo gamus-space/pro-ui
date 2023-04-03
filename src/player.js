@@ -7,8 +7,12 @@ export class Player {
   // audio
   // loading
   // handlers
+  // playlist
+  // entry
 
   constructor() {
+    this.playlist = [];
+    this.entry = null;
     this.loading = false;
     this.handlers = {};
     this.initialize(new Audio());
@@ -24,6 +28,10 @@ export class Player {
         get() { return this.audio[field]; },
         set(v) { this.audio[field] = v; },
       });
+    });
+    this.audio.addEventListener('ended', () => {
+      if (this.entry != null && this.entry < this.playlist.length-1)
+        this.load(this.playlist[++this.entry], true);
     });
 
     Object.seal(this);
@@ -81,6 +89,7 @@ export class Player {
   }
 
   load(href, play) {
+    this.handlers.entry?.({ entry: this.entry, href });
     if (this.loading) return;
     this.loading = true;
     const url = `media/${href}`;
