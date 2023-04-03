@@ -2,11 +2,11 @@
 
 import { db } from './db.js';
 import { player } from './player.js';
-import { dialogOptions, time } from './utils.js';
+import { dialogOptions, time, trackTitle } from './utils.js';
 
 $('#playlistDialog').dialog({
   ...dialogOptions,
-  width: 450,
+  width: 400,
   height: 400,
   position: { my: "left", at: "left+2% center", of: window },
   resize: (e, { size: { height } }) => {
@@ -149,7 +149,7 @@ class PlaylistController {
   add({ url, game, title, time, timeSec }) {
     this.entry = undefined;
     this.playlist.push(url);
-    this.table.row.add({ play: this.play, no: this.playlist.length, title: `${game} - ${title}`, time, timeSec, url }).draw(false);
+    this.table.row.add({ play: this.play, no: this.playlist.length, title: trackTitle({ game, title }), time, timeSec, url }).draw(false);
     this.updatePlaylist();
   }
   remove() {

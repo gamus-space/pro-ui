@@ -2,7 +2,7 @@
 
 import { db } from './db.js';
 import { player } from './player.js';
-import { dialogOptions, time } from './utils.js';
+import { dialogOptions, time, trackTitle } from './utils.js';
 
 class Controls {
   constructor() {
@@ -72,7 +72,7 @@ player.addEventListener('timeupdate', (e) => {
 });
 player.addEventListener('entry', ({ detail: { url } }) => {
   const track = db[url];
-  $('.title').text(`${track.game} - ${track.title}`);
+  $('.title').text(trackTitle(track));
   updateEntry();
 });
 player.addEventListener('playlist', ({ detail: { playlist } }) => {
@@ -89,7 +89,7 @@ function updateEntry() {
 $('#playerDialog').dialog({
   ...dialogOptions,
   width: 'auto',
-  position: { my: "center", at: "center", of: window },
+  position: { my: "center", at: "center-5%", of: window },
 });
 $('.ui-dialog-titlebar button').blur();
 

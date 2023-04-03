@@ -1,5 +1,9 @@
 'use strict';
 
+export function trackTitle({ game, title }) {
+  return `${game} - ${title}`;
+}
+
 export const dialogOptions = {
   closeText: 'Minimize',
   beforeClose: function (e) {

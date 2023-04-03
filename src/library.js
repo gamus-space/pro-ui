@@ -1,13 +1,13 @@
 'use strict';
 
 import { db, loadDb } from './db.js';
-import { player } from './player.js';
+import { player, downloadOriginal, downloadWav } from './player.js';
 import { playlistController } from './playlist.js';
-import { dialogOptions, size, time } from './utils.js';
+import { dialogOptions, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
   ...dialogOptions,
-  width: 450,
+  width: 500,
   height: 400,
   position: { my: "right", at: "right-2% center", of: window },
   resize: (e, { size: { height } }) => {
@@ -131,6 +131,10 @@ loadDb().then(data => {
         <option data-role="reset" data-icon="help">Set defaults</option>
       </optgroup>
     </select>
+    <select class="downloadSelector">
+      <option data-role="downloadOriginal" data-icon="arrowthickstop-1-s">Download</option>
+      <option data-role="downloadWav" data-icon="arrowthickstop-1-s">Download as WAV</option>
+    </select>
   `));
 
   $.widget("custom.iconsselectmenu", $.ui.selectmenu, {
@@ -159,6 +163,12 @@ loadDb().then(data => {
       selectKind(item, !item.element.attr("data-checked"));
     },
   }).iconsselectmenu("menuWidget").addClass("ui-menu-icons");
+  $(".downloadSelector").iconsselectmenu({
+    icons: { button: "ui-icon-arrowthickstop-1-s" },
+    select: (event, { item }) => {
+      download(item, item.element.attr("data-role"));
+    },
+  });
   function toggleIcon(item, selected) {
     item.element.attr("data-checked", selected ? 'checked' : null);
     const menuId = `${item.element.parents('select').attr('id')}-menu`;
@@ -180,6 +190,19 @@ loadDb().then(data => {
       return true;
     }
     return false;
+  }
+
+  async function download(item, type) {
+    const downloader = {
+      'downloadOriginal': downloadOriginal,
+      'downloadWav': downloadWav,
+    }[type];
+    const data = $('#library').DataTable().rows('.selected').data().toArray();
+    for (let track of data) {
+      await downloader?.(track.url, trackTitle(track));
+      $('#library').DataTable().rows((row, data) => data.url === track.url).nodes().to$().removeClass('selected');
+      updateSelection();
+    }
   }
 
   const DEFAULT_COLUMNS = {
@@ -224,7 +247,9 @@ loadDb().then(data => {
     $('#libraryDialog .info').text(`Showing ${rowsStats({ search: 'applied' }, true)} tracks`);
   };
   const updateSelection = () => {
-    $('#libraryDialog .addToPlaylist').button({ disabled: $('#library').DataTable().$('tr.selected').length === 0 });
+    const disabled = $('#library').DataTable().$('tr.selected').length === 0;
+    $('#libraryDialog .addToPlaylist').button({ disabled });
+    $('#libraryDialog .downloadSelector').iconsselectmenu('option', 'disabled', disabled);
     const stats = rowsStats('.selected', false);
     $('#libraryDialog .status').text(stats == null ? '' : `Selected: ${stats}`);
   };

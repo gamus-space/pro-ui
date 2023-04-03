@@ -126,3 +126,69 @@ class Player extends EventTarget {
 }
 
 export const player = new Player();
+
+function setString(data, pos, value, n) {
+  const a = new Uint8Array(data.buffer);
+  a.set([...value].map((_, i) => value.charCodeAt(i)), pos);
+  a.fill(0, pos+value.length, pos+n);
+}
+
+export function downloadWav(url, name) {
+  return fetch(url).then(response => response.arrayBuffer()).then(buffer => {
+    const data = new DataView(buffer);
+    if (data.getUint32(0) !== 0x664c6143) throw new Error('invalid signature');
+    if (data.getUint8(5) !== 0) throw new Error('invalid header type');
+    const sampleRate = (data.getUint8(18) << 12) | (data.getUint8(19) << 4) | (data.getUint8(20) >> 4);
+    const channels = ((data.getUint8(20) >> 1) & 0x7) + 1;
+    const bps = (((data.getUint8(20) & 0x1) << 4) | (data.getUint8(21) >> 4)) + 1;
+    const audioContext = new AudioContext({ sampleRate });
+    return audioContext.decodeAudioData(buffer).then(audioBuffer => ({ audioBuffer, channels, bps }));
+  }).then(({ audioBuffer, channels, bps }) => {
+    if (channels !== audioBuffer.numberOfChannels)
+      throw new Error('number of channels mismatch');
+    if (bps !== 8 && bps !== 16)
+      throw new Error('unsupported bits per sample');
+    const data = new DataView(new ArrayBuffer(44+audioBuffer.length*audioBuffer.numberOfChannels*bps/8));
+    let pos = 0;
+    setString(data, pos, 'RIFF', 4); pos += 4;
+    data.setUint32(pos, data.byteLength-8, true); pos += 4;
+    setString(data, pos, 'WAVE', 4); pos += 4;
+    setString(data, pos, 'fmt ', 4); pos += 4;
+    data.setUint32(pos, 16, true); pos += 4;
+    data.setUint16(pos, 1, true); pos += 2;
+    data.setUint16(pos, audioBuffer.numberOfChannels, true); pos += 2;
+    data.setUint32(pos, audioBuffer.sampleRate, true); pos += 4;
+    data.setUint32(pos, audioBuffer.sampleRate*audioBuffer.numberOfChannels*bps/8, true); pos += 4;
+    data.setUint16(pos, audioBuffer.numberOfChannels*bps/8, true); pos += 2;
+    data.setUint16(pos, bps, true); pos += 2;
+    setString(data, pos, 'data', 4); pos += 4;
+    data.setUint32(pos, audioBuffer.length*audioBuffer.numberOfChannels*bps/8, true); pos += 4;
+    for (let i = 0; i < audioBuffer.length; i++)
+      for (let j = 0; j < audioBuffer.numberOfChannels; j++)
+        switch (bps) {
+        case 8:
+          data.setUint8(pos, (audioBuffer.getChannelData(j)[i]+1)/2 * 255, true); pos += 1;
+          break;
+        case 16:
+          data.setInt16(pos, (audioBuffer.getChannelData(j)[i]+1)/2 * 65535 - 32768, true); pos += 2;
+          break;
+        }
+    return data.buffer;
+  }).then(download(name, 'wav'));
+}
+
+export function downloadOriginal(url, name) {
+  return fetch(url).then(response => response.arrayBuffer()).then(download(name, 'flac'));
+}
+
+function download(name, type) {
+  return buffer => {
+    const file = new File([buffer], `${name}.${type}`, { type: `audio/${type}` });
+    const a = document.createElement("a");
+    const url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = `${name}.${type}`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+}
