@@ -49,12 +49,14 @@ loadDb().then(data => {
       url: track.url,
       platform: track.platform,
       year: track.year,
+      ordinal: track.ordinal,
       kind: KIND_MAPPING[track.kind] ?? '?',
     })),
     columns: [
       { name: "play", data: "play", title: "Play", orderable: false },
       { name: "game", data: "game", title: "Game" },
-      { name: "track", data: "track", title: "#" },
+      { name: "track", data: "track", title: "tr #" },
+      { name: "ordinal", data: "ordinal", title: "#" },
       { name: "kind", data: "kind", title: "?" },
       { name: "title", data: "title", title: "Title" },
       { name: "platform", data: "platform", title: "Platform" },
@@ -99,6 +101,7 @@ loadDb().then(data => {
       <optgroup label="Columns">
         <option value="game" data-checked="checked">Game</option>
         <option value="track" data-checked="checked"># track</option>
+        <option value="ordinal" data-checked="checked"># sequence</option>
         <option value="kind" data-checked="checked">? kind</option>
         <option value="title" data-checked="checked">Title</option>
         <option value="platform" data-checked="checked">Platform</option>
@@ -181,7 +184,8 @@ loadDb().then(data => {
 
   const DEFAULT_COLUMNS = {
     game: true,
-    track: true,
+    track: false,
+    ordinal: true,
     kind: false,
     title: true,
     platform: false,

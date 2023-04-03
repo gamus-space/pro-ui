@@ -87,7 +87,6 @@ function flacGainValue(gainStr) {
 
 const db = tree(dir)
   .filter(file => file.endsWith('.flac'))
-  .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
   .map(file => {
     const content = fs.readFileSync(path.resolve(dir, file));
     const headers = flacHeaders(content);
@@ -109,6 +108,7 @@ const db = tree(dir)
       platform: headers.metadata?.['Platform'],
       year: headers.metadata?.['DATE'],
       kind: headers.metadata?.['Kind'],
+      ordinal: headers.metadata?.['Ordinal'],
     };
-  });
+  }).sort((a, b) => `${a.game}\t${a.ordinal}`.localeCompare(`${b.game}\t${b.ordinal}`, undefined, { numeric: true }));
 console.log(JSON.stringify(db, null, 2));
