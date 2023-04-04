@@ -16,6 +16,8 @@ export function loadDb() {
     loadedHandlers.forEach(handler => handler());
     loadedHandlers = undefined;
     return data;
+  }).catch(() => {
+    alert('error loading library!');
   });
 }
 

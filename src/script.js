@@ -1,5 +1,6 @@
 'use strict';
 
+import { logout } from './login.js';
 import { player } from './player.js';
 
 import './login.js';
@@ -12,6 +13,11 @@ $('#playerDialog').dialog('moveToTop');
 
 $('#desktop .background').click(() => {
   import('./background.js');
+});
+$('#desktop .logout').click(() => {
+  logout().finally(() => {
+    location.reload();
+  });
 });
 
 export function setPlaylist(playlist, entry) {
