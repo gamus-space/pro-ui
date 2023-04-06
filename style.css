@@ -441,6 +441,14 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 #login h1 {
   margin-bottom: 2rem;
 }
+#login h1.selected {
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+#login h2 {
+  margin-top: 2rem;
+}
 #login form div {
   display: flex;
   margin-top: 1rem;
@@ -456,4 +464,20 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 }
 #login button {
   margin: 1rem auto;
+}
+#login .sources {
+  display: flex;
+  justify-content: space-between;
+}
+#login .sources .ui-checkboxradio-label {
+  text-indent: initial;
+  width: 4rem;
+  height: 4rem;
+}
+#login .sources .ui-button-icon-only {
+  font-size: 2rem;
+  padding: 0;
+}
+#login .sources .ui-button-icon-only * {
+  vertical-align: bottom;
 }

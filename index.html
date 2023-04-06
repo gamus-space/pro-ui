@@ -14,6 +14,7 @@
   <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.6/iconify-icon.min.js"></script>
   <script type="module" src="src/script.js"></script>
 </head>
 
@@ -191,18 +192,35 @@
   </div>
   <div id="loginOverlay">
     <div id="login" style="display: none" class="ui-widget ui-widget-content ui-corner-all ui-widget-shadow">
-      <h1>Log in</h1>
+      <h1>Select access type</h1>
+      <div class="sources">
+        <label class="ui-button-icon-only">
+          <iconify-icon icon="ph:browsers-fill"></iconify-icon>
+          <input type="checkbox" name="browse" />
+        </label>
+        <label class="ui-button-icon-only">
+          <iconify-icon icon="ph:headphones-fill"></iconify-icon>
+          <input type="checkbox" name="lossy" />
+        </label>
+        <label class="ui-button-icon-only">
+          <iconify-icon icon="ph:speaker-hifi-fill"></iconify-icon>
+          <input type="checkbox" name="lossless" />
+        </label>
+      </div>
       <form>
+        <section class="auth" style="display: none">
+          <h2>Log in</h2>
+          <div>
+            <label for="loginform_login">Email:</label>
+            <input id="loginform_login" autofocus type="text" name="email" />
+          </div>
+          <div>
+            <label for="loginform_password">Password:</label>
+            <input id="loginform_password" type="password" name="password" />
+          </div>
+        </section>
         <div>
-          <label for="loginform_login">Email:</label>
-          <input id="loginform_login" autofocus type="text" name="email" />
-        </div>
-        <div>
-          <label for="loginform_password">Password:</label>
-          <input  id="loginform_password" type="password" name="password" />
-        </div>
-        <div>
-          <button type="submit" class="ui-button ui-widget ui-corner-all">Login</button>
+          <button type="submit" class="ui-button ui-widget ui-corner-all">Enter</button>
         </div>
       </form>
     </div>
