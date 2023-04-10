@@ -418,6 +418,13 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   width: 100%;
 }
 
+#visualizerDialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 #loginOverlay {
   z-index: 1000;
   background: #5c5c5ccc;

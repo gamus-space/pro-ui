@@ -14,6 +14,9 @@ $('#playerDialog').dialog('moveToTop');
 $('#desktop .background').click(() => {
   import('./background.js');
 });
+$('#desktop .visualize').click(() => {
+  import('./visualizer.js');
+});
 $('#desktop .logout').click(() => {
   logout().finally(() => {
     location.reload();

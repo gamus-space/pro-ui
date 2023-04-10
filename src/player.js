@@ -74,8 +74,13 @@ class Player extends EventTarget {
     this.audioContext = new AudioContext();
 
     const audioInput = this.audioContext.createMediaElementSource(this.audio);
+    const analyser = this.audioContext.createAnalyser();
+    Object.defineProperty(this, 'analyser', {
+      get() { return analyser; }
+    });
+    audioInput.connect(analyser);
     const replayGainNode = this.audioContext.createGain();
-    audioInput.connect(replayGainNode);
+    analyser.connect(replayGainNode);
     const splitter = this.audioContext.createChannelSplitter(2);
     replayGainNode.connect(splitter);
     const gainL1 = this.audioContext.createGain();
