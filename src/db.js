@@ -9,7 +9,7 @@ const baseUrl = new Promise((resolve, reject) => {
 export var db;
 
 export function loadDb() {
-  return baseUrl.then(url => fetch(`${url}/index.json`).then(response => response.json()).then(
+  return baseUrl.then(url => fetch(`${url}/index.json`, { credentials: 'include' }).then(response => response.json()).then(
     data => data.map(entry => ({ ...entry, url: `${url}/${entry.url}` }))
   )).then(data => {
     db = Object.fromEntries(data.map(track => [track.url, track]));

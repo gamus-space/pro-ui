@@ -71,6 +71,7 @@ class Player extends EventTarget {
 
   initialize(audio) {
     this.audio = audio;
+    audio.crossOrigin = 'use-credentials';
     this.audioContext = new AudioContext();
 
     const audioInput = this.audioContext.createMediaElementSource(this.audio);
