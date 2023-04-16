@@ -163,6 +163,15 @@ body .ui-widget {
   height: 1.5rem;
   top: 0rem;
 }
+#playerDialog .seek .label {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  font-weight: bold;
+  font-size: 1rem;
+  initial-letter: 0.2rem;
+}
 #playerDialog .volume,
 #playerDialog .stereo {
   width: 0.8rem;
@@ -190,6 +199,15 @@ body .ui-widget {
   display: inline-block;
   width: 100px;
   margin: 0 1rem;
+}
+#miniPlayerDialog .seek .label {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  font-weight: bold;
+  font-size: 0.5rem;
+  initial-letter: 0.1rem;
 }
 #miniPlayerDialog .controls .volume {
   display: inline-block;
@@ -257,15 +275,23 @@ body .ui-widget {
   width: 2rem;
   height: 2rem;
 }
-#libraryDialog .ui-selectmenu-button {
+#libraryDialog .ui-selectmenu-button.text {
+  width: 3.5rem;
+  height: 1.6rem;
+  padding: 0.4rem 0.4rem 0 0.4rem;
+}
+#libraryDialog .ui-selectmenu-button.text .ui-selectmenu-icon {
+  margin-top: 3px;
+}
+#libraryDialog .ui-selectmenu-button.icon {
   width: 2rem;
   height: 2rem;
   padding: 0;
 }
-#libraryDialog .ui-selectmenu-button .ui-selectmenu-text {
+#libraryDialog .ui-selectmenu-button.icon .ui-selectmenu-text {
   display: none;
 }
-#libraryDialog .ui-selectmenu-button .ui-selectmenu-icon {
+#libraryDialog .ui-selectmenu-button.icon .ui-selectmenu-icon {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -445,13 +471,24 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 #login.ui-widget-shadow {
   box-shadow: 10px 10px 20px #cccccc;
 }
-#login h1 {
-  margin-bottom: 2rem;
+#login .type {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 0.5rem 0;
+}
+#login h1.fade {
+  max-width: 4rem;
+  white-space: nowrap;
+  overflow: hidden;
 }
 #login h1.selected {
   text-transform: uppercase;
   text-align: center;
   letter-spacing: 0.1em;
+}
+#login .features {
+  list-style: square;
 }
 #login h2 {
   margin-top: 2rem;
@@ -474,7 +511,7 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 }
 #login .sources {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 #login .sources .ui-checkboxradio-label {
   text-indent: initial;

@@ -10,9 +10,9 @@ export var db;
 
 export function loadDb() {
   return baseUrl.then(url => fetch(`${url}/index.json`, { credentials: 'include' }).then(response => response.json()).then(
-    data => data.map(entry => ({ ...entry, url: `${url}/${entry.url}` }))
+    data => data.map(entry => ({ ...entry, files: entry.files.map(file => ({ ...file, url: `${url}/${file.url}` })) }))
   )).then(data => {
-    db = Object.fromEntries(data.map(track => [track.url, track]));
+    db = Object.fromEntries(data.flatMap(track => track.files.map(file => [file.url, track])));
     loadedHandlers.forEach(handler => handler());
     loadedHandlers = undefined;
     return data;

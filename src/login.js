@@ -3,17 +3,25 @@
 import { setBaseUrl } from './db.js';
 
 const dev = location.hostname === '127.0.0.1';
-const sources = dev ? {
-  browse: { url: 'media-pub', auth: false },
-  lossy: { url: 'media-priv', auth: true },
-  lossless: { url: 'https://localhost:8000/media-priv', auth: true },
-} : {
-  browse: { url: 'https://d3nf4l9p8rzvje.cloudfront.net', auth: false },
-  lossy: { url: 'https://d3nf4l9p8rzvje.cloudfront.net', auth: true },
-  lossless: { url: 'https://d3nf4l9p8rzvje.cloudfront.net', auth: true },
+const sourceUrl = dev ? 'https://localhost:8000/media-priv' : 'https://d1e7jf8j2bpzti.cloudfront.net';
+const sources = {
+  demo: { url: sourceUrl, auth: false },
+  standard: { url: sourceUrl, auth: true },
+  hifi: { url: sourceUrl, auth: true },
+};
+const features = {
+  demo: ['samples of ~15 sec', 'MP3 bitrate 160kbps'],
+  standard: ['MP3 bitrate 160kbps'],
+  hifi: ['FLAC - CD perfect'],
 };
 var source;
 var baseUrl;
+
+var setUser;
+export const user = new Promise((resolve, reject) => {
+  setUser = resolve;
+});
+const ANONYMOUS = { username: 'preview', mp3: true, flac: false, demo: true };
 
 $('#login').toggle(true);
 
@@ -25,9 +33,10 @@ $('#login').on('submit', e => {
   e.preventDefault();
   $('#login button').button('option', 'disabled', true);
   baseUrl = sources[source].url;
-  (sources[source].auth ? login(e.target.email.value, e.target.password.value) : Promise.resolve()).then(() => {
+  (sources[source].auth ? login(e.target.email.value, e.target.password.value) : Promise.resolve(ANONYMOUS)).then(body => {
     $('#login').hide('fade', {}, 500);
     $('#loginOverlay').hide('fade', {}, 1500);
+    setUser(body);
     setBaseUrl(baseUrl);
   }).catch(() => {
     $('#login').effect('shake', {}, 500);
@@ -50,6 +59,7 @@ function fire(url, body = undefined) {
   }).then(response => {
     if (!response.ok)
       throw new Error('unauthorized');
+    return response.json();
   });
 }
 function login(username, password) {
@@ -69,5 +79,18 @@ $('#login input[type=checkbox]').click(e => {
   $('#login .auth')[sources[source].auth ? 'show' : 'hide']('fold', {}, 1000);
   $('#login button[type=submit]').text(sources[source].auth ? 'Login' : 'Enter');
   $('#login button').button('option', 'disabled', !source);
-  $('#login h1').text(source).addClass('selected');
+  $('#login h1')
+    .toggleClass('fade', !$('#login h1').hasClass('selected'))
+    .hide('fade', {}, 500, () => {
+      $('#login h1')
+        .text(source)
+        .addClass('selected')
+        .removeClass('fade')
+        .show('fade', {}, 1000);
+    });
+  $('#login .features').hide('fade', {}, 750, () => {
+    $('#login .features').empty()
+      .append(features[source].map(feature => $("<li>", { text: feature })))
+      .show('fade', {}, 1500);
+  });
 });

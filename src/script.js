@@ -1,6 +1,6 @@
 'use strict';
 
-import { logout } from './login.js';
+import { logout, user } from './login.js';
 import { player } from './player.js';
 
 import './login.js';
@@ -47,3 +47,7 @@ player.volume = localStorage.getItem('volume') == null ? 1 : parseFloat(localSto
 player.stereo = localStorage.getItem('stereo') == null ? 1 : parseFloat(localStorage.getItem('stereo'));;
 player.loop = localStorage.getItem('loop') === 'true';
 setPlaylist(JSON.parse(localStorage.getItem('playlist') ?? '[]'), undefined);
+
+user.then(user => {
+  player.stream = !user.demo;
+});

@@ -7,6 +7,8 @@ class Player extends EventTarget {
   // playlist
   // entry
   // loop
+  // stream
+  // lastUrl
 
   constructor() {
     super();
@@ -14,6 +16,8 @@ class Player extends EventTarget {
     this._entry = null;
     this._loop = false;
     this.loading = false;
+    this.stream = true;
+    this._lastUrl = undefined;
     this.initialize(new Audio());
 
     ['play', 'pause'].forEach(method => {
@@ -134,8 +138,19 @@ class Player extends EventTarget {
     this.dispatchEvent(new CustomEvent('entry', { detail: { entry: this.entry, ...data } }));
 
     this.audioContext.resume().then(() => {
+      if (this.stream)
+        return data.url;
+      return fetch(data.url).then(response => response.arrayBuffer()).then(buffer => {
+        if (this._lastUrl)
+          URL.revokeObjectURL(this._lastUrl);
+        const blob = new Blob([buffer]);
+        const url = URL.createObjectURL(blob);
+        this._lastUrl = url;
+        return url;
+      });
+    }).then(url => {
+      this.audio.src = url;
       this.replayGain = data.replayGain;
-      this.audio.src = data.url;
       if (play) this.audio.play();
     }).finally(() => {
       this.loading = false;
@@ -152,16 +167,39 @@ function setString(data, pos, value, n) {
 }
 
 export function downloadWav(url, name) {
-  return fetch(url).then(response => response.arrayBuffer()).then(buffer => {
-    const data = new DataView(buffer);
-    if (data.getUint32(0) !== 0x664c6143) throw new Error('invalid signature');
-    if (data.getUint8(5) !== 0) throw new Error('invalid header type');
-    const sampleRate = (data.getUint8(18) << 12) | (data.getUint8(19) << 4) | (data.getUint8(20) >> 4);
-    const channels = ((data.getUint8(20) >> 1) & 0x7) + 1;
-    const bps = (((data.getUint8(20) & 0x1) << 4) | (data.getUint8(21) >> 4)) + 1;
-    const audioContext = new AudioContext({ sampleRate });
-    return audioContext.decodeAudioData(buffer).then(audioBuffer => ({ audioBuffer, channels, bps }));
-  }).then(({ audioBuffer, channels, bps }) => {
+  const format = url.match(/\.(.+)$/)[1];
+  const decoders = {
+    flac: buffer => {
+      const data = new DataView(buffer);
+      if (data.getUint32(0) !== 0x664c6143) throw new Error('invalid signature');
+      if (data.getUint8(5) !== 0) throw new Error('invalid header type');
+      const sampleRate = (data.getUint8(18) << 12) | (data.getUint8(19) << 4) | (data.getUint8(20) >> 4);
+      const channels = ((data.getUint8(20) >> 1) & 0x7) + 1;
+      const bps = (((data.getUint8(20) & 0x1) << 4) | (data.getUint8(21) >> 4)) + 1;
+      const audioContext = new AudioContext({ sampleRate });
+      return audioContext.decodeAudioData(buffer).then(audioBuffer => ({ audioBuffer, channels, bps }));
+    },
+    mp3: buffer => {
+      const data = new DataView(buffer);
+      if (data.getUint32(0) >> 8 !== 0x494433) throw new Error('invalid signature');
+      if (data.getUint16(3) !== 0x300) throw new Error('invalid version');
+      const size = (data.getUint8(6) << 21) | (data.getUint8(7) << 14) | (data.getUint8(8) << 7) | data.getUint8(9);
+      let pos = 10 + size;
+      if (data.getUint16(pos) !== 0xfffb) throw new Error('invalid header');
+      pos += 4;
+      const sampleRateMapping = { 0: 44100, 1: 48000, 2: 32000 };
+      const sampleRate = sampleRateMapping[(data.getUint8(pos) >> 2) & 0x3];
+      pos += 1;
+      if (!sampleRate) throw new Error('unknown sample rate');
+      const channelsMapping = { 0: 2, 1: 2, 2: 2, 3: 1 };
+      const channels = channelsMapping[data.getUint8(pos) >> 6];
+      pos += 1;
+      const bps = 16;
+      const audioContext = new AudioContext({ sampleRate });
+      return audioContext.decodeAudioData(buffer).then(audioBuffer => ({ audioBuffer, channels, bps }));
+    },
+  };
+  return fetch(url).then(response => response.arrayBuffer()).then(decoders[format]).then(({ audioBuffer, channels, bps }) => {
     if (channels !== audioBuffer.numberOfChannels)
       throw new Error('number of channels mismatch');
     if (bps !== 8 && bps !== 16)
@@ -196,7 +234,8 @@ export function downloadWav(url, name) {
 }
 
 export function downloadOriginal(url, name) {
-  return fetch(url).then(response => response.arrayBuffer()).then(download(name, 'flac'));
+  const format = url.match(/\.(.+)$/)[1];
+  return fetch(url).then(response => response.arrayBuffer()).then(download(name, format));
 }
 
 function download(name, type) {

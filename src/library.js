@@ -1,13 +1,14 @@
 'use strict';
 
 import { db, loadDb } from './db.js';
+import { user } from './login.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
 import { setPlaylist } from './script.js';
 import { dialogOptions, initDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
   ...dialogOptions($('#libraryDialog')),
-  width: 500,
+  width: 530,
   height: 400,
   position: { my: "right", at: "right-2% center", of: window },
   resize: (e, { size: { height } }) => {
@@ -45,8 +46,9 @@ loadDb().then(data => {
       track: track.tracknumber,
       timeSec: track.time,
       time: track.time ? time(track.time) : '',
-      size: track.size ? size(track.size) : '',
-      url: track.url,
+      files: track.files,
+      size: '',
+      url: '',
       platform: track.platform,
       year: track.year,
       ordinal: track.ordinal,
@@ -131,6 +133,10 @@ loadDb().then(data => {
         <option data-role="reset" data-icon="help">Set defaults</option>
       </optgroup>
     </select>
+    <select class="formatSelector">
+      <option value="flac">FLAC</option>
+      <option value="mp3">MP3</option>
+    </select>
     <select class="downloadSelector">
       <option data-role="downloadOriginal" data-icon="arrowthickstop-1-s">Download</option>
       <option data-role="downloadWav" data-icon="arrowthickstop-1-s">Download as WAV</option>
@@ -166,7 +172,8 @@ loadDb().then(data => {
       $(".columnSelector").iconsselectmenu('preventClose');
     },
     classes: {
-      "ui-selectmenu-menu": "groups"
+      "ui-selectmenu-menu": "groups",
+      "ui-selectmenu-button": "icon",
     },
   }).iconsselectmenu("menuWidget").addClass("ui-menu-icons");
   $(".kindSelector").iconsselectmenu({
@@ -176,13 +183,25 @@ loadDb().then(data => {
       $(".kindSelector").iconsselectmenu('preventClose');
     },
     classes: {
-      "ui-selectmenu-menu": "groups"
+      "ui-selectmenu-menu": "groups",
+      "ui-selectmenu-button": "icon",
     },
   }).iconsselectmenu("menuWidget").addClass("ui-menu-icons");
   $(".downloadSelector").iconsselectmenu({
     icons: { button: "ui-icon-arrowthickstop-1-s" },
     select: (event, { item }) => {
       download(item, item.element.attr("data-role"));
+    },
+    classes: {
+      "ui-selectmenu-button": "icon",
+    },
+  });
+  $(".formatSelector").selectmenu({
+    change: (event, { item }) => {
+      setFormat(item.value);
+    },
+    classes: {
+      "ui-selectmenu-button": "text",
     },
   });
   function toggleIcon(item, selected) {
@@ -207,6 +226,22 @@ loadDb().then(data => {
     }
     return false;
   }
+
+  function setFormat(format) {
+    $('#library').DataTable().rows().every(function() {
+      const file = this.data().files.find(file => file.url.endsWith(`.${format}`));
+      this.data({ ...this.data(), url: file?.url, size: file?.size ? size(file.size) : '' });
+    });
+    $('.formatSelector').val(format).selectmenu('refresh');
+    localStorage.setItem('format', format);
+  }
+  user.then(user => {
+    $('.formatSelector')
+      .find(`option[value='flac']`).prop('disabled', !user.flac).end()
+      .find(`option[value='mp3']`).prop('disabled', !user.mp3).end()
+      .selectmenu('refresh');
+    setFormat(localStorage.getItem('format') || (user.mp3 ? 'mp3' : 'flac'));
+  });
 
   async function download(item, type) {
     const downloader = {

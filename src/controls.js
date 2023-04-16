@@ -1,6 +1,7 @@
 'use strict';
 
 import { db } from './db.js';
+import { user } from './login.js';
 import { player } from './player.js';
 import { setPlayerOptions } from './script.js';
 import { dialogOptions, initDialog, time } from './utils.js';
@@ -43,6 +44,10 @@ class Controls {
       step: 0.1,
       orientation: "horizontal",
       range: "min",
+    });
+    user.then(user => {
+      if (user.demo)
+        $('#playerDialog .seek').append($('<div class="label">DEMO</div>'));
     });
     $('#playerDialog .volume').slider({
       ...sliderSettings,

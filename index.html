@@ -4,7 +4,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>proto</title>
+  <title>GAMUS pro</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="jquery-ui.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/dataTables.jqueryui.min.css">
@@ -199,19 +199,23 @@
   </div>
   <div id="loginOverlay">
     <div id="login" style="display: none" class="ui-widget ui-widget-content ui-corner-all ui-widget-shadow">
-      <h1>Select access type</h1>
+      <div class="type">
+        <h1>Select access type</h1>
+        <ul class="features" style="display: none">
+        </ul>
+      </div>
       <div class="sources">
         <label class="ui-button-icon-only">
           <iconify-icon icon="ph:browsers-fill"></iconify-icon>
-          <input type="checkbox" name="browse" />
+          <input type="checkbox" name="demo" />
         </label>
         <label class="ui-button-icon-only">
           <iconify-icon icon="ph:headphones-fill"></iconify-icon>
-          <input type="checkbox" name="lossy" />
+          <input type="checkbox" name="standard" />
         </label>
         <label class="ui-button-icon-only">
           <iconify-icon icon="ph:speaker-hifi-fill"></iconify-icon>
-          <input type="checkbox" name="lossless" />
+          <input type="checkbox" name="hifi" />
         </label>
       </div>
       <form>

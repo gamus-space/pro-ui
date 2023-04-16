@@ -1,5 +1,6 @@
 'use strict';
 
+import { user } from './login.js';
 import { player } from './player.js';
 import { setPlayerOptions } from './script.js';
 import { dialogOptions, initDialog, time, trackTitle } from './utils.js';
@@ -136,6 +137,10 @@ $('#miniPlayerDialog .controls .volume').slider({
   step: 0.01,
   orientation: "horizontal",
   range: "min",
+});
+user.then(user => {
+  if (user.demo)
+    $('#miniPlayerDialog .seek').append($('<div class="label">DEMO</div>'));
 });
 $('#miniPlayerDialog .controls .stereo').slider({
   ...sliderSettings,
