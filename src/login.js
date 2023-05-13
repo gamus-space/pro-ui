@@ -27,11 +27,11 @@ $('#login').toggle(true);
 
 $('#login form input').on('input', e => {
   if (!sources[source]?.auth) return;
-  $('#login button').button('option', 'disabled', e.target.form.email.value === '' || e.target.form.password.value === '');
+  $('#login button.login').button('option', 'disabled', e.target.form.email.value === '' || e.target.form.password.value === '');
 });
 $('#login').on('submit', e => {
   e.preventDefault();
-  $('#login button').button('option', 'disabled', true);
+  $('#login button.login').button('option', 'disabled', true);
   baseUrl = sources[source].url;
   (sources[source].auth ? login(e.target.email.value, e.target.password.value) : Promise.resolve(ANONYMOUS)).then(body => {
     $('#login').hide('fade', {}, 500);
@@ -42,11 +42,14 @@ $('#login').on('submit', e => {
     $('#login').effect('shake', {}, 500);
     baseUrl = undefined;
   }).finally(() => {
-    $('#login button').button('option', 'disabled', false);
+    $('#login button.login').button('option', 'disabled', false);
   });
 });
 $('input[autofocus]').focus();
-$('#login button').button({ disabled: true });
+$('#login button.login').button({ disabled: true });
+$('#login button.signup').click(() => {
+  window.open('https://www.patreon.com/krzykos');
+});
 
 function fire(url, body = undefined) {
   return fetch(url, {
@@ -77,8 +80,8 @@ $('#login input[type=checkbox]').click(e => {
   source = e.target.name;
   $(`#login input[type=checkbox][name='${source}']`).prop('checked', true).checkboxradio('refresh');
   $('#login .auth')[sources[source].auth ? 'show' : 'hide']('fold', {}, 1000);
-  $('#login button[type=submit]').text(sources[source].auth ? 'Login' : 'Enter');
-  $('#login button').button('option', 'disabled', !source);
+  $('#login button.login').text(sources[source].auth ? 'Login' : 'Enter');
+  $('#login button.login').button('option', 'disabled', !source);
   $('#login h1')
     .toggleClass('fade', !$('#login h1').hasClass('selected'))
     .hide('fade', {}, 500, () => {
