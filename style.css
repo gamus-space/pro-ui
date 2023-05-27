@@ -161,7 +161,10 @@ body .ui-widget {
 #playerDialog .seek.ui-slider .ui-slider-handle {
   width: 1.5rem;
   height: 1.5rem;
-  top: 0rem;
+  top: -1px;
+}
+#playerDialog .seek.ui-slider .ui-slider-range {
+  top: -1px;
 }
 #playerDialog .seek .label {
   position: relative;
@@ -180,7 +183,11 @@ body .ui-widget {
 #playerDialog .stereo.ui-slider .ui-slider-handle {
   width: 0.8rem;
   height: 0.8rem;
-  left: 0rem;
+  left: -1px;
+}
+#playerDialog .volume.ui-slider .ui-slider-range,
+#playerDialog .stereo.ui-slider .ui-slider-range {
+  left: -1px;
 }
 
 #miniPlayerDialog .ui-button-icon-only {
@@ -259,7 +266,10 @@ body .ui-widget {
 #miniPlayerDialog .controls .ui-slider .ui-slider-handle {
   width: 0.8em;
   height: 0.8em;
-  top: 0em;
+  top: -1px;
+}
+#miniPlayerDialog .controls .ui-slider .ui-slider-range {
+  top: -1px;
 }
 #miniPlayerDialog .entry h2 {
   display: inline-block;
