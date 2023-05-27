@@ -193,7 +193,7 @@ const fixSlider = (event) => {
   const handleSize = 0.8;
   const handle = $(event.target).find('.ui-slider-handle');
   const pos = parseInt(handle[0].style['left']);
-  handle.css('margin-left', `-${handleSize*(pos+1)/100}em`);
+  handle.css('margin-left', `-${handleSize*(pos)/100}em`);
 }
 fixSlider({ target: $('#miniPlayerDialog .controls .volume') });
 $('#miniPlayerDialog .controls .volume').on('slidechange', fixSlider);

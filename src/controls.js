@@ -71,7 +71,7 @@ class Controls {
     const fixSlider = (handleSize, ref) => (event) => {
       const handle = $(event.target).find('.ui-slider-handle');
       const pos = parseInt(handle[0].style[ref]);
-      handle.css(`margin-${ref}`, `-${handleSize*(pos+1)/100}rem`);
+      handle.css(`margin-${ref}`, `-${handleSize*(pos)/100}rem`);
     };
     const initSlider = (fix, slider) => {
       fix({ target: slider });
