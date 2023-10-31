@@ -154,7 +154,9 @@ player.addEventListener('timeupdate', (e) => {
 player.addEventListener('entry', ({ detail: track }) => {
   const dbTrack = db?.[track.url];
   $('#playerDialog .info').toggle(true)
-    .find('.game').text(track.game).end()
+    .find('.game').text(track.game.split(': ')[0]).end()
+    .find('.subtitle').text(track.game.split(': ')[1] ?? '').end()
+    .find('.space').toggle(!track.game.split(': ')[1]).end()
     .find('.track').text(track.title).end()
     .find('.misc').toggle(!!dbTrack).end()
     .find('.platform').text(dbTrack?.platform ?? '').end()

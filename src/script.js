@@ -51,3 +51,5 @@ setPlaylist(JSON.parse(localStorage.getItem('playlist') ?? '[]'), undefined);
 user.then(user => {
   player.stream = !user.demo;
 });
+
+navigator.wakeLock?.request();

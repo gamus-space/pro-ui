@@ -42,6 +42,8 @@ loadDb().then(data => {
         </button>
       `,
       game: track.game,
+      gameTitle: track.game.split(': ')[0],
+      gameSubtitle: track.game.split(': ')[1] ?? '',
       title: track.title,
       track: track.tracknumber,
       timeSec: track.time,
@@ -56,7 +58,9 @@ loadDb().then(data => {
     })),
     columns: [
       { name: "play", data: "play", title: "Play", orderable: false },
-      { name: "game", data: "game", title: "Game" },
+      { name: "game", data: "game", title: "Game", orderData: [2, 3] },
+      { name: "gameTitle", data: "gameTitle", visible: false },
+      { name: "gameSubtitle", data: "gameSubtitle", visible: false },
       { name: "track", data: "track", title: "tr #" },
       { name: "ordinal", data: "ordinal", title: "#" },
       { name: "kind", data: "kind", title: "?" },
@@ -168,6 +172,7 @@ loadDb().then(data => {
   $(".columnSelector").iconsselectmenu({
     icons: { button: "ui-icon-gear" },
     select: (event, { item }) => {
+      if (!event.currentTarget) return;
       selectColumn(item, !item.element.attr("data-checked"));
       $(".columnSelector").iconsselectmenu('preventClose');
     },
@@ -179,6 +184,7 @@ loadDb().then(data => {
   $(".kindSelector").iconsselectmenu({
     icons: { button: "ui-icon-wrench" },
     select: (event, { item }) => {
+      if (!event.currentTarget) return;
       selectKind(item, !item.element.attr("data-checked"));
       $(".kindSelector").iconsselectmenu('preventClose');
     },

@@ -70,9 +70,15 @@ body .ui-widget {
   font-size: 1.2rem;
   font-weight: bold;
 }
+#playerDialog .info .row.medium {
+  font-size: 1rem;
+}
 #playerDialog .info .row.minor {
-  margin-top: 2rem;
+  margin-top: 1rem;
   font-size: 0.8rem;
+}
+#playerDialog .info .row.space {
+  height: 1rem;
 }
 #playerDialog .time {
   grid-area: time;
