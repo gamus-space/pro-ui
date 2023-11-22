@@ -42,7 +42,10 @@ loadDb().then(data => {
         </button>
       `,
       game: track.game,
+      gameTitle: track.game.split(': ')[0],
+      gameSubtitle: track.game.split(': ')[1] ?? '',
       title: track.title,
+      artist: track.artist,
       track: track.tracknumber,
       timeSec: track.time,
       time: track.time ? time(track.time) : '',
@@ -56,11 +59,14 @@ loadDb().then(data => {
     })),
     columns: [
       { name: "play", data: "play", title: "Play", orderable: false },
-      { name: "game", data: "game", title: "Game" },
+      { name: "game", data: "game", title: "Game", orderData: [2, 3] },
+      { name: "gameTitle", data: "gameTitle", visible: false },
+      { name: "gameSubtitle", data: "gameSubtitle", visible: false },
       { name: "track", data: "track", title: "tr #" },
       { name: "ordinal", data: "ordinal", title: "#" },
       { name: "kind", data: "kind", title: "?" },
       { name: "title", data: "title", title: "Title" },
+      { name: "artist", data: "artist", title: "Artist" },
       { name: "platform", data: "platform", title: "Platform" },
       { name: "year", data: "year", title: "Year" },
       { name: "time", data: "time", title: "Time" },
@@ -106,6 +112,7 @@ loadDb().then(data => {
         <option value="ordinal" data-checked="checked"># sequence</option>
         <option value="kind" data-checked="checked">? kind</option>
         <option value="title" data-checked="checked">Title</option>
+        <option value="artist" data-checked="checked">Artist</option>
         <option value="platform" data-checked="checked">Platform</option>
         <option value="year" data-checked="checked">Year</option>
         <option value="time" data-checked="checked">Time</option>
@@ -168,6 +175,7 @@ loadDb().then(data => {
   $(".columnSelector").iconsselectmenu({
     icons: { button: "ui-icon-gear" },
     select: (event, { item }) => {
+      if (!event.currentTarget) return;
       selectColumn(item, !item.element.attr("data-checked"));
       $(".columnSelector").iconsselectmenu('preventClose');
     },
@@ -179,6 +187,7 @@ loadDb().then(data => {
   $(".kindSelector").iconsselectmenu({
     icons: { button: "ui-icon-wrench" },
     select: (event, { item }) => {
+      if (!event.currentTarget) return;
       selectKind(item, !item.element.attr("data-checked"));
       $(".kindSelector").iconsselectmenu('preventClose');
     },
@@ -262,6 +271,7 @@ loadDb().then(data => {
     ordinal: true,
     kind: false,
     title: true,
+    artist: false,
     platform: false,
     year: false,
     time: true,
@@ -341,7 +351,7 @@ loadDb().then(data => {
     unselectAll();
   });
   function playerEntry({ url, game, title, timeSec }) {
-    return { url, game, title, time: timeSec, replayGain: db[url].replayGain?.album };
+    return { url, game, title, time: timeSec, replayGain: db[url]?.replayGain?.album };
   }
 
   Object.entries(currentColumns).forEach(([column, selected]) => {
