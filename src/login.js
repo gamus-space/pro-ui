@@ -10,9 +10,9 @@ const sources = {
   hifi: { url: sourceUrl, auth: true },
 };
 const features = {
-  demo: ['samples of ~15 sec', 'MP3 bitrate 160kbps'],
-  standard: ['MP3 bitrate 160kbps'],
-  hifi: ['FLAC - CD perfect'],
+  demo: ['samples of ~15 sec', 'MP3 bitrate 160kbps', 'sample screenshots'],
+  standard: ['MP3 bitrate 160kbps', 'all screenshots'],
+  hifi: ['FLAC - CD perfect', 'all screenshots'],
 };
 var source;
 var baseUrl;

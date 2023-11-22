@@ -8,6 +8,7 @@ import './controls_mini.js';
 import './controls.js';
 import './library.js';
 import './playlist.js';
+import './gallery.js';
 $('#miniPlayerDialog').dialog('moveToTop');
 $('#playerDialog').dialog('moveToTop');
 

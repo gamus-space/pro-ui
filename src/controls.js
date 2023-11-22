@@ -158,6 +158,8 @@ player.addEventListener('entry', ({ detail: track }) => {
     .find('.subtitle').text(track.game.split(': ')[1] ?? '').end()
     .find('.space').toggle(!track.game.split(': ')[1]).end()
     .find('.track').text(track.title).end()
+    .find('.artist').toggle(!!dbTrack?.artist).end()
+    .find('.by').text(dbTrack?.artist ?? '').end()
     .find('.misc').toggle(!!dbTrack).end()
     .find('.platform').text(dbTrack?.platform ?? '').end()
     .find('.year').text(dbTrack?.year ?? '').end();
@@ -236,7 +238,7 @@ $('#playerDialog .stereo-full').click(() => {
 
 $('#playerDialog').dialog({
   ...dialogOptions($('#playerDialog')),
-  width: 550,
+  width: 580,
   height: 'auto',
   position: { my: "center", at: "center+15%", of: window },
 });

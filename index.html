@@ -33,13 +33,22 @@
   </div>
   <div id="playerDialog" title="player" style="display: none">
     <div class="info">
-      <div class="game row major">game</div>
-      <div class="subtitle row medium">subtitle</div>
-      <div class="track row major">track</div>
-      <div class="row space"></div>
-      <div class="misc row minor">
-        <span class="platform">p</span>,
-        <span class="year">0</span>
+      <div class="row">
+        <div class="game major">game</div>
+        <div class="subtitle medium">subtitle</div>
+      </div>
+      <div class="row">
+        <div class="track major">track</div>
+        <div class="artist medium">
+          by
+          <span class="by">artist</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="misc minor">
+          <span class="platform">p</span>,
+          <span class="year">0</span>
+        </div>
       </div>
     </div>
     <div class="time">
@@ -199,6 +208,20 @@
   <div id="visualizerDialog" title="visualizer" style="display: none">
     <canvas class="wave"></canvas>
     <canvas class="freq"></canvas>
+  </div>
+  <div id="galleryDialog" title="gallery" style="display: none">
+    <span class="loader off"></span>
+    <div class="image active"></div>
+    <div class="image passive"></div>
+    <div class="data active">
+      <div class="game"></div>
+      <div class="title"></div>
+    </div>
+    <div class="data passive">
+      <div class="game"></div>
+      <div class="title"></div>
+    </div>
+    <div class="demo">DEMO</div>
   </div>
   <div id="loginOverlay">
     <div id="login" style="display: none" class="ui-widget ui-widget-content ui-corner-all ui-widget-shadow">
