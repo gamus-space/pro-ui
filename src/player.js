@@ -1,5 +1,7 @@
 'use strict';
 
+const FADEOUT_DURATION = 3;
+
 class Player extends EventTarget {
   // audioContext
   // audio
@@ -9,6 +11,12 @@ class Player extends EventTarget {
   // loop
   // stream
   // lastUrl
+  // duration
+  // iteration
+  // isSeeking
+  // looped
+  // fadeGainL
+  // fadeGainR
 
   constructor() {
     super();
@@ -18,7 +26,22 @@ class Player extends EventTarget {
     this.loading = false;
     this.stream = true;
     this._lastUrl = undefined;
+    this._duration = undefined;
+    this.iteration = undefined;
+    this.isSeeking = undefined;
+    this.looped = undefined;
+    this.fadeGainL = undefined;
+    this.fadeGainR = undefined;
     this.initialize(new Audio());
+
+    const ended = () => {
+      this.isSeeking = true;
+      if (this.entry == null) return;
+      if (this.entry < this.playlist.length-1)
+        this.load(this.entry+1);
+      if (this.entry === this.playlist.length-1 && this.loop)
+        this.load(0);
+    };
 
     ['play', 'pause'].forEach(method => {
       this[method] = () => { this.audio[method](); };
@@ -26,21 +49,53 @@ class Player extends EventTarget {
     ['canplay', 'play', 'pause', 'ended', 'timeupdate'].forEach(event => {
       this.audio.addEventListener(event, e => { this.dispatchEvent(new CustomEvent(e.type)); });
     });
-    ['duration', 'currentTime'].forEach(field => {
-      Object.defineProperty(this, field, {
-        get() { return this.audio[field]; },
-        set(v) { this.audio[field] = v; },
-      });
+    this.audio.addEventListener('canplay', () => {
+      if (this.looped) {
+        this.looped = false;
+        return;
+      }
+      this._updateLoop(this._duration > this.audio.duration);
+    });
+    this.audio.addEventListener('timeupdate', () => {
+      if (this._duration && !this._trackLooped()) {
+        const fadeRatio = Math.min((this._duration - this.iteration * this.audio.duration - this.audio.currentTime) / FADEOUT_DURATION, 1);
+        this.fadeGainL.gain.value = fadeRatio || 1;
+        this.fadeGainR.gain.value = fadeRatio || 1;
+      } else {
+        this.fadeGainL.gain.value =  1;
+        this.fadeGainR.gain.value =  1;
+      }
+      if (this.loading || !this._duration || this._trackLooped() ||
+        !(this.iteration * this.audio.duration + this.audio.currentTime > this._duration)
+      ) return;
+      this.audio.pause();
+      this.audio.currentTime = 0;
+      this.iteration = 0;
+      ended();
+    });
+    this.audio.addEventListener('seeking', () => {
+      if (this.isSeeking) {
+        this.isSeeking = false;
+        return;
+      }
+      this.looped = true;
+      if (!this._duration) return;
+      const middle = this._duration - (this.iteration+1) * this.audio.duration > this.audio.duration;
+      this._updateLoop(middle);
+      this.iteration = this._trackLooped() && !middle ? 0 : this.iteration + 1;
     });
     this.audio.addEventListener('ended', () => {
-      if (this.entry == null) return;
-      if (this.entry < this.playlist.length-1)
-        this.load(this.entry+1);
-      if (this.entry === this.playlist.length-1 && this.loop)
-        this.load(0);
+      ended();
     });
 
     Object.seal(this);
+  }
+
+  _trackLooped() {
+    return this._loop && this._entry == null;
+  }
+  _updateLoop(middle) {
+    this.audio.loop = this._duration && (middle ?? true) || this._trackLooped();
   }
 
   get entry() {
@@ -62,7 +117,7 @@ class Player extends EventTarget {
   }
   set loop(v) {
     this._loop = v;
-    this.audio.loop = this._entry == null ? v : false;
+    this._updateLoop(true);
     this.dispatchEvent(new CustomEvent('update', { detail: { loop: this._loop } }));
   }
   get volume() {
@@ -71,6 +126,17 @@ class Player extends EventTarget {
   set volume(v) {
     this.audio.volume = v;
     this.dispatchEvent(new CustomEvent('update', { detail: { volume: v } }));
+  }
+  get duration() {
+    return this._duration ?? (this.audio.duration || 0);
+  }
+  get currentTime() {
+    return (this.iteration * this.audio.duration + this.audio.currentTime) || 0;
+  }
+  set currentTime(v) {
+    this.iteration = Math.floor(v / this.audio.duration);
+    this.audio.currentTime = v - this.iteration * this.audio.duration;
+    this.isSeeking = true;
   }
 
   initialize(audio) {
@@ -101,7 +167,16 @@ class Player extends EventTarget {
     gainR1.connect(merger, 0, 0);
     gainL2.connect(merger, 0, 1);
     gainR2.connect(merger, 0, 1);
-    merger.connect(this.audioContext.destination);
+    const fadeSplitter = this.audioContext.createChannelSplitter(2);
+    merger.connect(fadeSplitter);
+    this.fadeGainL = this.audioContext.createGain();
+    this.fadeGainR = this.audioContext.createGain();
+    fadeSplitter.connect(this.fadeGainL, 0);
+    fadeSplitter.connect(this.fadeGainR, 1);
+    const fadeMerger = this.audioContext.createChannelMerger(2);
+    this.fadeGainL.connect(fadeMerger, 0, 0);
+    this.fadeGainR.connect(fadeMerger, 0, 1);
+    fadeMerger.connect(this.audioContext.destination);
 
     let replayGain = 0;
     Object.defineProperty(this, 'replayGain', {
@@ -134,7 +209,10 @@ class Player extends EventTarget {
 
     const data = typeof data_or_entry === 'number' ? this._playlist[data_or_entry] : data_or_entry;
     this._entry = typeof data_or_entry === 'number' ? data_or_entry : null;
-    this.loop = this.loop;
+    this._duration = data.duration;
+    this.iteration = 0;
+    this.isSeeking = false;
+    this.looped = false;
     this.dispatchEvent(new CustomEvent('entry', { detail: { entry: this.entry, ...data } }));
 
     this.audioContext.resume().then(() => {
@@ -185,8 +263,9 @@ export function downloadWav(url, name) {
       if (data.getUint16(3) !== 0x300) throw new Error('invalid version');
       const size = (data.getUint8(6) << 21) | (data.getUint8(7) << 14) | (data.getUint8(8) << 7) | data.getUint8(9);
       let pos = 10 + size;
-      if (data.getUint16(pos) !== 0xfffb) throw new Error('invalid header');
-      pos += 4;
+      if ((data.getUint16(pos) | 0x18) !== 0xfffb) throw new Error('invalid header');
+      const version = (data.getUint16(pos) & 0x18) >> 3;
+      pos += 2;
       const sampleRateMapping = { 0: 44100, 1: 48000, 2: 32000 };
       const sampleRate = sampleRateMapping[(data.getUint8(pos) >> 2) & 0x3];
       pos += 1;
@@ -199,7 +278,7 @@ export function downloadWav(url, name) {
       return audioContext.decodeAudioData(buffer).then(audioBuffer => ({ audioBuffer, channels, bps }));
     },
   };
-  return fetch(url).then(response => response.arrayBuffer()).then(decoders[format]).then(({ audioBuffer, channels, bps }) => {
+  return fetch(url, { credentials: "include" }).then(response => response.arrayBuffer()).then(decoders[format]).then(({ audioBuffer, channels, bps }) => {
     if (channels !== audioBuffer.numberOfChannels)
       throw new Error('number of channels mismatch');
     if (bps !== 8 && bps !== 16)
@@ -235,16 +314,17 @@ export function downloadWav(url, name) {
 
 export function downloadOriginal(url, name) {
   const format = url.match(/\.(.+)$/)[1];
-  return fetch(url).then(response => response.arrayBuffer()).then(download(name, format));
+  return fetch(url, { credentials: "include" }).then(response => response.arrayBuffer()).then(download(name, format));
 }
 
 function download(name, type) {
+  const fullName = `${name.replaceAll(/: ?/g, ' - ')}.${type}`;
   return buffer => {
-    const file = new File([buffer], `${name}.${type}`, { type: `audio/${type}` });
+    const file = new File([buffer], fullName, { type: `audio/${type}` });
     const a = document.createElement("a");
     const url = URL.createObjectURL(file);
     a.href = url;
-    a.download = `${name}.${type}`;
+    a.download = fullName;
     a.click();
     URL.revokeObjectURL(url);
   };

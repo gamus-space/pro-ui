@@ -53,4 +53,7 @@ user.then(user => {
   player.stream = !user.demo;
 });
 
-navigator.wakeLock?.request();
+let wakelock;
+navigator.wakeLock?.request().then(lock => {
+  wakelock = lock;
+});
