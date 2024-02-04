@@ -3,11 +3,11 @@
 import { setBaseUrl } from './db.js';
 
 const dev = location.hostname === '127.0.0.1';
-const sourceUrl = dev ? 'https://localhost:8000/media-priv' : 'https://d1e7jf8j2bpzti.cloudfront.net';
+const apiUrl = dev ? 'https://localhost:8000/media-priv' : 'https://d1e7jf8j2bpzti.cloudfront.net';
 const sources = {
-  demo: { url: sourceUrl, auth: false },
-  standard: { url: sourceUrl, auth: true },
-  hifi: { url: sourceUrl, auth: true },
+  demo: { auth: false },
+  standard: { auth: true },
+  hifi: { auth: true },
 };
 const features = {
   demo: ['samples of ~15 sec', 'MP3 bitrate 160kbps', 'sample screenshots'],
@@ -15,7 +15,6 @@ const features = {
   hifi: ['FLAC - CD perfect', 'all screenshots'],
 };
 var source;
-var baseUrl;
 
 var setUser;
 export const user = new Promise((resolve, reject) => {
@@ -23,7 +22,19 @@ export const user = new Promise((resolve, reject) => {
 });
 const ANONYMOUS = { username: 'preview', mp3: true, flac: false, demo: true };
 
-$('#login').toggle(true);
+function loginUser(user) {
+  $('#login').hide('fade', {}, 500);
+  $('#loginOverlay').hide('fade', {}, 1500);
+  setUser(user);
+  setBaseUrl(apiUrl);
+}
+
+fetch(`${apiUrl}/api/user`, { credentials: 'include' }).then(response =>
+  response.status !== 401 ? response.json() : undefined
+).then(user => {
+  if (user) loginUser(user);
+  else $('#login').toggle(true);
+});
 
 $('#login form input').on('input', e => {
   if (!sources[source]?.auth) return;
@@ -32,15 +43,10 @@ $('#login form input').on('input', e => {
 $('#login').on('submit', e => {
   e.preventDefault();
   $('#login button.login').button('option', 'disabled', true);
-  baseUrl = sources[source].url;
-  (sources[source].auth ? login(e.target.email.value, e.target.password.value) : Promise.resolve(ANONYMOUS)).then(body => {
-    $('#login').hide('fade', {}, 500);
-    $('#loginOverlay').hide('fade', {}, 1500);
-    setUser(body);
-    setBaseUrl(baseUrl);
+  (sources[source].auth ? login(e.target.email.value, e.target.password.value) : Promise.resolve(ANONYMOUS)).then(user => {
+    loginUser(user);
   }).catch(() => {
     $('#login').effect('shake', {}, 500);
-    baseUrl = undefined;
   }).finally(() => {
     $('#login button.login').button('option', 'disabled', false);
   });
@@ -66,10 +72,10 @@ function fire(url, body = undefined) {
   });
 }
 function login(username, password) {
-  return fire(`${baseUrl}/api/login`, { username, password });
+  return fire(`${apiUrl}/api/login`, { username, password });
 }
 export function logout() {
-  return fire(`${baseUrl}/api/logout`);
+  return fire(`${apiUrl}/api/logout`);
 }
 
 $('#login input[type=checkbox]').checkboxradio({

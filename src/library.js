@@ -49,6 +49,7 @@ loadDb().then(data => {
       track: track.tracknumber,
       timeSec: track.time,
       time: track.time ? time(track.time) : '',
+      originalTimeSec: track.originalTime,
       files: track.files,
       size: '',
       url: '',
@@ -350,8 +351,12 @@ loadDb().then(data => {
     ], undefined);
     unselectAll();
   });
-  function playerEntry({ url, game, title, timeSec }) {
-    return { url, game, title, time: timeSec, replayGain: db[url]?.replayGain?.album };
+  function playerEntry({ url, game, title, timeSec, originalTimeSec }) {
+    return {
+      url, game, title,
+      time: timeSec, duration: originalTimeSec ? timeSec : undefined,
+      replayGain: db[url]?.replayGain?.album,
+    };
   }
 
   Object.entries(currentColumns).forEach(([column, selected]) => {
