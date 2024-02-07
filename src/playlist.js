@@ -2,18 +2,20 @@
 
 import { player } from './player.js';
 import { setPlaylist } from './script.js';
-import { dialogOptions, initDialog, time, trackTitle } from './utils.js';
+import { showDialog, time, trackTitle } from './utils.js';
 
 $('#playlistDialog').dialog({
-  ...dialogOptions($('#playlistDialog')),
   width: 400,
   height: 400,
-  position: { my: "left", at: "left+2% center", of: window },
+  position: { my: "left", at: "left+10% center", of: window },
   resize: (e, { size: { height } }) => {
     resizeTable(height);
   },
 });
-initDialog($('#playlistDialog'));
+
+export function show() {
+  showDialog($('#playlistDialog'));
+}
 
 function resizeTable(height) {
   const body = $('#playlist_wrapper .dataTables_scrollBody');

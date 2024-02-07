@@ -3,7 +3,7 @@
 import { user } from './login.js';
 import { player } from './player.js';
 import { setPlayerOptions } from './script.js';
-import { dialogOptions, initDialog, time, trackTitle } from './utils.js';
+import { showDialog, time, trackTitle } from './utils.js';
 
 class Controls {
   constructor() {
@@ -96,19 +96,13 @@ player.addEventListener('playlist', ({ detail: { playlist } }) => {
   $('#miniPlayerDialog .entry .total').text(playlist.length);
   updateEntry();
 });
+$('#miniPlayerDialog .entry .total').text(player.playlist.length);
 function updateEntry() {
   $('#miniPlayerDialog .entry').toggle(player.entry != null);
   $('#miniPlayerDialog .entry .pos').text(player.entry+1);
   $('#miniPlayerDialog .previous').button('option', 'disabled', player.entry == null || player.entry == 0);
   $('#miniPlayerDialog .next').button('option', 'disabled', player.entry == null || player.entry >= player.playlist.length-1);
 }
-
-$('#miniPlayerDialog').dialog({
-  ...dialogOptions($('#miniPlayerDialog')),
-  width: 'auto',
-  position: { my: "center", at: "center-15%", of: window },
-});
-initDialog($('#miniPlayerDialog'));
 
 $('#miniPlayerDialog input[type=checkbox]').checkboxradio({
   icon: false,
@@ -229,3 +223,13 @@ $('#miniPlayerDialog .next').click(() => {
   if (player.entry == null) return;
   player.load(player.entry+1);
 });
+
+$('#miniPlayerDialog').dialog({
+  width: 'auto',
+  position: { my: "bottom", at: "bottom-10%", of: window },
+  resizable: false,
+});
+
+export function show() {
+  showDialog($('#miniPlayerDialog'));
+}

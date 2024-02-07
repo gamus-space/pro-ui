@@ -4,7 +4,7 @@ import { db } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
 import { setPlayerOptions } from './script.js';
-import { dialogOptions, initDialog, time } from './utils.js';
+import { showDialog, time } from './utils.js';
 
 class Controls {
   constructor() {
@@ -169,6 +169,7 @@ player.addEventListener('playlist', ({ detail: { playlist } }) => {
   $('#playerDialog .entry .total').text(playlist.length);
   updateEntry();
 });
+$('#playerDialog .entry .total').text(player.playlist.length);
 function updateEntry() {
   $('#playerDialog .entry').toggle(player.entry != null);
   $('#playerDialog .entry .pos').text(player.entry+1);
@@ -237,9 +238,11 @@ $('#playerDialog .stereo-full').click(() => {
 });
 
 $('#playerDialog').dialog({
-  ...dialogOptions($('#playerDialog')),
   width: 580,
   height: 'auto',
-  position: { my: "center", at: "center+15%", of: window },
+  position: { my: "center", at: "center", of: window },
 });
-initDialog($('#playerDialog'));
+
+export function show() {
+  showDialog($('#playerDialog'));
+}

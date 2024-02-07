@@ -3,15 +3,17 @@
 import { loadScreenshots } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
-import { dialogOptions, initDialog } from "./utils.js";
+import { showDialog } from "./utils.js";
 
 $('#galleryDialog').dialog({
-    ...dialogOptions($('#galleryDialog')),
     width: 640,
     height: 480+40,
     position: { my: "center", at: "center", of: window },
 });
-initDialog($('#galleryDialog'));
+
+export function show() {
+  showDialog($('#galleryDialog'));
+}
 
 let galleryIndex = undefined;
 let galleryCache = {};

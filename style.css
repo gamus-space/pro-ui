@@ -19,12 +19,6 @@ body .ui-widget {
 .ui-dialog.ui-widget.ui-widget-content {
   border: 1px solid black;
 }
-.ui-dialog.hidden {
-  height: 2.70em !important;
-}
-.ui-dialog.hidden .ui-dialog-content {
-  visibility: hidden;
-}
 .ui-slider.ui-slider-vertical {
   background-position: 25% 50%;
 }
@@ -35,12 +29,45 @@ body .ui-widget {
   background-size: 60px 150px !important;
 }
 
-#desktop {
-  text-align: center;
+#launcher {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
 }
-#desktop button {
-  width: 2rem;
-  height: 2rem;
+#launcher .ui-button {
+  width: 4rem;
+  height: 4rem;
+  font-size: 2rem;
+  padding: 0;
+}
+#launcher .ui-button > * {
+  vertical-align: sub;
+}
+
+#user {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+#user .ui-button {
+  width: 4rem;
+  height: 4rem;
+  font-size: 2rem;
+  padding: 0;
+}
+#user .ui-button > * {
+  vertical-align: sub;
+}
+#user .ui-checkboxradio-label > * {
+  vertical-align: bottom;
 }
 
 #playerDialog {

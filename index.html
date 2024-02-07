@@ -20,15 +20,36 @@
 </head>
 
 <body>
-  <div id="desktop">
-    <button class="background ui-button ui-button-icon-only">
-      <span class="ui-icon ui-icon-image"></span>
+  <div id="user">
+    <button type="button" title="Logout" class="logout ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:power"></iconify-icon>
     </button>
-    <button class="visualize ui-button ui-button-icon-only">
-      <span class="ui-icon ui-icon-lightbulb"></span>
+    <label class="lock" style="display: none">
+      <iconify-icon icon="ph:lock"></iconify-icon>
+      <input type="checkbox" />
+    </label>
+    <button type="button" title="Background" class="background ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:image"></iconify-icon>
     </button>
-    <button class="logout ui-button ui-button-icon-only">
-      <span class="ui-icon ui-icon-power"></span>
+  </div>
+  <div id="launcher">
+    <button type="button" title="Library" class="library ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:folder-open"></iconify-icon>
+    </button>
+    <button type="button" title="Player" class="player ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:play"></iconify-icon>
+    </button>
+    <button type="button" title="Mini player" class="mini_player ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:play-circle"></iconify-icon>
+    </button>
+    <button type="button" title="Playlist" class="playlist ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:playlist"></iconify-icon>
+    </button>
+    <button type="button" title="Gallery" class="gallery ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:monitor-play"></iconify-icon>
+    </button>
+    <button type="button" title="Visualizer" class="visualizer ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:equalizer"></iconify-icon>
     </button>
   </div>
   <div id="playerDialog" title="player" style="display: none">
@@ -105,7 +126,7 @@
       </label>
     </div>
   </div>
-  <div id="miniPlayerDialog" title="mini player" class="fixed" style="display: none">
+  <div id="miniPlayerDialog" title="mini player" style="display: none">
     <h2 class="title">-</h2>
     <div class="controls">
       <div class="row">

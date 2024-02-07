@@ -4,18 +4,20 @@ import { db, loadDb } from './db.js';
 import { user } from './login.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
 import { setPlaylist } from './script.js';
-import { dialogOptions, initDialog, size, time, trackTitle } from './utils.js';
+import { showDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
-  ...dialogOptions($('#libraryDialog')),
   width: 530,
   height: 400,
-  position: { my: "right", at: "right-2% center", of: window },
+  position: { my: "right", at: "right-8% center", of: window },
   resize: (e, { size: { height } }) => {
     resizeTable(height);
   },
 });
-initDialog($('#libraryDialog'));
+
+export function show() {
+  showDialog($('#libraryDialog'));
+}
 
 function resizeTable(height) {
   const body = $('#library_wrapper .dataTables_scrollBody');

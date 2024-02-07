@@ -1,15 +1,17 @@
 'use strict';
 
 import { player } from './player.js';
-import { dialogOptions, initDialog } from "./utils.js";
+import { showDialog } from "./utils.js";
 
 $('#visualizerDialog').dialog({
-    ...dialogOptions($('#visualizerDialog')),
     width: 400,
     height: 400,
     position: { my: "center", at: "center", of: window },
 });
-initDialog($('#visualizerDialog'));
+
+export function show() {
+    showDialog($('#visualizerDialog'));
+}
 
 const analyser = player.analyser;
 analyser.fftSize = 64;
