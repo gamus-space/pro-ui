@@ -4,6 +4,17 @@ export function trackTitle({ game, title }) {
   return `${game} - ${title}`;
 }
 
+export const dialogOptions = {
+  autoOpen: false,
+  show: 500,
+  hide: 500,
+};
+
+export function initDialog(element, { icon }) {
+  element.parent().find('.ui-dialog-title')
+    .prepend($('<iconify-icon>', { icon }));
+}
+
 export function showDialog(element) {
   if (element.dialog('isOpen')) {
     element.dialog('moveToTop');

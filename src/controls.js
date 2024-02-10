@@ -4,7 +4,19 @@ import { db } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
 import { setPlayerOptions } from './script.js';
-import { showDialog, time } from './utils.js';
+import { dialogOptions, initDialog, showDialog, time } from './utils.js';
+
+$('#playerDialog').dialog({
+  ...dialogOptions,
+  width: 580,
+  height: 260,
+  position: { my: "center", at: "center", of: window },
+});
+initDialog($('#playerDialog'), { icon: 'ph:play' });
+
+export function show() {
+  showDialog($('#playerDialog'));
+}
 
 class Controls {
   constructor() {
@@ -78,9 +90,12 @@ class Controls {
       slider.on('slidechange', fix);
       slider.on('slide', fix);
     };
-    initSlider(fixSlider(1.5, 'left'), $('#playerDialog .seek'));
-    initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .volume'));
-    initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .stereo'));
+    initSlider(fixSlider(1.5, 'left'), $('#playerDialog .midiPlayer .seek'));
+    initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .midiPlayer .volume'));
+    initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .midiPlayer .stereo'));
+    initSlider(fixSlider(0.8, 'left'), $('#playerDialog .miniPlayer .seek'));
+    initSlider(fixSlider(0.5, 'bottom'), $('#playerDialog .miniPlayer .volume'));
+    initSlider(fixSlider(0.5, 'bottom'), $('#playerDialog .miniPlayer .stereo'));
   }
   get canplay() {
     return this._canplay;
@@ -154,9 +169,9 @@ player.addEventListener('timeupdate', (e) => {
 player.addEventListener('entry', ({ detail: track }) => {
   const dbTrack = db?.[track.url];
   $('#playerDialog .info').toggle(true)
-    .find('.game').text(track.game.split(': ')[0]).end()
-    .find('.subtitle').text(track.game.split(': ')[1] ?? '').end()
-    .find('.space').toggle(!track.game.split(': ')[1]).end()
+    .find('.game').text(track.game).end()
+    .find('.gameTitle').text(track.game.split(': ')[0]).end()
+    .find('.gameSubtitle').text(track.game.split(': ')[1] ?? '').end()
     .find('.track').text(track.title).end()
     .find('.artist').toggle(!!dbTrack?.artist).end()
     .find('.by').text(dbTrack?.artist ?? '').end()
@@ -173,9 +188,10 @@ $('#playerDialog .entry .total').text(player.playlist.length);
 function updateEntry() {
   $('#playerDialog .entry').toggle(player.entry != null);
   $('#playerDialog .entry .pos').text(player.entry+1);
-  $('#playerDialog .nav').toggle(player.entry != null);
-  $('#playerDialog .nav .previous').button('option', 'disabled', player.entry == null || player.entry == 0);
-  $('#playerDialog .nav .next').button('option', 'disabled', player.entry == null || player.entry >= player.playlist.length-1);
+  $('#playerDialog .midiPlayer .nav').toggle(player.entry != null);
+  $('#playerDialog .miniPlayer .next,.previous').toggle(player.entry != null);
+  $('#playerDialog .previous').button('option', 'disabled', player.entry == null || player.entry == 0);
+  $('#playerDialog .next').button('option', 'disabled', player.entry == null || player.entry >= player.playlist.length-1);
 }
 player.addEventListener('update', ({ detail: updates }) => {
   if (updates.loop != null) controls.loop = updates.loop;
@@ -236,13 +252,3 @@ $('#playerDialog .mono').click(() => {
 $('#playerDialog .stereo-full').click(() => {
   setValue($('#playerDialog .stereo'), 1);
 });
-
-$('#playerDialog').dialog({
-  width: 580,
-  height: 'auto',
-  position: { my: "center", at: "center", of: window },
-});
-
-export function show() {
-  showDialog($('#playerDialog'));
-}

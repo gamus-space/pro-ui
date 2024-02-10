@@ -1,13 +1,15 @@
 'use strict';
 
 import { player } from './player.js';
-import { showDialog } from "./utils.js";
+import { dialogOptions, initDialog, showDialog } from "./utils.js";
 
 $('#visualizerDialog').dialog({
+    ...dialogOptions,
     width: 400,
     height: 400,
     position: { my: "center", at: "center", of: window },
 });
+initDialog($('#visualizerDialog'), { icon: 'ph:equalizer' });
 
 export function show() {
     showDialog($('#visualizerDialog'));

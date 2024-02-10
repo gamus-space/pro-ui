@@ -24,7 +24,7 @@
     <button type="button" title="Logout" class="logout ui-button ui-widget ui-corner-all">
       <iconify-icon icon="ph:power"></iconify-icon>
     </button>
-    <label class="lock" style="display: none">
+    <label class="lock" title="Screen lock" style="display: none">
       <iconify-icon icon="ph:lock"></iconify-icon>
       <input type="checkbox" />
     </label>
@@ -39,9 +39,6 @@
     <button type="button" title="Player" class="player ui-button ui-widget ui-corner-all">
       <iconify-icon icon="ph:play"></iconify-icon>
     </button>
-    <button type="button" title="Mini player" class="mini_player ui-button ui-widget ui-corner-all">
-      <iconify-icon icon="ph:play-circle"></iconify-icon>
-    </button>
     <button type="button" title="Playlist" class="playlist ui-button ui-widget ui-corner-all">
       <iconify-icon icon="ph:playlist"></iconify-icon>
     </button>
@@ -53,93 +50,109 @@
     </button>
   </div>
   <div id="playerDialog" title="player" style="display: none">
-    <div class="info">
-      <div class="row">
-        <div class="game major">game</div>
-        <div class="subtitle medium">subtitle</div>
-      </div>
-      <div class="row">
-        <div class="track major">track</div>
-        <div class="artist medium">
-          by
-          <span class="by">artist</span>
+    <div class="midiPlayer">
+      <div class="info">
+        <div class="row">
+          <div class="gameTitle major">game</div>
+          <div class="gameSubtitle medium">subtitle</div>
+        </div>
+        <div class="row">
+          <div class="track major">track</div>
+          <div class="artist medium">
+            by
+            <span class="by">artist</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="misc minor">
+            <span class="platform">p</span>,
+            <span class="year">0</span>
+          </div>
         </div>
       </div>
-      <div class="row">
-        <div class="misc minor">
-          <span class="platform">p</span>,
-          <span class="year">0</span>
-        </div>
+      <div class="time">
+        <span class="position"></span>
+        /
+        <span class="duration"></span>
+      </div>
+      <div class="plpa">
+        <button class="play ui-button ui-button-icon-only">
+          <span class="ui-icon ui-icon-play"></span>
+        </button>
+      </div>
+      <div class="seek"></div>
+      <div class="vol">
+        <div class="volume"></div>
+        <span class="icon-group volume-min">
+          <span class="ui-icon ui-icon-volume-off"></span>
+        </span>
+        <span class="icon-group volume-max">
+          <span class="ui-icon ui-icon-volume-on"></span>
+        </span>
+      </div>
+      <div class="ster">
+        <div class="stereo"></div>
+        <span class="icon-group stereo-rev">
+          <span class="ui-icon ui-icon-triangle-1-e"></span>
+          <span class="ui-icon ui-icon-triangle-1-w"></span>
+        </span>
+        <span class="icon-group mono">
+          <span class="ui-icon ui-icon-bullet"></span>
+        </span>
+        <span class="icon-group stereo-full">
+          <span class="ui-icon ui-icon-triangle-1-w"></span>
+          <span class="ui-icon ui-icon-triangle-1-e"></span>
+        </span>
+      </div>
+      <div class="entry">
+        <span class="pos"></span>
+        /
+        <span class="total"></span>
+      </div>
+      <div class="nav">
+        <button class="previous ui-button ui-button-icon-only">
+          <span class="ui-icon ui-icon-seek-first"></span>
+        </button>
+        <button class="next ui-button ui-button-icon-only">
+          <span class="ui-icon ui-icon-seek-end"></span>
+        </button>
+      </div>
+      <div class="status">
+        <label class="loop ui-button-icon-only">
+          <span class="ui-icon ui-icon-arrowrefresh-1-n"></span>
+          <input type="checkbox" />
+        </label>
       </div>
     </div>
-    <div class="time">
-      <span class="position"></span>
-      /
-      <span class="duration"></span>
-    </div>
-    <div class="plpa">
-      <button class="play ui-button ui-button-icon-only">
-        <span class="ui-icon ui-icon-play"></span>
-      </button>
-    </div>
-    <div class="seek"></div>
-    <div class="vol">
-      <div class="volume"></div>
-      <span class="icon-group volume-min">
-        <span class="ui-icon ui-icon-volume-off"></span>
-      </span>
-      <span class="icon-group volume-max">
-        <span class="ui-icon ui-icon-volume-on"></span>
-      </span>
-    </div>
-    <div class="ster">
-      <div class="stereo"></div>
-      <span class="icon-group stereo-rev">
-        <span class="ui-icon ui-icon-triangle-1-e"></span>
-        <span class="ui-icon ui-icon-triangle-1-w"></span>
-      </span>
-      <span class="icon-group mono">
-        <span class="ui-icon ui-icon-bullet"></span>
-      </span>
-      <span class="icon-group stereo-full">
-        <span class="ui-icon ui-icon-triangle-1-w"></span>
-        <span class="ui-icon ui-icon-triangle-1-e"></span>
-      </span>
-    </div>
-    <div class="entry">
-      <span class="pos"></span>
-      /
-      <span class="total"></span>
-    </div>
-    <div class="nav">
-      <button class="previous ui-button ui-button-icon-only">
-        <span class="ui-icon ui-icon-seek-first"></span>
-      </button>
-      <button class="next ui-button ui-button-icon-only">
-        <span class="ui-icon ui-icon-seek-end"></span>
-      </button>
-    </div>
-    <div class="status">
-      <label class="loop ui-button-icon-only">
-        <span class="ui-icon ui-icon-arrowrefresh-1-n"></span>
-        <input type="checkbox" />
-      </label>
-    </div>
-  </div>
-  <div id="miniPlayerDialog" title="mini player" style="display: none">
-    <h2 class="title">-</h2>
-    <div class="controls">
-      <div class="row">
-        <span class="group group3">
+    <div class="miniPlayer">
+      <div class="header">
+        <span class="entry" style="display: none">
+          <span class="pos"></span>
+          /
+          <span class="total"></span>
+        </span>
+        <div class="info">
+          <div class="game"></div>
+          <div class="track"></div>
+        </div>
+      </div>
+      <div class="controls">
+        <span class="btns">
           <label class="loop ui-button-icon-only">
             <span class="ui-icon ui-icon-arrowrefresh-1-n"></span>
             <input type="checkbox" />
           </label>
+          <button class="previous ui-button ui-button-icon-only" style="display: none">
+            <span class="ui-icon ui-icon-seek-first"></span>
+          </button>
           <button class="play ui-button ui-button-icon-only">
             <span class="ui-icon ui-icon-play"></span>
           </button>
+          <button class="next ui-button ui-button-icon-only" style="display: none">
+            <span class="ui-icon ui-icon-seek-end"></span>
+          </button>
         </span>
-        <span class="group group3">
+        <span class="sk">
           <div class="seek"></div>
           <div class="scale">
             <span>
@@ -149,49 +162,30 @@
             </span>
           </div>
         </span>
-      </div>
-      <div class="row">
-        <span class="group group1">
+        <div class="vol">
           <div class="volume"></div>
-          <div class="scale">
-            <span class="icon-group volume-min">
-              <span class="ui-icon ui-icon-volume-off"></span>
-            </span>
-            <span class="icon-group volume-max">
-              <span class="ui-icon ui-icon-volume-on"></span>
-            </span>
-          </div>
-        </span>
-        <span class="group group2">
+          <span class="icon-group volume-min">
+            <span class="ui-icon ui-icon-volume-off"></span>
+          </span>
+          <span class="icon-group volume-max">
+            <span class="ui-icon ui-icon-volume-on"></span>
+          </span>
+        </div>
+        <div class="ster">
           <div class="stereo"></div>
-          <div class="scale">
-            <span class="icon-group stereo-rev">
-              <span class="ui-icon ui-icon-triangle-1-e"></span>
-              <span class="ui-icon ui-icon-triangle-1-w"></span>
-            </span>
-            <span class="icon-group mono">
-              <span class="ui-icon ui-icon-bullet"></span>
-            </span>
-            <span class="icon-group stereo-full">
-              <span class="ui-icon ui-icon-triangle-1-w"></span>
-              <span class="ui-icon ui-icon-triangle-1-e"></span>
-            </span>
-          </div>
-        </span>
+          <span class="icon-group stereo-rev">
+            <span class="ui-icon ui-icon-triangle-1-e"></span>
+            <span class="ui-icon ui-icon-triangle-1-w"></span>
+          </span>
+          <span class="icon-group mono">
+            <span class="ui-icon ui-icon-bullet"></span>
+          </span>
+          <span class="icon-group stereo-full">
+            <span class="ui-icon ui-icon-triangle-1-w"></span>
+            <span class="ui-icon ui-icon-triangle-1-e"></span>
+          </span>
+        </div>
       </div>
-    </div>
-    <div class="entry" style="display: none">
-      <h2>
-        <span class="pos"></span>
-        /
-        <span class="total"></span>
-      </h2>
-      <button class="previous ui-button ui-button-icon-only">
-        <span class="ui-icon ui-icon-seek-first"></span>
-      </button>
-      <button class="next ui-button ui-button-icon-only">
-        <span class="ui-icon ui-icon-seek-end"></span>
-      </button>
     </div>
   </div>
   <div id="libraryDialog" title="library" style="display: none">

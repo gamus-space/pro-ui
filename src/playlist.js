@@ -2,9 +2,10 @@
 
 import { player } from './player.js';
 import { setPlaylist } from './script.js';
-import { showDialog, time, trackTitle } from './utils.js';
+import { dialogOptions, initDialog, showDialog, time, trackTitle } from './utils.js';
 
 $('#playlistDialog').dialog({
+  ...dialogOptions,
   width: 400,
   height: 400,
   position: { my: "left", at: "left+10% center", of: window },
@@ -12,6 +13,7 @@ $('#playlistDialog').dialog({
     resizeTable(height);
   },
 });
+initDialog($('#playlistDialog'), { icon: 'ph:playlist' });
 
 export function show() {
   showDialog($('#playlistDialog'));

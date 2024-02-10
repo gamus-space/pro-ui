@@ -1,8 +1,9 @@
 'use strict';
 
-import { showDialog } from './utils.js';
+import { dialogOptions, initDialog, showDialog } from './utils.js';
 
 $('#backgroundDialog').dialog({
+  ...dialogOptions,
   width: 400,
   height: 300,
   position: { my: "left", at: "left+8% center", of: window },
@@ -10,6 +11,8 @@ $('#backgroundDialog').dialog({
     $(this).parent().focus();
   },
 });
+initDialog($('#backgroundDialog'), { icon: 'ph:image' });
+
 
 export function show() {
   showDialog($('#backgroundDialog'));

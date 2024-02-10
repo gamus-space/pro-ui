@@ -4,16 +4,14 @@ import { logout, user } from './login.js';
 import { player } from './player.js';
 
 import('./library.js').then(({ show }) => show());
-import('./controls.js').then(({ show }) => show());
+import('./controls.js');
+import('./gallery.js');
 
 $('#launcher .library').click(() => {
   import('./library.js').then(({ show }) => show());
 });
 $('#launcher .player').click(() => {
   import('./controls.js').then(({ show }) => show());
-});
-$('#launcher .mini_player').click(() => {
-  import('./controls_mini.js').then(({ show }) => show());
 });
 $('#launcher .playlist').click(() => {
   import('./playlist.js').then(({ show }) => show());

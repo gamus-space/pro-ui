@@ -3,13 +3,15 @@
 import { loadScreenshots } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
-import { showDialog } from "./utils.js";
+import { dialogOptions, initDialog, showDialog } from "./utils.js";
 
 $('#galleryDialog').dialog({
+	...dialogOptions,
     width: 640,
     height: 480+40,
     position: { my: "center", at: "center", of: window },
 });
+initDialog($('#galleryDialog'), { icon: 'ph:monitor-play' });
 
 export function show() {
   showDialog($('#galleryDialog'));

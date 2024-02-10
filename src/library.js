@@ -4,9 +4,10 @@ import { db, loadDb } from './db.js';
 import { user } from './login.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
 import { setPlaylist } from './script.js';
-import { showDialog, size, time, trackTitle } from './utils.js';
+import { dialogOptions, initDialog, showDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
+  ...dialogOptions,
   width: 530,
   height: 400,
   position: { my: "right", at: "right-8% center", of: window },
@@ -14,6 +15,7 @@ $('#libraryDialog').dialog({
     resizeTable(height);
   },
 });
+initDialog($('#libraryDialog'), { icon: 'ph:folder-open' });
 
 export function show() {
   showDialog($('#libraryDialog'));
