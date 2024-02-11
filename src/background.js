@@ -13,7 +13,6 @@ $('#backgroundDialog').dialog({
 });
 initDialog($('#backgroundDialog'), { icon: 'ph:image' });
 
-
 export function show() {
   showDialog($('#backgroundDialog'));
 }

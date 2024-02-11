@@ -24,6 +24,11 @@ body .ui-widget {
 .ui-dialog.ui-widget.ui-widget-content {
   border: 1px solid black;
 }
+.ui-dialog .dataTables_scrollBody,
+.ui-dialog .scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: #777 #222;
+}
 .ui-slider.ui-slider-vertical {
   background-position: 25% 50%;
 }
@@ -32,6 +37,12 @@ body .ui-widget {
 }
 .ui-widget-header {
   background-size: 60px 150px !important;
+}
+.dataTables_paginate .paginate_button.disabled {
+  opacity: 0.5;
+}
+.dataTables_paginate .paginate_button {
+  padding: 0.2rem 0.5rem !important;
 }
 
 #launcher {
@@ -474,6 +485,13 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   width: 1.5rem;
   height: 1.5rem;
 }
+#library.demo .listen.ui-state-active .demo {
+  position: absolute;
+  text-indent: 0;
+  top: -0.5rem;
+  right: -1.5rem;
+  writing-mode: vertical-lr;
+}
 
 #playlistDialog {
   overflow: hidden;
@@ -532,6 +550,14 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   width: 1.5rem;
   height: 1.5rem;
 }
+#playlist.demo .listen.ui-state-active .demo {
+  position: absolute;
+  text-indent: 0;
+  top: -0.5rem;
+  right: -1.5rem;
+  writing-mode: vertical-lr;
+}
+
 
 #backgroundDialog {
   display: flex;

@@ -3,9 +3,10 @@
 import { logout, user } from './login.js';
 import { player } from './player.js';
 
+$.fn.DataTable.ext.pager.numbers_length = 5;
+
 import('./library.js').then(({ show }) => show());
 import('./controls.js');
-import('./gallery.js');
 
 $('#launcher .library').click(() => {
   import('./library.js').then(({ show }) => show());

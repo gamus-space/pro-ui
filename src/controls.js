@@ -6,6 +6,8 @@ import { player } from './player.js';
 import { setPlayerOptions } from './script.js';
 import { dialogOptions, initDialog, showDialog, time } from './utils.js';
 
+const SEEK_START_LIMIT = 2;
+
 $('#playerDialog').dialog({
   ...dialogOptions,
   width: 580,
@@ -165,6 +167,14 @@ player.addEventListener('pause', () => {
 });
 player.addEventListener('timeupdate', (e) => {
   controls.position = player.currentTime;
+  const previous = $('#playerDialog .previous .ui-icon');
+  if (player.currentTime <= SEEK_START_LIMIT && previous.hasClass('ui-icon-seek-prev')) {
+    previous.removeClass('ui-icon-seek-prev').addClass('ui-icon-seek-first');
+  }
+  if (player.currentTime > SEEK_START_LIMIT && previous.hasClass('ui-icon-seek-first')) {
+    previous.removeClass('ui-icon-seek-first').addClass('ui-icon-seek-prev');
+  }
+  updatePreviousDisabled();
 });
 player.addEventListener('entry', ({ detail: track }) => {
   const dbTrack = db?.[track.url];
@@ -190,8 +200,11 @@ function updateEntry() {
   $('#playerDialog .entry .pos').text(player.entry+1);
   $('#playerDialog .midiPlayer .nav').toggle(player.entry != null);
   $('#playerDialog .miniPlayer .next,.previous').toggle(player.entry != null);
-  $('#playerDialog .previous').button('option', 'disabled', player.entry == null || player.entry == 0);
+  updatePreviousDisabled();
   $('#playerDialog .next').button('option', 'disabled', player.entry == null || player.entry >= player.playlist.length-1);
+}
+function updatePreviousDisabled() {
+  $('#playerDialog .previous').button('option', 'disabled', player.currentTime <= SEEK_START_LIMIT && (player.entry == null || player.entry == 0));
 }
 player.addEventListener('update', ({ detail: updates }) => {
   if (updates.loop != null) controls.loop = updates.loop;
@@ -205,7 +218,8 @@ $('#playerDialog .play').click(() => {
 });
 $('#playerDialog .previous').click(() => {
   if (player.entry == null) return;
-  player.load(player.entry-1);
+  if (player.currentTime > SEEK_START_LIMIT) player.currentTime = 0;
+  else player.load(player.entry-1);
 });
 $('#playerDialog .next').click(() => {
   if (player.entry == null) return;

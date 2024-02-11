@@ -7,6 +7,7 @@ class Player extends EventTarget {
   // audio
   // loading
   // playlist
+  // track
   // entry
   // loop
   // stream
@@ -21,6 +22,7 @@ class Player extends EventTarget {
   constructor() {
     super();
     this._playlist = [];
+    this._track = null;
     this._entry = null;
     this._loop = false;
     this.loading = false;
@@ -100,6 +102,9 @@ class Player extends EventTarget {
 
   get entry() {
     return this._entry;
+  }
+  get track() {
+    return this._track;
   }
   get playlist() {
     return this._playlist;
@@ -208,6 +213,7 @@ class Player extends EventTarget {
     this.loading = true;
 
     const data = typeof data_or_entry === 'number' ? this._playlist[data_or_entry] : data_or_entry;
+    this._track = data;
     this._entry = typeof data_or_entry === 'number' ? data_or_entry : null;
     this._duration = data.duration;
     this.iteration = 0;
