@@ -1,24 +1,34 @@
 'use strict';
 
+import { user } from './login.js';
 import { player } from './player.js';
 import { setPlaylist } from './script.js';
-import { dialogOptions, initDialog, time, trackTitle } from './utils.js';
+import { dialogOptions, initDialog, showDialog, time, trackTitle } from './utils.js';
 
 $('#playlistDialog').dialog({
-  ...dialogOptions($('#playlistDialog')),
+  ...dialogOptions,
   width: 400,
   height: 400,
-  position: { my: "left", at: "left+2% center", of: window },
+  position: { my: "left", at: "left+10% center", of: window },
   resize: (e, { size: { height } }) => {
     resizeTable(height);
   },
 });
-initDialog($('#playlistDialog'));
+initDialog($('#playlistDialog'), { icon: 'ph:playlist' });
+
+export function show() {
+  showDialog($('#playlistDialog'));
+}
 
 function resizeTable(height) {
   const body = $('#playlist_wrapper .dataTables_scrollBody');
   body.css('max-height', height - body.position().top - 70);
 }
+
+const ICON_PLAY = 'ui-icon-circle-triangle-e';
+const ICON_PAUSE = 'ui-icon-pause';
+
+let isPlaying = false;
 
 setTimeout(() => {
   setTimeout(() => {
@@ -38,7 +48,7 @@ setTimeout(() => {
     scrollX: true,
     scrollY: $('#playlistDialog').parent()[0].clientHeight - 132,
     scrollCollapse: true,
-    dom: '<"operations">flrt<"info"><"status">p',
+    dom: '<"operations">frt<"info"><"status">p',
     initComplete: () => {
       updateInfo();
     },
@@ -56,7 +66,10 @@ setTimeout(() => {
   $('#playlist tbody').on('click', 'button.listen', (event) => {
     event.stopPropagation();
     const data = $('#playlist').DataTable().row($(event.target).parents('tr')).data();
-    player.load(data.no-1);
+    const loaded = $(event.currentTarget).hasClass('ui-state-active');
+    if (!loaded) player.load(data.no-1);
+    else if (isPlaying) player.pause();
+    else player.play();
   });
 
   $('#playlistDialog .operations').append($(`
@@ -76,6 +89,10 @@ setTimeout(() => {
       <span class="ui-icon ui-icon-circle-triangle-s"></span>
     </button>
   `));
+
+  user.then(user => {
+    if (user.demo) $('#playlist').addClass('demo');
+  });
 
   function rowsStats(selector, zero) {
     const rows = $('#playlist').DataTable().rows(selector);
@@ -125,8 +142,19 @@ setTimeout(() => {
   });
 
   player.addEventListener('entry', ({ detail: { entry } }) => {
-    $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active');
+    $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active')
+      .find('.ui-icon').removeClass(ICON_PAUSE).addClass(ICON_PLAY);
     $('#playlist').DataTable().rows((row, data) => data.no-1 === entry).nodes().to$().find('button.listen').addClass('ui-state-active');
+  });
+  player.addEventListener('play', () => {
+    isPlaying = true;
+    $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active')
+      .find('.ui-icon').removeClass(ICON_PLAY).addClass(ICON_PAUSE);
+  });
+  player.addEventListener('pause', () => {
+    isPlaying = false;
+    $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active')
+      .find('.ui-icon').removeClass(ICON_PAUSE).addClass(ICON_PLAY);
   });
 
   playlistController.init($('#playlist').DataTable());
@@ -139,7 +167,8 @@ class PlaylistController {
     this.playlist = [];
     this.play = `
       <button class="listen ui-button ui-button-icon-only">
-        <span class="ui-icon ui-icon-circle-triangle-e"></span>
+        <span class="ui-icon ${ICON_PLAY}"></span>
+        <span class="demo">DEMO</span
       </button>
     `;
     this.entry = undefined;

@@ -1,17 +1,21 @@
 'use strict';
 
-import { dialogOptions, initDialog } from './utils.js';
+import { dialogOptions, initDialog, showDialog } from './utils.js';
 
 $('#backgroundDialog').dialog({
-  ...dialogOptions($('#backgroundDialog')),
+  ...dialogOptions,
   width: 400,
   height: 300,
-  position: { my: "left", at: "left+5% center", of: window },
+  position: { my: "left", at: "left+8% center", of: window },
   open: function() {
     $(this).parent().focus();
   },
 });
-initDialog($('#backgroundDialog'));
+initDialog($('#backgroundDialog'), { icon: 'ph:image' });
+
+export function show() {
+  showDialog($('#backgroundDialog'));
+}
 
 const backgrounds = [
   { previewUrl: 'https://www.myfreetextures.com/wp-content/uploads/2014/11/another-flowing-blue-abstract-texture-445x312.jpg?ezimgfmt=ng:webp/ngcb1', refUrl: 'https://www.myfreetextures.com/dark-blue-swirl-abstract-texture-background/', fileUrl: 'https://www.myfreetextures.com/wp-content/uploads/2014/11/another-flowing-blue-abstract-texture.jpg', name: 'Dark blue swirl abstract texture background' },

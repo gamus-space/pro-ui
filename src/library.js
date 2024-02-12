@@ -4,18 +4,22 @@ import { db, loadDb } from './db.js';
 import { user } from './login.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
 import { setPlaylist } from './script.js';
-import { dialogOptions, initDialog, size, time, trackTitle } from './utils.js';
+import { dialogOptions, initDialog, showDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
-  ...dialogOptions($('#libraryDialog')),
+  ...dialogOptions,
   width: 530,
   height: 400,
-  position: { my: "right", at: "right-2% center", of: window },
+  position: { my: "right", at: "right-8% center", of: window },
   resize: (e, { size: { height } }) => {
     resizeTable(height);
   },
 });
-initDialog($('#libraryDialog'));
+initDialog($('#libraryDialog'), { icon: 'ph:folder-open' });
+
+export function show() {
+  showDialog($('#libraryDialog'));
+}
 
 function resizeTable(height) {
   const body = $('#library_wrapper .dataTables_scrollBody');
@@ -30,6 +34,11 @@ const KIND_MAPPING = {
   story: 'Y',
 };
 
+const ICON_PLAY = 'ui-icon-circle-triangle-e';
+const ICON_PAUSE = 'ui-icon-pause';
+
+let isPlaying = false;
+
 loadDb().then(data => {
   setTimeout(() => {
     resizeTable($('#libraryDialog').parent().height());
@@ -38,7 +47,8 @@ loadDb().then(data => {
     data: data.map(track => ({
       play: `
         <button class="listen ui-button ui-button-icon-only">
-          <span class="ui-icon ui-icon-circle-triangle-e"></span>
+          <span class="ui-icon ${ICON_PLAY}"></span>
+          <span class="demo">DEMO</span
         </button>
       `,
       game: track.game,
@@ -74,11 +84,21 @@ loadDb().then(data => {
       { name: "size", data: "size", title: "Size" },
     ],
     order: [1, 'asc'],
-    paging: false,
+    paging: true,
+    pageLength: 100,
+    pagingType: 'full_numbers',
+    language: {
+      paginate: {
+        previous: '<span class="ui-icon ui-icon-arrow-1-w"></span>',
+        next: '<span class="ui-icon ui-icon-arrow-1-e"></span>',
+        first: '<span class="ui-icon ui-icon-arrowstop-1-w"></span>',
+        last: '<span class="ui-icon ui-icon-arrowstop-1-e"></span>',
+      }
+    },
     scrollX: true,
     scrollY: $('#libraryDialog').parent()[0].clientHeight - 132,
     scrollCollapse: true,
-    dom: '<"operations">flrt<"info"><"status">p',
+    dom: '<"operations">frt<"info"><"status">p',
     initComplete: () => {
       updateInfo();
     },
@@ -93,7 +113,10 @@ loadDb().then(data => {
   $('#library tbody').on('click', 'button.listen', (event) => {
     event.stopPropagation();
     const data = $('#library').DataTable().row($(event.target).parents('tr')).data();
-    player.load(playerEntry(data));
+    const loaded = $(event.currentTarget).hasClass('ui-state-active');
+    if (!loaded) player.load(playerEntry(data));
+    else if (isPlaying) player.pause();
+    else player.play();
   });
 
   $('#libraryDialog .operations').append($(`
@@ -251,6 +274,7 @@ loadDb().then(data => {
       .find(`option[value='mp3']`).prop('disabled', !user.mp3).end()
       .selectmenu('refresh');
     setFormat(localStorage.getItem('format') || (user.mp3 ? 'mp3' : 'flac'));
+    if (user.demo) $('#library').addClass('demo');
   });
 
   async function download(item, type) {
@@ -367,7 +391,18 @@ loadDb().then(data => {
   });
 
   player.addEventListener('entry', ({ detail: { url } }) => {
-    $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active');
+    $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active')
+      .find('.ui-icon').removeClass(ICON_PAUSE).addClass(ICON_PLAY);
     $('#library').DataTable().rows((row, data) => data.url === url).nodes().to$().find('button.listen').addClass('ui-state-active');
+  });
+  player.addEventListener('play', () => {
+    isPlaying = true;
+    $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active')
+      .find('.ui-icon').removeClass(ICON_PLAY).addClass(ICON_PAUSE);
+  });
+  player.addEventListener('pause', () => {
+    isPlaying = false;
+    $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active')
+      .find('.ui-icon').removeClass(ICON_PAUSE).addClass(ICON_PLAY);
   });
 });

@@ -3,22 +3,31 @@
 import { logout, user } from './login.js';
 import { player } from './player.js';
 
-import './login.js';
-import './controls_mini.js';
-import './controls.js';
-import './library.js';
-import './playlist.js';
-import './gallery.js';
-$('#miniPlayerDialog').dialog('moveToTop');
-$('#playerDialog').dialog('moveToTop');
+$.fn.DataTable.ext.pager.numbers_length = 5;
 
-$('#desktop .background').click(() => {
-  import('./background.js');
+import('./library.js').then(({ show }) => show());
+import('./controls.js');
+
+$('#launcher .library').click(() => {
+  import('./library.js').then(({ show }) => show());
 });
-$('#desktop .visualize').click(() => {
-  import('./visualizer.js');
+$('#launcher .player').click(() => {
+  import('./controls.js').then(({ show }) => show());
 });
-$('#desktop .logout').click(() => {
+$('#launcher .playlist').click(() => {
+  import('./playlist.js').then(({ show }) => show());
+});
+$('#launcher .gallery').click(() => {
+  import('./gallery.js').then(({ show }) => show());
+});
+$('#launcher .visualizer').click(() => {
+  import('./visualizer.js').then(({ show }) => show());
+});
+
+$('#user .background').click(() => {
+  import('./background.js').then(({ show }) => show());
+});
+$('#user .logout').click(() => {
   logout().finally(() => {
     location.reload();
   });
@@ -54,6 +63,19 @@ user.then(user => {
 });
 
 let wakelock;
-navigator.wakeLock?.request().then(lock => {
-  wakelock = lock;
+if (navigator.wakeLock) {
+  $('#user .lock').show();
+  $('#user .lock input').checkboxradio({
+    icon: false,
+  });
+}
+$('#user .lock').change(event => {
+  const value = $(event.target).prop('checked');
+  if (value) {
+    navigator.wakeLock.request().then(lock => {
+      wakelock = lock;
+    });
+  } else {
+    wakelock.release();
+  }
 });

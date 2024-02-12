@@ -4,25 +4,24 @@ export function trackTitle({ game, title }) {
   return `${game} - ${title}`;
 }
 
-export const dialogOptions = element => ({
-  closeText: 'Minimize',
-  resizable: !element.hasClass('fixed'),
-  beforeClose: function (e) {
-    e.preventDefault();
-    const open = $(this).dialog("option", "classes.ui-dialog") === 'hidden';
-    $(this).dialog("option", "classes.ui-dialog", open ? '' : 'hidden');
-    $(this).dialog("option", "resizable", open && !$(this).hasClass('fixed'));
-    $(this).parent().find('.ui-dialog-titlebar-close').attr('title', open ? 'Minimize' : 'Restore');
-    $(this).parent().find('.ui-dialog-titlebar button .ui-icon')
-      .toggleClass('ui-icon-minusthick', open)
-      .toggleClass('ui-icon-triangle-1-s', !open);
-  },
-});
+export const dialogOptions = {
+  autoOpen: false,
+  show: 500,
+  hide: 500,
+};
 
-export function initDialog(element) {
-  element.parent().find('.ui-dialog-titlebar button')
-    .blur()
-    .find('.ui-icon').removeClass('ui-icon-closethick').addClass('ui-icon-minusthick');
+export function initDialog(element, { icon }) {
+  element.parent().find('.ui-dialog-title')
+    .prepend($('<iconify-icon>', { icon }));
+}
+
+export function showDialog(element) {
+  if (element.dialog('isOpen')) {
+    element.dialog('moveToTop');
+  } else {
+    element.dialog('open');
+  }
+  element.parent().find('.ui-dialog-titlebar button').blur();
 }
 
 export function time(t) {

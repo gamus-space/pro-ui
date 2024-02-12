@@ -4,7 +4,21 @@ import { db } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
 import { setPlayerOptions } from './script.js';
-import { dialogOptions, initDialog, time } from './utils.js';
+import { dialogOptions, initDialog, showDialog, time } from './utils.js';
+
+const SEEK_START_LIMIT = 2;
+
+$('#playerDialog').dialog({
+  ...dialogOptions,
+  width: 580,
+  height: 260,
+  position: { my: "center", at: "center", of: window },
+});
+initDialog($('#playerDialog'), { icon: 'ph:play' });
+
+export function show() {
+  showDialog($('#playerDialog'));
+}
 
 class Controls {
   constructor() {
@@ -78,9 +92,12 @@ class Controls {
       slider.on('slidechange', fix);
       slider.on('slide', fix);
     };
-    initSlider(fixSlider(1.5, 'left'), $('#playerDialog .seek'));
-    initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .volume'));
-    initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .stereo'));
+    initSlider(fixSlider(1.5, 'left'), $('#playerDialog .midiPlayer .seek'));
+    initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .midiPlayer .volume'));
+    initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .midiPlayer .stereo'));
+    initSlider(fixSlider(0.8, 'left'), $('#playerDialog .miniPlayer .seek'));
+    initSlider(fixSlider(0.5, 'bottom'), $('#playerDialog .miniPlayer .volume'));
+    initSlider(fixSlider(0.5, 'bottom'), $('#playerDialog .miniPlayer .stereo'));
   }
   get canplay() {
     return this._canplay;
@@ -150,13 +167,21 @@ player.addEventListener('pause', () => {
 });
 player.addEventListener('timeupdate', (e) => {
   controls.position = player.currentTime;
+  const previous = $('#playerDialog .previous .ui-icon');
+  if (player.currentTime <= SEEK_START_LIMIT && previous.hasClass('ui-icon-seek-prev')) {
+    previous.removeClass('ui-icon-seek-prev').addClass('ui-icon-seek-first');
+  }
+  if (player.currentTime > SEEK_START_LIMIT && previous.hasClass('ui-icon-seek-first')) {
+    previous.removeClass('ui-icon-seek-first').addClass('ui-icon-seek-prev');
+  }
+  updatePreviousDisabled();
 });
 player.addEventListener('entry', ({ detail: track }) => {
   const dbTrack = db?.[track.url];
   $('#playerDialog .info').toggle(true)
-    .find('.game').text(track.game.split(': ')[0]).end()
-    .find('.subtitle').text(track.game.split(': ')[1] ?? '').end()
-    .find('.space').toggle(!track.game.split(': ')[1]).end()
+    .find('.game').text(track.game).end()
+    .find('.gameTitle').text(track.game.split(': ')[0]).end()
+    .find('.gameSubtitle').text(track.game.split(': ')[1] ?? '').end()
     .find('.track').text(track.title).end()
     .find('.artist').toggle(!!dbTrack?.artist).end()
     .find('.by').text(dbTrack?.artist ?? '').end()
@@ -169,12 +194,17 @@ player.addEventListener('playlist', ({ detail: { playlist } }) => {
   $('#playerDialog .entry .total').text(playlist.length);
   updateEntry();
 });
+$('#playerDialog .entry .total').text(player.playlist.length);
 function updateEntry() {
   $('#playerDialog .entry').toggle(player.entry != null);
   $('#playerDialog .entry .pos').text(player.entry+1);
-  $('#playerDialog .nav').toggle(player.entry != null);
-  $('#playerDialog .nav .previous').button('option', 'disabled', player.entry == null || player.entry == 0);
-  $('#playerDialog .nav .next').button('option', 'disabled', player.entry == null || player.entry >= player.playlist.length-1);
+  $('#playerDialog .midiPlayer .nav').toggle(player.entry != null);
+  $('#playerDialog .miniPlayer .next,.previous').toggle(player.entry != null);
+  updatePreviousDisabled();
+  $('#playerDialog .next').button('option', 'disabled', player.entry == null || player.entry >= player.playlist.length-1);
+}
+function updatePreviousDisabled() {
+  $('#playerDialog .previous').button('option', 'disabled', player.currentTime <= SEEK_START_LIMIT && (player.entry == null || player.entry == 0));
 }
 player.addEventListener('update', ({ detail: updates }) => {
   if (updates.loop != null) controls.loop = updates.loop;
@@ -188,7 +218,8 @@ $('#playerDialog .play').click(() => {
 });
 $('#playerDialog .previous').click(() => {
   if (player.entry == null) return;
-  player.load(player.entry-1);
+  if (player.currentTime > SEEK_START_LIMIT) player.currentTime = 0;
+  else player.load(player.entry-1);
 });
 $('#playerDialog .next').click(() => {
   if (player.entry == null) return;
@@ -235,11 +266,3 @@ $('#playerDialog .mono').click(() => {
 $('#playerDialog .stereo-full').click(() => {
   setValue($('#playerDialog .stereo'), 1);
 });
-
-$('#playerDialog').dialog({
-  ...dialogOptions($('#playerDialog')),
-  width: 580,
-  height: 'auto',
-  position: { my: "center", at: "center+15%", of: window },
-});
-initDialog($('#playerDialog'));

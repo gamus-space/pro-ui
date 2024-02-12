@@ -16,14 +16,18 @@ body .ui-widget {
 .ui-dialog .ui-dialog-title {
   font-weight: normal;
 }
+.ui-dialog .ui-dialog-title > * {
+  vertical-align: sub;
+  padding-right: 0.5rem;
+  font-size: 1.25em;
+}
 .ui-dialog.ui-widget.ui-widget-content {
   border: 1px solid black;
 }
-.ui-dialog.hidden {
-  height: 2.70em !important;
-}
-.ui-dialog.hidden .ui-dialog-content {
-  visibility: hidden;
+.ui-dialog .dataTables_scrollBody,
+.ui-dialog .scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: #777 #222;
 }
 .ui-slider.ui-slider-vertical {
   background-position: 25% 50%;
@@ -34,16 +38,72 @@ body .ui-widget {
 .ui-widget-header {
   background-size: 60px 150px !important;
 }
-
-#desktop {
-  text-align: center;
+.dataTables_paginate .paginate_button.disabled {
+  opacity: 0.5;
 }
-#desktop button {
-  width: 2rem;
-  height: 2rem;
+.dataTables_paginate .paginate_button {
+  padding: 0.2rem 0.5rem !important;
 }
 
-#playerDialog {
+#launcher {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+#launcher .ui-button {
+  width: 4rem;
+  height: 4rem;
+  font-size: 2rem;
+  padding: 0;
+}
+#launcher .ui-button > * {
+  vertical-align: sub;
+}
+
+#user {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+#user .ui-button {
+  width: 4rem;
+  height: 4rem;
+  font-size: 2rem;
+  padding: 0;
+}
+#user .ui-button > * {
+  vertical-align: sub;
+}
+#user .ui-checkboxradio-label > * {
+  vertical-align: bottom;
+}
+
+body #playerDialog {
+  container-type: size;
+  overflow: hidden;
+}
+body #playerDialog .miniPlayer {
+  display: none;
+}
+@container (width < 400px) or (height < 200px) {
+  body #playerDialog .midiPlayer {
+    display: none;
+  }
+  body #playerDialog .miniPlayer {
+    display: flex;
+  }
+}
+
+#playerDialog .midiPlayer {
+  height: calc(100% - 2rem);
   display: grid;
   grid-template:
     "status plpa info vol  ster" 6rem
@@ -52,242 +112,294 @@ body .ui-widget {
   /  3rem   6rem auto 3rem 3rem;
   place-items: center;
   margin: 1rem;
-}
-#playerDialog .plpa {
-  grid-area: plpa;
-}
-#playerDialog .plpa .play {
-  width: 2rem;
-  height: 2rem;
-  transform: scale(2);
-}
-#playerDialog .info {
-  display: none;
-  grid-area: info;
-  place-self: stretch;
-  contain: strict;
-  padding: 0.2rem 1rem;
-}
-#playerDialog .info .row {
-  margin-top: 0.8rem;
-}
-#playerDialog .info .row .major {
-  display: inline-block;
-  margin-right: 1rem;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-#playerDialog .info .row .medium {
-  display: inline-block;
-  font-size: 1rem;
-}
-#playerDialog .info .row .minor {
-  display: inline-block;
-  margin-top: 1rem;
-  font-size: 0.8rem;
-}
-#playerDialog .time {
-  grid-area: time;
-}
-#playerDialog .status {
-  grid-area: status;
-}
-#playerDialog .status .loop {
-  width: 2rem;
-  height: 2rem;
-}
-#playerDialog .seek {
-  grid-area: seek;
-  justify-self: stretch;
-}
-#playerDialog .vol {
-  grid-area: vol;
-  display: grid;
-  grid-template:
-    "volume max" 1fr
-    "volume min" 1fr
-  / 1fr 1fr
-}
-#playerDialog .vol .volume {
-  grid-area: volume;
-  height: 5rem;
-}
-#playerDialog .vol .volume-min {
-  grid-area: min;
-  align-self: end;
-}
-#playerDialog .vol .volume-max {
-  grid-area: max;
-  align-self: start;
-}
-#playerDialog .ster {
-  grid-area: ster;
-  display: grid;
-  grid-template:
-    "stereo max" 1fr
-    "stereo med" 1fr
-    "stereo min" 1fr
-  / 1fr 1fr
-}
-#playerDialog .ster .stereo {
-  grid-area: stereo;
-  height: 5rem;
-}
-#playerDialog .ster .stereo-rev {
-  grid-area: min;
-  align-self: end;
-}
-#playerDialog .ster .mono {
-  grid-area: med;
-  align-self: center;
-}
-#playerDialog .ster .stereo-full {
-  grid-area: max;
-  align-self: start;
-}
-#playerDialog .ster .icon-group {
-  white-space: nowrap;
-  margin: -0.1em 0.2em;
-  text-align: center;
-}
-#playerDialog .ster .icon-group * {
-  margin: 0 -0.5em;
-}
-#playerDialog .entry {
-  grid-area: entry;
-  display: none;
-  font-size: 1rem;
-  font-weight: bold;
-}
-#playerDialog .nav {
-  grid-area: nav;
-  display: none;
-}
-#playerDialog .nav button {
-  width: 2rem;
-  height: 2rem;
-}
-#playerDialog .seek {
-  height: 1.5rem;
-}
-#playerDialog .seek.ui-slider .ui-slider-handle {
-  width: 1.5rem;
-  height: 1.5rem;
-  top: -1px;
-}
-#playerDialog .seek.ui-slider .ui-slider-range {
-  top: -1px;
-}
-#playerDialog .seek .label {
-  position: relative;
-  width: 100%;
-  text-align: center;
-  z-index: 10;
-  font-weight: bold;
-  font-size: 1rem;
-  initial-letter: 0.2rem;
-}
-#playerDialog .volume,
-#playerDialog .stereo {
-  width: 0.8rem;
-}
-#playerDialog .volume.ui-slider .ui-slider-handle,
-#playerDialog .stereo.ui-slider .ui-slider-handle {
-  width: 0.8rem;
-  height: 0.8rem;
-  left: -1px;
-}
-#playerDialog .volume.ui-slider .ui-slider-range,
-#playerDialog .stereo.ui-slider .ui-slider-range {
-  left: -1px;
+
+  .plpa {
+    grid-area: plpa;
+  }
+  .plpa .play {
+    width: 2rem;
+    height: 2rem;
+    transform: scale(2);
+  }
+  .info {
+    display: none;
+    grid-area: info;
+    place-self: stretch;
+    contain: strict;
+    padding: 0.2rem 1rem;
+  }
+  .info .row {
+    margin-top: 0.8rem;
+  }
+  .info .row .major {
+    display: inline-block;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  .info .row .medium {
+    display: inline-block;
+    font-size: 1rem;
+  }
+  .info .row .minor {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+  }
+  .time {
+    grid-area: time;
+  }
+  .status {
+    grid-area: status;
+  }
+  .status .loop {
+    width: 2rem;
+    height: 2rem;
+  }
+  .seek {
+    grid-area: seek;
+    justify-self: stretch;
+  }
+  .vol {
+    grid-area: vol;
+    display: grid;
+    grid-template:
+      "volume max" 1fr
+      "volume min" 1fr
+    / 1fr 1fr
+  }
+  .vol .volume {
+    grid-area: volume;
+    height: 5rem;
+  }
+  .vol .volume-min {
+    grid-area: min;
+    align-self: end;
+  }
+  .vol .volume-max {
+    grid-area: max;
+    align-self: start;
+  }
+  .ster {
+    grid-area: ster;
+    display: grid;
+    grid-template:
+      "stereo max" 1fr
+      "stereo med" 1fr
+      "stereo min" 1fr
+    / 1fr 1fr
+  }
+  .ster .stereo {
+    grid-area: stereo;
+    height: 5rem;
+  }
+  .ster .stereo-rev {
+    grid-area: min;
+    align-self: end;
+  }
+  .ster .mono {
+    grid-area: med;
+    align-self: center;
+  }
+  .ster .stereo-full {
+    grid-area: max;
+    align-self: start;
+  }
+  .ster .icon-group {
+    white-space: nowrap;
+    margin: -0.1em 0.2em;
+    text-align: center;
+  }
+  .ster .icon-group * {
+    margin: 0 -0.5em;
+  }
+  .entry {
+    grid-area: entry;
+    display: none;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  .nav {
+    grid-area: nav;
+    display: none;
+  }
+  .nav button {
+    width: 2rem;
+    height: 2rem;
+  }
+  .seek {
+    height: 1.5rem;
+  }
+  .seek.ui-slider .ui-slider-handle {
+    width: 1.5rem;
+    height: 1.5rem;
+    top: -1px;
+  }
+  .seek.ui-slider .ui-slider-range {
+    top: -1px;
+  }
+  .seek .label {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+    font-weight: bold;
+    font-size: 1rem;
+    initial-letter: 0.2rem;
+  }
+  .volume,
+  .stereo {
+    width: 0.8rem;
+  }
+  .volume.ui-slider .ui-slider-handle,
+  .stereo.ui-slider .ui-slider-handle {
+    width: 0.8rem;
+    height: 0.8rem;
+    left: -1px;
+  }
+  .volume.ui-slider .ui-slider-range,
+  .stereo.ui-slider .ui-slider-range {
+    left: -1px;
+  }
 }
 
-#miniPlayerDialog .ui-button-icon-only {
-  height: 2rem;
-}
-#miniPlayerDialog .ui-visual-focus {
-  box-shadow: none;
-}
-#miniPlayerDialog .controls .row {
-  margin: 1rem 0;
-}
-#miniPlayerDialog .controls .group {
-  display: inline-block;
-}
-#miniPlayerDialog .controls .seek {
-  display: inline-block;
-  width: 100px;
-  margin: 0 1rem;
-}
-#miniPlayerDialog .seek .label {
-  position: relative;
-  width: 100%;
-  text-align: center;
-  z-index: 10;
-  font-weight: bold;
-  font-size: 0.5rem;
-  initial-letter: 0.1rem;
-}
-#miniPlayerDialog .controls .volume {
-  display: inline-block;
-  width: 100px;
-  margin: 0 0.5rem;
-}
-#miniPlayerDialog .controls .stereo {
-  display: inline-block;
-  width: 100px;
-  margin: 0 0.5rem;
-}
-#miniPlayerDialog .controls .group .scale {
+#playerDialog .miniPlayer {
+  height: 100%;
+  min-width: 320px;
   display: flex;
-}
-#miniPlayerDialog .controls .group.group1 .scale {
-  margin: -0.3rem 1rem;
-}
-#miniPlayerDialog .controls .group.group2 .scale {
-  margin: -0.3rem 0.70rem;
-}
-#miniPlayerDialog .controls .group.group3 {
-  vertical-align: top;
-}
-#miniPlayerDialog .controls .group.group3 .scale {
-  justify-content: center;
-}
-#miniPlayerDialog .controls .icon-group {
-  flex-grow: 1;
-}
-#miniPlayerDialog .controls .icon-group > * {
-  margin: -6px;
-}
-#miniPlayerDialog .controls .icon-group.volume-min {
-  text-align: left;
-}
-#miniPlayerDialog .controls .icon-group.volume-max {
-  text-align: right;
-}
-#miniPlayerDialog .controls .icon-group.stereo-rev {
-  text-align: left;
-}
-#miniPlayerDialog .controls .icon-group.mono {
-  text-align: center;
-  padding-left: 3px;
-}
-#miniPlayerDialog .controls .icon-group.stereo-full {
-  text-align: right;
-}
-#miniPlayerDialog .controls .ui-slider .ui-slider-handle {
-  width: 0.8em;
-  height: 0.8em;
-  top: -1px;
-}
-#miniPlayerDialog .controls .ui-slider .ui-slider-range {
-  top: -1px;
-}
-#miniPlayerDialog .entry h2 {
-  display: inline-block;
-  vertical-align: sub;
-  margin-right: 1rem;
-  margin-top: 0;
+  flex-direction: column;
+  justify-content: space-evenly;
+
+  .ui-button-icon-only {
+    height: 2rem;
+    width: 2rem;
+  }
+  .ui-visual-focus {
+    box-shadow: none;
+  }
+  .header {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  .header .info {
+    width: 100%;
+    min-width: 0;
+    text-align: center;
+  }
+  .header .info > * {
+    font-size: 1.5em;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .header .entry {
+    white-space: nowrap;
+  }
+  .controls {
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+  }
+  .controls .sk {
+    flex-grow: 1;
+    align-self: end;
+  }
+  .controls .sk .seek {
+    margin: 0 1rem;
+    min-width: 4rem;
+  }
+  .controls .sk .scale {
+    text-align: center;
+  }
+  .seek {
+    height: 0.8rem;
+  }
+  .seek.ui-slider .ui-slider-handle {
+    width: 0.8rem;
+    height: 0.8rem;
+    top: -1px;
+  }
+  .seek.ui-slider .ui-slider-range {
+    top: -1px;
+  }
+  .seek .label {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+    font-weight: bold;
+    font-size: 0.5rem;
+    initial-letter: 0.1rem;
+  }
+  .vol {
+    display: grid;
+    grid-template:
+      "volume max" 1fr
+      "volume min" 1fr
+    / 1fr 1fr
+  }
+  .vol .volume {
+    grid-area: volume;
+    height: 3rem;
+  }
+  .vol .volume-min {
+    grid-area: min;
+    align-self: end;
+  }
+  .vol .volume-max {
+    grid-area: max;
+    align-self: start;
+  }
+  .ster {
+    margin-left: 1rem;
+    display: grid;
+    grid-template:
+      "stereo max" 1fr
+      "stereo med" 1fr
+      "stereo min" 1fr
+    / 1fr 1fr
+  }
+  .ster .stereo {
+    grid-area: stereo;
+    height: 3rem;
+  }
+  .ster .stereo-rev {
+    grid-area: min;
+    align-self: end;
+  }
+  .ster .mono {
+    grid-area: med;
+    align-self: center;
+  }
+  .ster .stereo-full {
+    grid-area: max;
+    align-self: start;
+  }
+  .ster .icon-group {
+    white-space: nowrap;
+    margin: -0.1em 0.2em;
+    text-align: center;
+  }
+  .ster .icon-group * {
+    margin: 0 -0.5em;
+  }
+  .volume,
+  .stereo {
+    width: 0.5rem;
+  }
+  .volume.ui-slider .ui-slider-handle,
+  .stereo.ui-slider .ui-slider-handle {
+    width: 0.5rem;
+    height: 0.5rem;
+    left: -1px;
+  }
+  .volume.ui-slider .ui-slider-range,
+  .stereo.ui-slider .ui-slider-range {
+    left: -1px;
+  }
 }
 
 #libraryDialog {
@@ -373,6 +485,13 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   width: 1.5rem;
   height: 1.5rem;
 }
+#library.demo .listen.ui-state-active .demo {
+  position: absolute;
+  text-indent: 0;
+  top: -0.5rem;
+  right: -1.5rem;
+  writing-mode: vertical-lr;
+}
 
 #playlistDialog {
   overflow: hidden;
@@ -431,6 +550,14 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   width: 1.5rem;
   height: 1.5rem;
 }
+#playlist.demo .listen.ui-state-active .demo {
+  position: absolute;
+  text-indent: 0;
+  top: -0.5rem;
+  right: -1.5rem;
+  writing-mode: vertical-lr;
+}
+
 
 #backgroundDialog {
   display: flex;
