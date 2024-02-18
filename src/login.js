@@ -27,6 +27,8 @@ function loginUser(user) {
   $('#loginOverlay').hide('fade', {}, 1500);
   setUser(user);
   setBaseUrl(apiUrl);
+  $('body').toggleClass('standard', !user.flac);
+  $('body').toggleClass('hifi', user.flac);
 }
 
 fetch(`${apiUrl}/api/user`, { credentials: 'include' }).then(response =>
@@ -102,4 +104,7 @@ $('#login input[type=checkbox]').click(e => {
       .append(features[source].map(feature => $("<li>", { text: feature })))
       .show('fade', {}, 1500);
   });
+  $('body').toggleClass('demo', source === 'demo');
+  $('body').toggleClass('standard', source === 'standard');
+  $('body').toggleClass('hifi', source === 'hifi');
 });

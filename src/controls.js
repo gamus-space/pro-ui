@@ -8,10 +8,12 @@ import { dialogOptions, initDialog, showDialog, time } from './utils.js';
 
 const SEEK_START_LIMIT = 2;
 
+let playlistDurations = [];
+
 $('#playerDialog').dialog({
   ...dialogOptions,
   width: 580,
-  height: 260,
+  height: 280,
   position: { my: "center", at: "center", of: window },
 });
 initDialog($('#playerDialog'), { icon: 'ph:play' });
@@ -50,7 +52,7 @@ class Controls {
       classes: { "ui-slider-range": "ui-state-active" },
       animate: false,
     };
-    $('#playerDialog .seek').slider({
+    $('#playerDialog .seekTrack').slider({
       ...sliderSettings,
       value: 0,
       min: 0,
@@ -59,9 +61,18 @@ class Controls {
       orientation: "horizontal",
       range: "min",
     });
+    $('#playerDialog .seekPlaylist').slider({
+      ...sliderSettings,
+      value: 0,
+      min: 0,
+      max: 0,
+      step: 1,
+      orientation: "horizontal",
+      range: "min",
+    });
     user.then(user => {
       if (user.demo)
-        $('#playerDialog .seek').append($('<div class="label">DEMO</div>'));
+        $('#playerDialog .seekTrack').append($('<div class="label">DEMO</div>'));
     });
     $('#playerDialog .volume').slider({
       ...sliderSettings,
@@ -92,10 +103,11 @@ class Controls {
       slider.on('slidechange', fix);
       slider.on('slide', fix);
     };
-    initSlider(fixSlider(1.5, 'left'), $('#playerDialog .midiPlayer .seek'));
+    initSlider(fixSlider(1.5, 'left'), $('#playerDialog .midiPlayer .seekTrack'));
+    initSlider(fixSlider(0.8, 'left'), $('#playerDialog .midiPlayer .seekPlaylist'));
     initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .midiPlayer .volume'));
     initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .midiPlayer .stereo'));
-    initSlider(fixSlider(0.8, 'left'), $('#playerDialog .miniPlayer .seek'));
+    initSlider(fixSlider(0.8, 'left'), $('#playerDialog .miniPlayer .seekTrack'));
     initSlider(fixSlider(0.5, 'bottom'), $('#playerDialog .miniPlayer .volume'));
     initSlider(fixSlider(0.5, 'bottom'), $('#playerDialog .miniPlayer .stereo'));
   }
@@ -120,7 +132,7 @@ class Controls {
   set duration(v) {
     this._duration = v;
     $('#playerDialog .duration').text(time(v));
-    $('#playerDialog .seek').slider('option', 'max', this._duration);
+    $('#playerDialog .seekTrack').slider('option', 'max', this._duration);
   }
   get position() {
     return this._position;
@@ -128,8 +140,10 @@ class Controls {
   set position(v) {
     this._position = v;
     $('#playerDialog .position').text(time(v));
-    if (!this.seeking)
-      $('#playerDialog .seek').slider('value', this._position);
+    if (!this.seeking) {
+      $('#playerDialog .seekTrack').slider('value', this._position);
+      $('#playerDialog .seekPlaylist').slider('value', (playlistDurations[player.entry-1] ?? 0) + this._position);
+    }
   }
   get loop() {
     return this._loop;
@@ -193,15 +207,22 @@ player.addEventListener('entry', ({ detail: track }) => {
 player.addEventListener('playlist', ({ detail: { playlist } }) => {
   $('#playerDialog .entry .total').text(playlist.length);
   updateEntry();
+  updatePlaylist();
 });
 $('#playerDialog .entry .total').text(player.playlist.length);
+updatePlaylist();
 function updateEntry() {
   $('#playerDialog .entry').toggle(player.entry != null);
   $('#playerDialog .entry .pos').text(player.entry+1);
   $('#playerDialog .midiPlayer .nav').toggle(player.entry != null);
   $('#playerDialog .miniPlayer .next,.previous').toggle(player.entry != null);
+  $('#playerDialog .midiPlayer .seekPlaylist').toggle(player.entry != null);
   updatePreviousDisabled();
   $('#playerDialog .next').button('option', 'disabled', player.entry == null || player.entry >= player.playlist.length-1);
+}
+function updatePlaylist() {
+  playlistDurations = player.playlist.map(({ time }) => time).reduce((res, time) => [...res, time + (res[res.length-1] ?? 0)], []);
+  $('#playerDialog .seekPlaylist').slider('option', 'max', playlistDurations[playlistDurations.length-1] ?? 0);
 }
 function updatePreviousDisabled() {
   $('#playerDialog .previous').button('option', 'disabled', player.currentTime <= SEEK_START_LIMIT && (player.entry == null || player.entry == 0));
@@ -230,15 +251,32 @@ $('#playerDialog .loop').change(() => {
   setPlayerOptions({ loop: controls.loop });
 });
 
-$('#playerDialog .seek').on('slidestart', () => {
+$('#playerDialog .seekTrack,.seekPlaylist').on('slidestart', () => {
   controls.seeking = true;
 });
-$('#playerDialog .seek').on('slidestop', () => {
+$('#playerDialog .seekTrack,.seekPlaylist').on('slidestop', () => {
   controls.seeking = false;
 });
-$('#playerDialog .seek').on('slidechange', (e, { value }) => {
+$('#playerDialog .seekTrack').on('slidechange', (e, { value }) => {
   if (!e.originalEvent) return;
   player.currentTime = value;
+});
+$('#playerDialog .seekPlaylist').on('slidechange', (e, { value }) => {
+  if (!e.originalEvent) return;
+  const index = playlistDurations.findIndex(duration => duration >= value);
+  const seek = value - (playlistDurations[index-1] ?? 0);
+  if (index === player.entry) {
+    player.currentTime = seek;
+  } else {
+    player.load(index);
+    autoseek = seek;
+  }
+});
+let autoseek;
+player.addEventListener('canplay', () => {
+  if (autoseek == null) return;
+  player.currentTime = autoseek;
+  autoseek = undefined;
 });
 $('#playerDialog .volume').on('slide', (e, { value }) => {
   setPlayerOptions({ volume: value });

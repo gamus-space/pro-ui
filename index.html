@@ -31,6 +31,9 @@
     <button type="button" title="Background" class="background ui-button ui-widget ui-corner-all">
       <iconify-icon icon="ph:image"></iconify-icon>
     </button>
+    <button type="button" title="About" class="about ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:info"></iconify-icon>
+    </button>
   </div>
   <div id="launcher">
     <button type="button" title="Library" class="library ui-button ui-widget ui-corner-all">
@@ -80,7 +83,10 @@
           <span class="ui-icon ui-icon-play"></span>
         </button>
       </div>
-      <div class="seek"></div>
+      <div class="seek">
+        <div class="seekTrack"></div>
+        <div class="seekPlaylist" style="display: none"></div>
+      </div>
       <div class="vol">
         <div class="volume"></div>
         <span class="icon-group volume-min">
@@ -153,7 +159,7 @@
           </button>
         </span>
         <span class="sk">
-          <div class="seek"></div>
+          <div class="seekTrack"></div>
           <div class="scale">
             <span>
               <span class="position">0:00</span>
@@ -210,10 +216,10 @@
         <span class="ui-icon ui-icon-arrow-4-diag"></span>
         <input type="checkbox" name="contain" />
       </label>
-      <span class="name">
+      <span class="name" style="display: none">
         <a href="#" target="_blank">-</a>
       </span>
-      <button class="reset ui-button ui-button-icon-only">
+      <button class="reset ui-button ui-button-icon-only" style="display: none">
         <span class="ui-icon ui-icon-closethick"></span>
       </button>
     </div>
@@ -237,6 +243,18 @@
       <div class="title"></div>
     </div>
     <div class="demo">DEMO</div>
+  </div>
+  <div id="aboutDialog" title="about" style="display: none">
+    <h1>GAMUS PRO</h1>
+    <h2>&copy;2023-2024 krzykos</h2>
+    <div class="links">
+      <a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a>
+      <a href="https://gamus.space/" target="_blank">GAMUS space</a>
+    </div>
+    <h3>credits</h3>
+    <ul>
+      <li><a href="https://www.myfreetextures.com/" target="_blank">My Free Textures</a> - background collection</li>
+    </ul>
   </div>
   <div id="loginOverlay">
     <div id="login" style="display: none" class="ui-widget ui-widget-content ui-corner-all ui-widget-shadow">

@@ -58,11 +58,18 @@ $('#backgroundDialog .contain input').checkboxradio({
 });
 
 function setBackground(data) {
-  $('body').css('background-image', data == null ? '' : `url(${data.url})`);
+  if (data !== undefined) {
+    $('body').css('background-image', data == null ? '' : `url(${data.url})`);
+  }
   $('#backgroundDialog .name a').attr('href', data == null ? '-' : data.refUrl);
   $('#backgroundDialog .name a').text(data == null ? '-' : data.name);
-  $('#backgroundDialog .name').toggle(data !== null);
-  $('#backgroundDialog .reset').toggle(data !== null);
+  $('#backgroundDialog .name').toggle(data != null);
+  $('#backgroundDialog .reset').toggle(data != null);
+  if (data?.url) {
+    localStorage.setItem('backgroundImageUrl', data?.url);
+  } else {
+    localStorage.removeItem('backgroundImageUrl');
+  }
 }
 $('#backgrounds').on('click', 'a', event => {
   setBackground({
@@ -75,12 +82,14 @@ $('#backgrounds').on('click', 'a', event => {
 $('#backgroundDialog .reset').on('click', () => {
   setBackground(null);
 });
-setBackground(null);
+const initial = backgrounds.find(({ fileUrl }) => fileUrl === localStorage.getItem('backgroundImageUrl'));
+setBackground(initial && { url: initial.fileUrl, name: initial.name, refUrl: initial.refUrl });
 
 function setSize(size) {
   $('#backgroundDialog input[type=checkbox]').prop('checked', false).checkboxradio('refresh');
   $(`#backgroundDialog input[type=checkbox][name=${size}]`).prop('checked', true).checkboxradio('refresh');
   $('body').css('background-size', size);
+  localStorage.setItem('backgroundSize', size);
 }
 $('#backgroundDialog .cover input').on('click', () => {
   setSize('cover');
@@ -88,4 +97,4 @@ $('#backgroundDialog .cover input').on('click', () => {
 $('#backgroundDialog .contain input').on('click', () => {
   setSize('contain');
 });
-setSize('cover');
+setSize(localStorage.getItem('backgroundSize') ?? 'cover');

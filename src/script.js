@@ -27,6 +27,9 @@ $('#launcher .visualizer').click(() => {
 $('#user .background').click(() => {
   import('./background.js').then(({ show }) => show());
 });
+$('#user .about').click(() => {
+  import('./about.js').then(({ show }) => show());
+});
 $('#user .logout').click(() => {
   logout().finally(() => {
     location.reload();
@@ -57,6 +60,8 @@ player.volume = localStorage.getItem('volume') == null ? 1 : parseFloat(localSto
 player.stereo = localStorage.getItem('stereo') == null ? 1 : parseFloat(localStorage.getItem('stereo'));;
 player.loop = localStorage.getItem('loop') === 'true';
 setPlaylist(JSON.parse(localStorage.getItem('playlist') ?? '[]'), undefined);
+$('body').css('background-image', localStorage.getItem('backgroundImageUrl') == null ? '' : `url(${localStorage.getItem('backgroundImageUrl')})`);
+$('body').css('background-size', localStorage.getItem('backgroundSize'));
 
 user.then(user => {
   player.stream = !user.demo;

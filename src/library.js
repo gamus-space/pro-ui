@@ -105,6 +105,8 @@ loadDb().then(data => {
   }).on('search.dt', () => {
     unselectAll();
     updateInfo();
+  }).on('page', () => {
+    $('#library').DataTable().rows(':visible').nodes()[0].scrollIntoView();
   });
 
   $('#library tbody').on('focus', 'button', (event) => {
