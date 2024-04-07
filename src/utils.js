@@ -15,11 +15,11 @@ export function initDialog(element, { icon }) {
     .prepend($('<iconify-icon>', { icon }));
 }
 
-export function showDialog(element) {
-  if (element.dialog('isOpen')) {
-    element.dialog('moveToTop');
+export function showDialog(element, dialog = 'dialog') {
+  if (element[dialog]('isOpen')) {
+    element[dialog]('moveToTop');
   } else {
-    element.dialog('open');
+    element[dialog]('open');
   }
   element.parent().find('.ui-dialog-titlebar button').blur();
 }
@@ -38,4 +38,21 @@ export function size(bytes) {
   const kb = Math.round(bytes / 1024 * 10) / 10;
   const mb = Math.round(kb / 1024 * 10) / 10;
   return kb < 500 ? `${kb} kB` : `${mb} MB`;
+}
+
+export function fetchAny(url) {
+  return fetch(url, { credentials: 'include' }).then(response => {
+    if (!response.ok) {
+      throw new Error('http error');
+    }
+    return response;
+  });
+}
+
+export function fetchJson(url) {
+  return fetchAny(url).then(response => response.json());
+}
+
+export function escapeRegex(string) {
+  return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }

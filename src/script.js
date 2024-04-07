@@ -5,9 +5,19 @@ import { player } from './player.js';
 
 $.fn.DataTable.ext.pager.numbers_length = 5;
 
-import('./library.js').then(({ show }) => show());
 import('./controls.js');
+import('./games.js').then(({ show }) => show());
+import('./info.js').then(({ show }) => {
+  show();
+  import('./library.js').then(({ show }) => show());
+});
 
+$('#launcher .games').click(() => {
+  import('./games.js').then(({ show }) => show());
+});
+$('#launcher .info').click(() => {
+  import('./info.js').then(({ show }) => show());
+});
 $('#launcher .library').click(() => {
   import('./library.js').then(({ show }) => show());
 });

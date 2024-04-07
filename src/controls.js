@@ -1,6 +1,6 @@
 'use strict';
 
-import { db } from './db.js';
+import { tracksDb } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
 import { setPlayerOptions } from './script.js';
@@ -191,7 +191,7 @@ player.addEventListener('timeupdate', (e) => {
   updatePreviousDisabled();
 });
 player.addEventListener('entry', ({ detail: track }) => {
-  const dbTrack = db?.[track.url];
+  const dbTrack = tracksDb?.[track.url];
   $('#playerDialog .info').toggle(true)
     .find('.game').text(track.game).end()
     .find('.gameTitle').text(track.game.split(': ')[0]).end()
