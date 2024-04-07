@@ -1,8 +1,14 @@
 body {
-  /* background-color: #777; */
-  /* background: linear-gradient(#59b4d4, #f58400b0, #000) fixed; */
-  /* background: linear-gradient(#59b4d4, #59b4d4 30%, #f58400b0 85%, #000 85%, #777) fixed; */
-  background: conic-gradient(at -10% 40%, #59b4d4 20%, #f58400b0 25%, #000 30%, #777 50%) fixed;
+  background-color: #777;
+  &.demo {
+    background: linear-gradient(#59b4d4, #59b4d4 30%, #f58400b0 85%, #000 85%, #777) fixed;
+  }
+  &.standard {
+    background: linear-gradient(#59b4d4, #f58400b0, #000) fixed;
+  }
+  &.hifi {
+    background: conic-gradient(at -10% 40%, #59b4d4 20%, #f58400b0 25%, #000 30%, #777 50%) fixed;
+  }
   background-position: center;
 }
 
@@ -227,18 +233,31 @@ body #playerDialog .miniPlayer {
     width: 2rem;
     height: 2rem;
   }
-  .seek {
-    height: 1.5rem;
+  .seekPlaylist {
+    height: 0.8rem;
+    margin-top: 0.5rem;
   }
-  .seek.ui-slider .ui-slider-handle {
+  .seekPlaylist.ui-slider .ui-slider-handle {
+    width: 0.8rem;
+    height: 0.8rem;
+    top: -1px;
+  }
+  .seekPlaylist.ui-slider .ui-slider-range {
+    top: -1px;
+  }
+  .seekTrack {
+    height: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  .seekTrack.ui-slider .ui-slider-handle {
     width: 1.5rem;
     height: 1.5rem;
     top: -1px;
   }
-  .seek.ui-slider .ui-slider-range {
+  .seekTrack.ui-slider .ui-slider-range {
     top: -1px;
   }
-  .seek .label {
+  .seekTrack .label {
     position: relative;
     width: 100%;
     text-align: center;
@@ -307,25 +326,25 @@ body #playerDialog .miniPlayer {
     flex-grow: 1;
     align-self: end;
   }
-  .controls .sk .seek {
+  .controls .sk .seekTrack {
     margin: 0 1rem;
     min-width: 4rem;
   }
   .controls .sk .scale {
     text-align: center;
   }
-  .seek {
+  .seekTrack {
     height: 0.8rem;
   }
-  .seek.ui-slider .ui-slider-handle {
+  .seekTrack.ui-slider .ui-slider-handle {
     width: 0.8rem;
     height: 0.8rem;
     top: -1px;
   }
-  .seek.ui-slider .ui-slider-range {
+  .seekTrack.ui-slider .ui-slider-range {
     top: -1px;
   }
-  .seek .label {
+  .seekTrack .label {
     position: relative;
     width: 100%;
     text-align: center;
@@ -399,6 +418,66 @@ body #playerDialog .miniPlayer {
   .volume.ui-slider .ui-slider-range,
   .stereo.ui-slider .ui-slider-range {
     left: -1px;
+  }
+}
+
+#gamesDialog .dataTables_filter {
+  padding-top: 0.3rem;
+}
+#gamesDialog input[type=search] {
+  color: white;
+}
+#gamesDialog input[type=search]::-webkit-search-cancel-button {
+  filter: grayscale(100%);
+}
+#games tr {
+  cursor: pointer;
+}
+#games tr.even td,
+#games tr.even td.sorting_1 {
+  box-shadow: none;
+}
+#games tr.odd td,
+#games tr.odd td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 5%);
+}
+#games tr:hover td,
+#games tr:hover td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 10%);
+}
+#games tr.selected td {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
+}
+#games tr.selected:hover td {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%) !important;
+}
+#games tr.selected td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
+}
+
+#infoDialog {
+  .views {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .empty, .missing {
+      display: flex;
+      align-items: center;
+      gap: 0.3em;
+      font-size: 2rem;
+    }
+
+    .content {
+      height: 100%;
+      h1 {
+        text-align: center;
+      }
+      table {
+        width: 100%;
+      }
+    }
   }
 }
 
@@ -646,15 +725,20 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   text-shadow: black -20px -12px 4px;
   opacity: 0.6;
 }
-#galleryDialog .loader {
-  z-index: 1;
-  transition: opacity 2s ease;
-}
-#galleryDialog .loader.on {
-  opacity: 1;
-}
-#galleryDialog .loader.off {
-  opacity: 0;
+#aboutDialog {
+  h1 {
+    text-align: center;
+  }
+  h3 {
+    margin-bottom: 0;
+  }
+  ul {
+    margin-top: 0;
+  }
+  .links {
+    display: flex;
+    justify-content: space-evenly;
+  }
 }
 
 #loginOverlay {
@@ -769,4 +853,15 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 @keyframes pulse {
   0% , 60% , 100%{ transform:  scale(1) }
   80% { transform:  scale(1.2)}
+}
+.loader {
+  position: absolute;
+  z-index: 1;
+  transition: opacity 2s ease;
+}
+.loader.on {
+  opacity: 1;
+}
+.loader.off {
+  opacity: 0;
 }

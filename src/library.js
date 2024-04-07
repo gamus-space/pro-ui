@@ -1,10 +1,11 @@
 'use strict';
 
-import { db, loadDb } from './db.js';
+import { loadTracks, tracksDb } from './db.js';
 import { user } from './login.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
+import { subscribeState } from './route.js';
 import { setPlaylist } from './script.js';
-import { dialogOptions, initDialog, showDialog, size, time, trackTitle } from './utils.js';
+import { dialogOptions, escapeRegex, initDialog, showDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
   ...dialogOptions,
@@ -39,7 +40,7 @@ const ICON_PAUSE = 'ui-icon-pause';
 
 let isPlaying = false;
 
-loadDb().then(data => {
+loadTracks().then(data => {
   setTimeout(() => {
     resizeTable($('#libraryDialog').parent().height());
   });
@@ -60,6 +61,7 @@ loadDb().then(data => {
       timeSec: track.time,
       time: track.time ? time(track.time) : '',
       originalTimeSec: track.originalTime,
+      originalSize: size(track.originalSize),
       files: track.files,
       size: '',
       url: '',
@@ -82,6 +84,7 @@ loadDb().then(data => {
       { name: "year", data: "year", title: "Year" },
       { name: "time", data: "time", title: "Time" },
       { name: "size", data: "size", title: "Size" },
+      { name: "originalSize", data: "originalSize", title: "Orig Size" },
     ],
     order: [1, 'asc'],
     paging: true,
@@ -105,6 +108,8 @@ loadDb().then(data => {
   }).on('search.dt', () => {
     unselectAll();
     updateInfo();
+  }).on('page', () => {
+    $('#library').DataTable().rows(':visible').nodes()[0].scrollIntoView();
   });
 
   $('#library tbody').on('focus', 'button', (event) => {
@@ -141,6 +146,7 @@ loadDb().then(data => {
         <option value="year" data-checked="checked">Year</option>
         <option value="time" data-checked="checked">Time</option>
         <option value="size" data-checked="checked">Size</option>
+        <option value="originalSize" data-checked="checked">Orig Size</option>
       </optgroup>
       <optgroup label="Selection">
         <option data-role="selectAll" data-icon="circle-plus">Select all</option>
@@ -301,6 +307,7 @@ loadDb().then(data => {
     year: false,
     time: true,
     size: false,
+    originalSize: false,
   };
   const currentColumns = {
     ...DEFAULT_COLUMNS,
@@ -379,7 +386,7 @@ loadDb().then(data => {
     return {
       url, game, title,
       time: timeSec, duration: originalTimeSec ? timeSec : undefined,
-      replayGain: db[url]?.replayGain?.album,
+      replayGain: tracksDb[url]?.replayGain?.album,
     };
   }
 
@@ -405,4 +412,10 @@ loadDb().then(data => {
     $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active')
       .find('.ui-icon').removeClass(ICON_PAUSE).addClass(ICON_PLAY);
   });
+
+  subscribeState(updateState);
+  function updateState(state) {
+    $('#library').DataTable().column('platform:name').search(state.platform ? `^${escapeRegex(state.platform)}$` : '', true).draw();
+    $('#library').DataTable().column('game:name').search(state.game ? `^${escapeRegex(state.game)}$` : '', true).draw();
+  }
 });

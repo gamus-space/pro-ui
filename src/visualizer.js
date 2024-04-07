@@ -1,7 +1,7 @@
 'use strict';
 
 import { player } from './player.js';
-import { dialogOptions, initDialog, showDialog } from "./utils.js";
+import { dialogOptions, initDialog, showDialog } from './utils.js';
 
 $('#visualizerDialog').dialog({
   ...dialogOptions,

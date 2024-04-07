@@ -3,7 +3,7 @@
 import { loadScreenshots } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
-import { dialogOptions, initDialog, showDialog } from "./utils.js";
+import { dialogOptions, fetchJson, initDialog, showDialog } from './utils.js';
 
 $('#galleryDialog').dialog({
   ...dialogOptions,
@@ -60,7 +60,7 @@ function showTrack() {
   }
 
   setLoading(true);
-  fetch(entry.index, { credentials: 'include' }).then(response => response.json()).then(preprocessGallery(entry.index)).then(gallery => {
+  fetchJson(entry.index).then(preprocessGallery(entry.index)).then(gallery => {
     gallery.forEach(entry => {
       galleryCache[entry.game] = entry;
     });

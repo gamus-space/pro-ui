@@ -5,9 +5,19 @@ import { player } from './player.js';
 
 $.fn.DataTable.ext.pager.numbers_length = 5;
 
-import('./library.js').then(({ show }) => show());
 import('./controls.js');
+import('./games.js').then(({ show }) => show());
+import('./info.js').then(({ show }) => {
+  show();
+  import('./library.js').then(({ show }) => show());
+});
 
+$('#launcher .games').click(() => {
+  import('./games.js').then(({ show }) => show());
+});
+$('#launcher .info').click(() => {
+  import('./info.js').then(({ show }) => show());
+});
 $('#launcher .library').click(() => {
   import('./library.js').then(({ show }) => show());
 });
@@ -26,6 +36,9 @@ $('#launcher .visualizer').click(() => {
 
 $('#user .background').click(() => {
   import('./background.js').then(({ show }) => show());
+});
+$('#user .about').click(() => {
+  import('./about.js').then(({ show }) => show());
 });
 $('#user .logout').click(() => {
   logout().finally(() => {
@@ -57,6 +70,8 @@ player.volume = localStorage.getItem('volume') == null ? 1 : parseFloat(localSto
 player.stereo = localStorage.getItem('stereo') == null ? 1 : parseFloat(localStorage.getItem('stereo'));;
 player.loop = localStorage.getItem('loop') === 'true';
 setPlaylist(JSON.parse(localStorage.getItem('playlist') ?? '[]'), undefined);
+$('body').css('background-image', localStorage.getItem('backgroundImageUrl') == null ? '' : `url(${localStorage.getItem('backgroundImageUrl')})`);
+$('body').css('background-size', localStorage.getItem('backgroundSize'));
 
 user.then(user => {
   player.stream = !user.demo;
