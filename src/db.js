@@ -27,7 +27,12 @@ export function loadTracks() {
 }
 
 export function loadGames() {
-  return baseUrl.then(({ baseUrl }) => fetchJson(`${baseUrl}/index.json`));
+  return baseUrl.then(({ baseUrl }) => fetchJson(`${baseUrl}/index.json`).then(
+    data => data.map(game => ({
+      ...game,
+      thumbnailsUrl: game.thumbnailsUrl && `${baseUrl}/${game.thumbnailsUrl}`,
+    }))
+  ));
 }
 
 export function loadScreenshots() {

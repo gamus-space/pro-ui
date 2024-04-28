@@ -12,9 +12,9 @@ $.widget("custom.dialogwithoutfocus", $.ui.dialog, {
 
 $('#infoDialog').dialogwithoutfocus({
   ...dialogOptions,
-  width: 500,
+  width: 420,
   height: 400,
-  position: { my: "center", at: "center+15% center+15%", of: window },
+  position: { my: "center", at: "center+18% center+15%", of: window },
 });
 initDialog($('#infoDialog'), { icon: 'ph:book' });
 

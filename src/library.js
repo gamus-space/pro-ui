@@ -9,7 +9,7 @@ import { dialogOptions, escapeRegex, initDialog, showDialog, size, time, trackTi
 
 $('#libraryDialog').dialog({
   ...dialogOptions,
-  width: 530,
+  width: 480,
   height: 400,
   position: { my: "right", at: "right-8% center", of: window },
   resize: (e, { size: { height } }) => {

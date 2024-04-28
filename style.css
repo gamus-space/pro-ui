@@ -454,6 +454,11 @@ body #playerDialog .miniPlayer {
 #games tr.selected td.sorting_1 {
   box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
 }
+#games .thumbnail {
+  min-width: 80px;
+  min-height: 48px;
+  background: radial-gradient(#666 0, transparent 75%);
+}
 
 #infoDialog {
   .views {
