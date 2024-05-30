@@ -13,29 +13,30 @@ const baseUrl = new Promise((resolve, reject) => {
   });
 });
 
-export var tracksDb;
-
 export function loadTracks() {
   return baseUrl.then(({ musicUrl }) => fetchJson(`${musicUrl}/index.json`).then(
-    data => data.map(entry => ({ ...entry, files: entry.files.map(file => ({ ...file, url: `${musicUrl}/${file.url}` })) }))
-  )).then(data => {
-    tracksDb = Object.fromEntries(data.flatMap(track => track.files.map(file => [file.url, track])));
-    return data;
-  }).catch(() => {
-    alert('error loading library!');
-  });
+    data => Object.fromEntries(Object.entries(data).map(([ platform, games ]) => [
+      platform,
+      Object.fromEntries(Object.entries(games).map(([game, index]) => [game, `${musicUrl}/${index}`])),
+    ]))
+  ));
 }
 
 export function loadGames() {
-  return baseUrl.then(({ baseUrl }) => fetchJson(`${baseUrl}/index.json`));
+  return baseUrl.then(({ baseUrl }) => fetchJson(`${baseUrl}/index.json`).then(
+    data => data.map(game => ({
+      ...game,
+      thumbnailsUrl: game.thumbnailsUrl && `${baseUrl}/${game.thumbnailsUrl}`,
+    }))
+  ));
 }
 
 export function loadScreenshots() {
   return baseUrl.then(({ screenshotsUrl }) => fetchJson(`${screenshotsUrl}/index.json`).then(
-    data => data.map(game => ({
-      ...game,
-      index: `${screenshotsUrl}/${game.index}`,
-    }))
+    data => Object.fromEntries(Object.entries(data).map(([ platform, games ]) => [
+      platform,
+      Object.fromEntries(Object.entries(games).map(([game, index]) => [game, `${screenshotsUrl}/${index}`])),
+    ]))
   ));
 }
 

@@ -31,7 +31,8 @@ body .ui-widget {
   border: 1px solid black;
 }
 .ui-dialog .dataTables_scrollBody,
-.ui-dialog .scrollable {
+.ui-dialog .scrollable,
+.ui-selectmenu-menu.scrollable ul {
   scrollbar-width: thin;
   scrollbar-color: #777 #222;
 }
@@ -454,6 +455,11 @@ body #playerDialog .miniPlayer {
 #games tr.selected td.sorting_1 {
   box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
 }
+#games .thumbnail {
+  min-width: 80px;
+  min-height: 48px;
+  background: radial-gradient(#666 0, transparent 75%);
+}
 
 #infoDialog {
   .views {
@@ -483,6 +489,9 @@ body #playerDialog .miniPlayer {
 
 #libraryDialog {
   overflow: hidden;
+}
+#libraryDialog .loader {
+  right: 1rem;
 }
 #libraryDialog .ui-button-icon-only {
   width: 2rem;
@@ -704,6 +713,42 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   transition: opacity 2s ease 0.5s;
   cursor: move;
 }
+#galleryDialog .controls {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  padding: 1em 2em;
+  border: 1px solid white;
+  background: black;
+  box-shadow: 0px 0px 20px white;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 2rem;
+  opacity: 0.6;
+  cursor: move;
+  .mode {
+    cursor: pointer;
+    padding-top: 0.4rem;
+  }
+  .ui-selectmenu-button.text {
+    width: 16rem;
+    height: 1.6rem;
+    padding: 0.4rem 0.4rem 0 0.4rem;
+    .ui-selectmenu-icon {
+      margin-top: 3px;
+    }
+  }
+}
+.ui-selectmenu-menu.screenshot-list .ui-menu {
+  max-height: 50vh;
+  .ui-menu-item-wrapper {
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: 0.75rem;
+  }
+}
 #galleryDialog .image.active {
   opacity: 1;
 }
@@ -715,7 +760,7 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 }
 #galleryDialog .demo {
   position: absolute;
-  inset: 0;
+  inset: 50%;
   font-size: 6rem;
   font-weight: bold;
   display: flex;

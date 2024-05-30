@@ -1,6 +1,5 @@
 'use strict';
 
-import { tracksDb } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
 import { setPlayerOptions } from './script.js';
@@ -191,17 +190,16 @@ player.addEventListener('timeupdate', (e) => {
   updatePreviousDisabled();
 });
 player.addEventListener('entry', ({ detail: track }) => {
-  const dbTrack = tracksDb?.[track.url];
   $('#playerDialog .info').toggle(true)
     .find('.game').text(track.game).end()
     .find('.gameTitle').text(track.game.split(': ')[0]).end()
     .find('.gameSubtitle').text(track.game.split(': ')[1] ?? '').end()
     .find('.track').text(track.title).end()
-    .find('.artist').toggle(!!dbTrack?.artist).end()
-    .find('.by').text(dbTrack?.artist ?? '').end()
-    .find('.misc').toggle(!!dbTrack).end()
-    .find('.platform').text(dbTrack?.platform ?? '').end()
-    .find('.year').text(dbTrack?.year ?? '').end();
+    .find('.artist').toggle(!!track.artist).end()
+    .find('.by').text(track.artist ?? '').end()
+    .find('.misc').toggle(true).end()
+    .find('.platform').text(track.platform ?? '').end()
+    .find('.year').text(track.year ?? '').end();
   updateEntry();
 });
 player.addEventListener('playlist', ({ detail: { playlist } }) => {

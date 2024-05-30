@@ -6,7 +6,7 @@ import { dialogOptions, initDialog, showDialog } from './utils.js';
 
 $('#gamesDialog').dialog({
   ...dialogOptions,
-  width: 460,
+  width: 520,
   height: 400,
   position: { my: "left", at: "left+8% center", of: window },
   resize: (e, { size: { height } }) => {
@@ -22,6 +22,7 @@ export function show() {
 function resizeTable(height) {
   const body = $('#games_wrapper .dataTables_scrollBody');
   body.css('max-height', height - body.position().top - 70);
+  $('#games').DataTable().columns.adjust();
 }
 
 loadGames().then(data => {
@@ -34,15 +35,18 @@ loadGames().then(data => {
       game: game.game,
       year: game.year,
       artists: game.artists.join(', '),
+      thumbnail: `<img alt="" class="thumbnail" src="${game.thumbnailsUrl ? `${game.thumbnailsUrl}/list.webp` : ''}" />`,
     })),
     columns: [
-      { name: "platform", data: "platform", title: "Platform" },
+      { name: "thumbnail", data: "thumbnail", title: "Thumbnail", orderable: false, className: "dt-center" },
       { name: "game", data: "game", title: "Game" },
+      { name: "platform", data: "platform", title: "Platform" },
       { name: "year", data: "year", title: "Year" },
       { name: "artists", data: "artists", title: "Artist" },
     ],
     order: [1, 'asc'],
     paging: false,
+    autoWidth: false,
     scrollX: true,
     scrollY: $('#gamesDialog').parent()[0].clientHeight - 132,
     scrollCollapse: true,

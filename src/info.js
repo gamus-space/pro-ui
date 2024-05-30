@@ -12,9 +12,9 @@ $.widget("custom.dialogwithoutfocus", $.ui.dialog, {
 
 $('#infoDialog').dialogwithoutfocus({
   ...dialogOptions,
-  width: 500,
+  width: 420,
   height: 400,
-  position: { my: "center", at: "center+15% center+15%", of: window },
+  position: { my: "center", at: "center+18% center+15%", of: window },
 });
 initDialog($('#infoDialog'), { icon: 'ph:book' });
 
@@ -50,9 +50,7 @@ function updateState(state) {
     setView('missing');
     return;
   }
-
-  setLoading(true);
-  fetchAny(gameIndex).then(response => response.text()).then(content => {
+  loadEntry(state.platform, state.game, gameIndex).then(content => {
     setView('content');
     $('#infoDialog .content')
       .html(marked.parse(content))
@@ -62,6 +60,19 @@ function updateState(state) {
         pushUrl(event.target.attributes.href.value);
       }).end();
     $('#infoDialog')[0].scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  });
+}
+
+let infoCache = {};
+function loadEntry(platform, game, index) {
+  const cacheKey = `${platform}\t${game}`;
+  if (infoCache[cacheKey]) {
+    return Promise.resolve(infoCache[cacheKey]);
+  }
+  setLoading(true);
+  return fetchAny(index).then(response => response.text()).then(content => {
+    infoCache[cacheKey] = content;
+    return infoCache[cacheKey];
   }).finally(() => {
     setLoading(false);
   });

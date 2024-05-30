@@ -14,8 +14,15 @@ export function unsubscribeState(subscriber) {
   subscribers = subscribers.filter(s => s !== subscriber);
 }
 
+function customEncodeURIComponent(str) {
+  return str.replace(/ /g, '_').replace(
+    /[^/_\w():&]/g,
+    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+  );
+}
+
 export function pushState(state, segments) {
-  const routePath = (segments) => `${segments.map(s => encodeURIComponent(s)).join('/')}`;
+  const routePath = (segments) => `${segments.map(s => customEncodeURIComponent(s)).join('/')}`;
   history.pushState(state, '', ROOT_URL + routePath(segments));
   updateRoute();
 }
@@ -28,7 +35,8 @@ export function pushUrl(url) {
 function fromURL(path) {
   const stripPrefix = (s, p) => s.startsWith(p) ? s.slice(p.length) : s;
   const split = (s, d) => s === '' ? [] : s.split(d);
-  const segments = split(stripPrefix(path, ROOT_PATH), '/').map(s => decodeURIComponent(s));
+  const customDecode = s => s.replace(/_/g, ' ');
+  const segments = split(customDecode(stripPrefix(path, ROOT_PATH)), '/').map(s => decodeURIComponent(s));
   return { state: { platform: segments[0], game: segments[1] }, segments };
 }
 
