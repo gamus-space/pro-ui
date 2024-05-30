@@ -1,11 +1,11 @@
 'use strict';
 
-import { loadTracks, tracksDb } from './db.js';
+import { loadTracks } from './db.js';
 import { user } from './login.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
 import { subscribeState } from './route.js';
 import { setPlaylist } from './script.js';
-import { dialogOptions, escapeRegex, initDialog, showDialog, size, time, trackTitle } from './utils.js';
+import { dialogOptions, fetchJson, initDialog, showDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
   ...dialogOptions,
@@ -39,37 +39,15 @@ const ICON_PLAY = 'ui-icon-circle-triangle-e';
 const ICON_PAUSE = 'ui-icon-pause';
 
 let isPlaying = false;
+let tracksIndex;
+let tracksCache = {};
 
 loadTracks().then(data => {
+  tracksIndex = data;
   setTimeout(() => {
     resizeTable($('#libraryDialog').parent().height());
   });
   $('#library').DataTable({
-    data: data.map(track => ({
-      play: `
-        <button class="listen ui-button ui-button-icon-only">
-          <span class="ui-icon ${ICON_PLAY}"></span>
-          <span class="demo">DEMO</span
-        </button>
-      `,
-      game: track.game,
-      gameTitle: track.game.split(': ')[0],
-      gameSubtitle: track.game.split(': ')[1] ?? '',
-      title: track.title,
-      artist: track.artist,
-      track: track.tracknumber,
-      timeSec: track.time,
-      time: track.time ? time(track.time) : '',
-      originalTimeSec: track.originalTime,
-      originalSize: size(track.originalSize),
-      files: track.files,
-      size: '',
-      url: '',
-      platform: track.platform,
-      year: track.year,
-      ordinal: track.ordinal,
-      kind: KIND_MAPPING[track.kind] ?? '?',
-    })),
     columns: [
       { name: "play", data: "play", title: "Play", orderable: false },
       { name: "game", data: "game", title: "Game", orderData: [2, 3] },
@@ -87,16 +65,17 @@ loadTracks().then(data => {
       { name: "originalSize", data: "originalSize", title: "Orig Size" },
     ],
     order: [1, 'asc'],
-    paging: true,
+    paging: false,
     pageLength: 100,
     pagingType: 'full_numbers',
     language: {
+      emptyTable: 'Select a game',
       paginate: {
         previous: '<span class="ui-icon ui-icon-arrow-1-w"></span>',
         next: '<span class="ui-icon ui-icon-arrow-1-e"></span>',
         first: '<span class="ui-icon ui-icon-arrowstop-1-w"></span>',
         last: '<span class="ui-icon ui-icon-arrowstop-1-e"></span>',
-      }
+      },
     },
     scrollX: true,
     scrollY: $('#libraryDialog').parent()[0].clientHeight - 132,
@@ -266,6 +245,7 @@ loadTracks().then(data => {
     return false;
   }
 
+  let format;
   function setFormat(format) {
     $('#library').DataTable().rows().every(function() {
       const file = this.data().files.find(file => file.url.endsWith(`.${format}`));
@@ -279,7 +259,7 @@ loadTracks().then(data => {
       .find(`option[value='flac']`).prop('disabled', !user.flac).end()
       .find(`option[value='mp3']`).prop('disabled', !user.mp3).end()
       .selectmenu('refresh');
-    setFormat(localStorage.getItem('format') || (user.mp3 ? 'mp3' : 'flac'));
+    format = localStorage.getItem('format') || (user.mp3 ? 'mp3' : 'flac');
     if (user.demo) $('#library').addClass('demo');
   });
 
@@ -382,11 +362,14 @@ loadTracks().then(data => {
     ], undefined);
     unselectAll();
   });
-  function playerEntry({ url, game, title, timeSec, originalTimeSec }) {
+  function playerEntry({ url, platform, game, title, timeSec, originalTimeSec, year, artist }) {
     return {
-      url, game, title,
+      url, platform, game, title,
       time: timeSec, duration: originalTimeSec ? timeSec : undefined,
-      replayGain: tracksDb[url]?.replayGain?.album,
+      replayGain: currentTracksDb.find(
+        entry => entry.platform === platform && entry.game === game && entry.title === title
+      )?.replayGain?.album,
+      year, artist,
     };
   }
 
@@ -414,8 +397,68 @@ loadTracks().then(data => {
   });
 
   subscribeState(updateState);
+  let currentTracksDb;
   function updateState(state) {
-    $('#library').DataTable().column('platform:name').search(state.platform ? `^${escapeRegex(state.platform)}$` : '', true).draw();
-    $('#library').DataTable().column('game:name').search(state.game ? `^${escapeRegex(state.game)}$` : '', true).draw();
+    if (!state.game || !tracksIndex[state.platform]?.[state.game]) {
+      $('#library').DataTable().rows().remove().draw();
+      return;
+    }
+    loadEntry(state.platform, state.game, tracksIndex[state.platform][state.game]).then(tracks => {
+      currentTracksDb = tracks;
+      $('#library').DataTable().rows().remove().draw();
+      $('#library').DataTable().rows.add(tracks.map(track => ({
+        play: `
+          <button class="listen ui-button ui-button-icon-only">
+            <span class="ui-icon ${ICON_PLAY}"></span>
+            <span class="demo">DEMO</span
+          </button>
+        `,
+        game: track.game,
+        gameTitle: track.game.split(': ')[0],
+        gameSubtitle: track.game.split(': ')[1] ?? '',
+        title: track.title,
+        artist: track.artist,
+        track: track.tracknumber,
+        timeSec: track.time,
+        time: track.time ? time(track.time) : '',
+        originalTimeSec: track.originalTime,
+        originalSize: size(track.originalSize),
+        files: track.files,
+        size: '',
+        url: '',
+        platform: track.platform,
+        year: track.year,
+        ordinal: track.ordinal,
+        kind: KIND_MAPPING[track.kind] ?? '?',
+      }))).draw();
+      setFormat(format);
+    });
   }
 });
+
+function setLoading(loading) {
+  $('#libraryDialog .loader')
+    .toggleClass('on', loading)
+    .toggleClass('off', !loading);
+}
+
+function loadEntry(platform, game, index) {
+  const cacheKey = `${platform}\t${game}`;
+  if (tracksCache[cacheKey]) {
+    return Promise.resolve(tracksCache[cacheKey]);
+  }
+  setLoading(true);
+  return fetchJson(index).then(preprocessTracks(index)).then(tracks => {
+    tracksCache[cacheKey] = tracks;
+    return tracksCache[cacheKey];
+  }).finally(() => {
+    setLoading(false);
+  });
+}
+
+const preprocessTracks = baseUrl => tracks => {
+  return tracks.map(track => ({
+    ...track,
+    files: track.files.map(file => ({ ...file, url: new URL(file.url, baseUrl).href })),
+  }));
+};
