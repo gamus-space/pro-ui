@@ -188,7 +188,6 @@ class Player extends EventTarget {
       get() { return replayGain; },
       set(v) {
         replayGain = v ?? 0;
-        console.log({ replayGain });
         replayGainNode.gain.value = Math.pow(10, replayGain/20);
       },
     });

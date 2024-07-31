@@ -431,6 +431,12 @@ loadTracks().then(data => {
         ordinal: track.ordinal,
         kind: KIND_MAPPING[track.kind] ?? '?',
       }))).draw();
+      if (player.track)
+        setTimeout(() => {
+          const button = $('#library').DataTable().rows((row, data) => data.url === player.track.url).nodes().to$().find('button.listen').addClass('ui-state-active');
+          if (isPlaying)
+            button.find('.ui-icon').removeClass(ICON_PLAY).addClass(ICON_PAUSE);
+        });
       setFormat(format);
     });
   }

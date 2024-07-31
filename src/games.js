@@ -6,7 +6,7 @@ import { dialogOptions, initDialog, showDialog } from './utils.js';
 
 $('#gamesDialog').dialog({
   ...dialogOptions,
-  width: 520,
+  width: 560,
   height: 400,
   position: { my: "left", at: "left+8% center", of: window },
   resize: (e, { size: { height } }) => {
@@ -36,6 +36,7 @@ loadGames().then(data => {
       year: game.year,
       artists: game.artists.join(', '),
       thumbnail: `<img alt="" class="thumbnail" src="${game.thumbnailsUrl ? `${game.thumbnailsUrl}/list.webp` : ''}" />`,
+      dateAdded: game.dateAdded || '',
     })),
     columns: [
       { name: "thumbnail", data: "thumbnail", title: "Thumbnail", orderable: false, className: "dt-center" },
@@ -43,6 +44,7 @@ loadGames().then(data => {
       { name: "platform", data: "platform", title: "Platform" },
       { name: "year", data: "year", title: "Year" },
       { name: "artists", data: "artists", title: "Artist" },
+      { name: "dateAdded", data: "dateAdded", title: "Added" },
     ],
     order: [1, 'asc'],
     paging: false,
