@@ -686,6 +686,10 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  .wave, .freq {
+    width: 300px;
+    height: 100px;
+  }
 }
 
 #galleryDialog {
