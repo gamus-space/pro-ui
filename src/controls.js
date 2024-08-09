@@ -122,8 +122,9 @@ class Controls {
   }
   set paused(v) {
     this._paused = v;
-    $('#playerDialog .play .ui-icon').toggleClass('ui-icon-play', this._paused);
-    $('#playerDialog .play .ui-icon').toggleClass('ui-icon-pause', !this._paused);
+    $('#playerDialog .play')
+      .attr('title', this._paused ? 'Play' : 'Pause')
+      .find('iconify-icon').attr('icon', this._paused ? 'ph:play-fill' : 'ph-pause-fill');
   }
   get duration() {
     return this._duration;
@@ -180,13 +181,9 @@ player.addEventListener('pause', () => {
 });
 player.addEventListener('timeupdate', (e) => {
   controls.position = player.currentTime;
-  const previous = $('#playerDialog .previous .ui-icon');
-  if (player.currentTime <= SEEK_START_LIMIT && previous.hasClass('ui-icon-seek-prev')) {
-    previous.removeClass('ui-icon-seek-prev').addClass('ui-icon-seek-first');
-  }
-  if (player.currentTime > SEEK_START_LIMIT && previous.hasClass('ui-icon-seek-first')) {
-    previous.removeClass('ui-icon-seek-first').addClass('ui-icon-seek-prev');
-  }
+  $('#playerDialog .previous')
+    .attr('title', player.currentTime <= SEEK_START_LIMIT ? 'Previous' : 'Restart')
+    .find('iconify-icon').attr('icon', player.currentTime <= SEEK_START_LIMIT ? 'ph:caret-line-left-fill' : 'ph:caret-double-left-fill');
   updatePreviousDisabled();
 });
 player.addEventListener('entry', ({ detail: track }) => {

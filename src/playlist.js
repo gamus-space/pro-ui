@@ -25,8 +25,8 @@ function resizeTable(height) {
   body.css('max-height', height - body.position().top - 70);
 }
 
-const ICON_PLAY = 'ui-icon-circle-triangle-e';
-const ICON_PAUSE = 'ui-icon-pause';
+const ICON_PLAY = 'ph:play-fill';
+const ICON_PAUSE = 'ph:pause-fill';
 
 let isPlaying = false;
 
@@ -73,20 +73,20 @@ setTimeout(() => {
   });
 
   $('#playlistDialog .operations').append($(`
-    <button class="selectAll ui-button ui-button-icon-only">
-      <span class="ui-icon ui-icon-bullet"></span>
+    <button class="selectAll ui-button ui-button-icon-only" title="Select all">
+      <iconify-icon icon="ph:check-square"></iconify-icon>
     </button>
-    <button class="unselectAll ui-button ui-button-icon-only">
-      <span class="ui-icon ui-icon-radio-off"></span>
+    <button class="unselectAll ui-button ui-button-icon-only" title="Clear selection">
+      <iconify-icon icon="ph:square"></iconify-icon>
     </button>
-    <button class="remove ui-button ui-button-icon-only">
-      <span class="ui-icon ui-icon-circle-close"></span>
+    <button class="remove ui-button ui-button-icon-only" title="Remove selected">
+      <iconify-icon icon="ph:x-bold"></iconify-icon>
     </button>
-    <button class="moveUp ui-button ui-button-icon-only">
-      <span class="ui-icon ui-icon-circle-triangle-n"></span>
+    <button class="moveUp ui-button ui-button-icon-only" title="Move selected up">
+      <iconify-icon icon="ph:caret-up-fill"></iconify-icon>
     </button>
-    <button class="moveDown ui-button ui-button-icon-only">
-      <span class="ui-icon ui-icon-circle-triangle-s"></span>
+    <button class="moveDown ui-button ui-button-icon-only" title="Move selected down">
+      <iconify-icon icon="ph:caret-down-fill"></iconify-icon>
     </button>
   `));
 
@@ -143,18 +143,21 @@ setTimeout(() => {
 
   player.addEventListener('entry', ({ detail: { entry } }) => {
     $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active')
-      .find('.ui-icon').removeClass(ICON_PAUSE).addClass(ICON_PLAY);
+      .attr('title', 'Play')
+      .find('iconify-icon').attr('icon', ICON_PLAY);
     $('#playlist').DataTable().rows((row, data) => data.no-1 === entry).nodes().to$().find('button.listen').addClass('ui-state-active');
   });
   player.addEventListener('play', () => {
     isPlaying = true;
     $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active')
-      .find('.ui-icon').removeClass(ICON_PLAY).addClass(ICON_PAUSE);
+      .attr('title', 'Pause')
+      .find('iconify-icon').attr('icon', ICON_PAUSE);
   });
   player.addEventListener('pause', () => {
     isPlaying = false;
     $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active')
-      .find('.ui-icon').removeClass(ICON_PAUSE).addClass(ICON_PLAY);
+      .attr('title', 'Play')
+      .find('iconify-icon').attr('icon', ICON_PLAY);
   });
 
   playlistController.init($('#playlist').DataTable());
@@ -166,8 +169,8 @@ class PlaylistController {
     this._skipScroll = true;
     this.playlist = [];
     this.play = `
-      <button class="listen ui-button ui-button-icon-only">
-        <span class="ui-icon ${ICON_PLAY}"></span>
+      <button class="listen ui-button ui-button-icon-only" title="Play">
+        <iconify-icon icon="${ICON_PLAY}"></iconify-icon>
         <span class="demo">DEMO</span
       </button>
     `;

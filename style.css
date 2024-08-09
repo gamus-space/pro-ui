@@ -45,6 +45,11 @@ body .ui-widget {
 .ui-widget-header {
   background-size: 60px 150px !important;
 }
+.ui-button-icon-only iconify-icon {
+  display: block;
+  position: absolute;
+  inset: 30%;
+}
 .dataTables_paginate .paginate_button.disabled {
   opacity: 0.5;
 }
@@ -513,16 +518,20 @@ body #playerDialog .miniPlayer {
 #libraryDialog .ui-selectmenu-button.icon .ui-selectmenu-text {
   display: none;
 }
-#libraryDialog .ui-selectmenu-button.icon .ui-selectmenu-icon {
+#libraryDialog .ui-selectmenu-button.icon iconify-icon {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -8px;
-  margin-left: -8px;
+  inset: 30%;
 }
 body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   text-align: center;
   padding: 0.5em;
+}
+.ui-menu.icons .ui-menu-item-wrapper {
+  padding-left: 2em;
+  iconify-icon {
+    position: absolute;
+    inset: 24% 0.4em;
+  }
 }
 #libraryDialog .operations {
   display: inline-block;
@@ -572,6 +581,9 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 #library .ui-button-icon-only {
   width: 1.5rem;
   height: 1.5rem;
+  iconify-icon {
+    inset: 24%;
+  }
 }
 #library.demo .listen.ui-state-active .demo {
   position: absolute;
@@ -637,6 +649,9 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 #playlist .ui-button-icon-only {
   width: 1.5rem;
   height: 1.5rem;
+  iconify-icon {
+    inset: 24%;
+  }
 }
 #playlist.demo .listen.ui-state-active .demo {
   position: absolute;
@@ -788,6 +803,18 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
     display: flex;
     justify-content: space-evenly;
   }
+  .medal {
+    vertical-align: sub;
+    &.gold {
+      color: #ffff00;
+    }
+    &.silver {
+      color: #bbbbbb;
+    }
+    &.bronze {
+      color: #a05000;
+    }
+  }
 }
 
 #loginOverlay {
@@ -855,14 +882,18 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 #login .sources .ui-checkboxradio-label {
   text-indent: initial;
   width: 4rem;
-  height: 4rem;
 }
-#login .sources .ui-button-icon-only {
+#login .sources .ui-button {
   font-size: 2rem;
   padding: 0;
 }
-#login .sources .ui-button-icon-only * {
+#login .sources .ui-button iconify-icon {
   vertical-align: bottom;
+}
+#login .sources .title {
+  font-size: 1rem;
+  font-weight: 400 !important;
+  margin-bottom: 0.3rem;
 }
 #login .links {
   font-size: 90%;

@@ -35,8 +35,8 @@ const KIND_MAPPING = {
   story: 'Y',
 };
 
-const ICON_PLAY = 'ui-icon-circle-triangle-e';
-const ICON_PAUSE = 'ui-icon-pause';
+const ICON_PLAY = 'ph:play-fill';
+const ICON_PAUSE = 'ph:pause-fill';
 
 let isPlaying = false;
 let tracksIndex;
@@ -104,16 +104,16 @@ loadTracks().then(data => {
   });
 
   $('#libraryDialog .operations').append($(`
-    <button class="selectAll ui-button ui-button-icon-only">
-      <span class="ui-icon ui-icon-bullet"></span>
+    <button class="selectAll ui-button ui-button-icon-only" title="Select all">
+      <iconify-icon icon="ph:check-square"></iconify-icon>
     </button>
-    <button class="unselectAll ui-button ui-button-icon-only">
-      <span class="ui-icon ui-icon-radio-off"></span>
+    <button class="unselectAll ui-button ui-button-icon-only" title="Clear selection">
+      <iconify-icon icon="ph:square"></iconify-icon>
     </button>
-    <button class="addToPlaylist ui-button ui-button-icon-only">
-      <span class="ui-icon ui-icon-circle-plus"></span>
+    <button class="addToPlaylist ui-button ui-button-icon-only" title="Add to playlist">
+      <iconify-icon icon="ph:playlist"></iconify-icon>
     </button>
-    <select class="columnSelector">
+    <select class="columnSelector" title="Select columns">
       <optgroup label="Columns">
         <option value="game" data-checked="checked">Game</option>
         <option value="track" data-checked="checked"># track</option>
@@ -128,13 +128,13 @@ loadTracks().then(data => {
         <option value="originalSize" data-checked="checked">Orig Size</option>
       </optgroup>
       <optgroup label="Selection">
-        <option data-role="selectAll" data-icon="circle-plus">Select all</option>
-        <option data-role="unselectAll" data-icon="circle-minus">Unselect all</option>
-        <option data-role="invertSelection" data-icon="circle-close">Invert</option>
-        <option data-role="reset" data-icon="help">Set defaults</option>
+        <option data-role="selectAll" data-icon="ph:check-square">Select all</option>
+        <option data-role="unselectAll" data-icon="ph:square">Unselect all</option>
+        <option data-role="invertSelection" data-icon="ph:swap">Invert</option>
+        <option data-role="reset" data-icon="ph:question-mark">Set defaults</option>
       </optgroup>
     </select>
-    <select class="kindSelector">
+    <select class="kindSelector" title="Filter kinds">
       <optgroup label="Kinds">
         <option value="track" data-checked="checked">Track</option>
         <option value="short" data-checked="checked">Short</option>
@@ -143,34 +143,44 @@ loadTracks().then(data => {
         <option value="story" data-checked="checked">storY</option>
       </optgroup>
       <optgroup label="Selection">
-        <option data-role="selectAll" data-icon="circle-plus">Select all</option>
-        <option data-role="unselectAll" data-icon="circle-minus">Unselect all</option>
-        <option data-role="invertSelection" data-icon="circle-close">Invert</option>
-        <option data-role="reset" data-icon="help">Set defaults</option>
+        <option data-role="selectAll" data-icon="ph:check-square">Select all</option>
+        <option data-role="unselectAll" data-icon="ph:square">Unselect all</option>
+        <option data-role="invertSelection" data-icon="ph:swap">Invert</option>
+        <option data-role="reset" data-icon="ph:question-mark">Set defaults</option>
       </optgroup>
     </select>
-    <select class="formatSelector">
+    <select class="formatSelector" title="Format">
       <option value="flac">FLAC</option>
       <option value="mp3">MP3</option>
     </select>
-    <select class="downloadSelector">
-      <option data-role="downloadOriginal" data-icon="arrowthickstop-1-s">Download</option>
-      <option data-role="downloadWav" data-icon="arrowthickstop-1-s">Download as WAV</option>
+    <select class="downloadSelector" title="Download">
+      <option data-role="downloadOriginal" data-icon="ph:download-simple">Download</option>
+      <option data-role="downloadWav" data-icon="ph:download-simple">Download as WAV</option>
     </select>
   `));
 
   $.widget("custom.iconsselectmenu", $.ui.selectmenu, {
     _renderItem: function(ul, item) {
-      var li = $("<li>"),
-      wrapper = $("<div>", { text: item.label });
-      if (item.disabled)
-        li.addClass("ui-state-disabled");
-      $("<span>", {
-        style: item.element.attr("data-style"),
-        'data-value': item.value,
-        class: "ui-icon ui-icon-" + (item.element.attr("data-icon") || (!!item.element.attr("data-checked") ? "check" : "closethick")),
-      }).appendTo(wrapper);
-      return li.append(wrapper).appendTo(ul);
+      ul.addClass('icons');
+      const li = $("<li>", { class: item.disabled ? "ui-state-disabled" : "" }).append(
+        $("<div>", { text: item.label }).append(
+          $("<iconify-icon>", {
+            style: item.element.attr("data-style"),
+            'data-value': item.value,
+            icon: item.element.attr("data-icon") || (!!item.element.attr("data-checked") ? "ph:check" : "ph:dot"),
+          })
+        )
+      );
+      return li.appendTo(ul);
+    },
+    super_drawButton: $.ui.selectmenu.prototype._drawButton,
+    _drawButton: function() {
+      this.super_drawButton();
+      this.button.find('.ui-icon').remove();
+      if (this.options.icons?.button)
+        $("<iconify-icon>", {
+          icon: this.options.icons?.button,
+        }).appendTo(this.button);
     },
     superClose: $.ui.selectmenu.prototype.close,
     close() {
@@ -182,7 +192,7 @@ loadTracks().then(data => {
     },
   });
   $(".columnSelector").iconsselectmenu({
-    icons: { button: "ui-icon-gear" },
+    icons: { button: "ph:gear-fill" },
     select: (event, { item }) => {
       if (!event.currentTarget) return;
       selectColumn(item, !item.element.attr("data-checked"));
@@ -194,7 +204,7 @@ loadTracks().then(data => {
     },
   }).iconsselectmenu("menuWidget").addClass("ui-menu-icons");
   $(".kindSelector").iconsselectmenu({
-    icons: { button: "ui-icon-wrench" },
+    icons: { button: "ph:wrench-fill" },
     select: (event, { item }) => {
       if (!event.currentTarget) return;
       selectKind(item, !item.element.attr("data-checked"));
@@ -206,7 +216,7 @@ loadTracks().then(data => {
     },
   }).iconsselectmenu("menuWidget").addClass("ui-menu-icons");
   $(".downloadSelector").iconsselectmenu({
-    icons: { button: "ui-icon-arrowthickstop-1-s" },
+    icons: { button: "ph:download-simple" },
     select: (event, { item }) => {
       download(item, item.element.attr("data-role"));
     },
@@ -225,9 +235,7 @@ loadTracks().then(data => {
   function toggleIcon(item, selected) {
     item.element.attr("data-checked", selected ? 'checked' : null);
     const menuId = `${item.element.parents('select').attr('id')}-menu`;
-    $(`ul[id=${menuId}] *[data-value=${item.value}]`)
-      .toggleClass("ui-icon-check", selected)
-      .toggleClass("ui-icon-closethick", !selected);
+    $(`ul[id=${menuId}] *[data-value=${item.value}]`).attr('icon', selected ? 'ph:check' : 'ph:dot');
   }
   function selectMultiple(item, select, defaults) {
     const handlers = {
@@ -382,18 +390,21 @@ loadTracks().then(data => {
 
   player.addEventListener('entry', ({ detail: { url } }) => {
     $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active')
-      .find('.ui-icon').removeClass(ICON_PAUSE).addClass(ICON_PLAY);
+      .attr('title', 'Play')
+      .find('iconify-icon').attr('icon', ICON_PLAY);
     $('#library').DataTable().rows((row, data) => data.url === url).nodes().to$().find('button.listen').addClass('ui-state-active');
   });
   player.addEventListener('play', () => {
     isPlaying = true;
     $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active')
-      .find('.ui-icon').removeClass(ICON_PLAY).addClass(ICON_PAUSE);
+      .attr('title', 'Pause')
+      .find('iconify-icon').attr('icon', ICON_PAUSE);
   });
   player.addEventListener('pause', () => {
     isPlaying = false;
     $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active')
-      .find('.ui-icon').removeClass(ICON_PAUSE).addClass(ICON_PLAY);
+      .attr('title', 'Play')
+      .find('iconify-icon').attr('icon', ICON_PLAY);
   });
 
   subscribeState(updateState);
@@ -408,8 +419,8 @@ loadTracks().then(data => {
       $('#library').DataTable().rows().remove().draw();
       $('#library').DataTable().rows.add(tracks.map(track => ({
         play: `
-          <button class="listen ui-button ui-button-icon-only">
-            <span class="ui-icon ${ICON_PLAY}"></span>
+          <button class="listen ui-button ui-button-icon-only" title="Play">
+            <iconify-icon icon="${ICON_PLAY}"></iconify-icon>
             <span class="demo">DEMO</span
           </button>
         `,
@@ -435,7 +446,9 @@ loadTracks().then(data => {
         setTimeout(() => {
           const button = $('#library').DataTable().rows((row, data) => data.url === player.track.url).nodes().to$().find('button.listen').addClass('ui-state-active');
           if (isPlaying)
-            button.find('.ui-icon').removeClass(ICON_PLAY).addClass(ICON_PAUSE);
+            button
+              .attr('title', 'Pause')
+              .find('iconify-icon').attr('icon', ICON_PAUSE);
         });
       setFormat(format);
     });
