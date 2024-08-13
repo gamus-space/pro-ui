@@ -393,6 +393,7 @@ loadTracks().then(data => {
 
   player.addEventListener('entry', ({ detail: { url } }) => {
     $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active')
+      .css('background-size', 0)
       .attr('title', 'Play')
       .find('iconify-icon').attr('icon', ICON_PLAY);
     $('#library').DataTable().rows((row, data) => data.url === url).nodes().to$().find('button.listen').addClass('ui-state-active');
@@ -409,6 +410,10 @@ loadTracks().then(data => {
       .attr('title', 'Play')
       .find('iconify-icon').attr('icon', ICON_PLAY);
   });
+  player.addEventListener('timeupdate', () => {
+    $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active')
+      .css('background-size', `${player.currentTime / player.duration * 100}%`);
+  });
 
   subscribeState(updateState);
   let currentTracksDb;
@@ -422,7 +427,7 @@ loadTracks().then(data => {
       $('#library').DataTable().rows().remove().draw();
       $('#library').DataTable().rows.add(tracks.map(track => ({
         play: `
-          <button class="listen ui-button ui-button-icon-only" title="Play">
+          <button class="listen ui-button ui-button-icon-only progressive" title="Play">
             <iconify-icon icon="${ICON_PLAY}"></iconify-icon>
             <span class="demo">DEMO</span
           </button>

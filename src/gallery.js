@@ -128,7 +128,7 @@ function loadEntry(platform, game, index) {
   });
 }
 
-const INTERVAL_SEC = 10;
+const INTERVAL_SEC = location.hostname === '127.0.0.1' ? 2 : 10;
 let galleryStatus = {
   list: null,
   index: 0,

@@ -502,6 +502,10 @@ body #playerDialog .miniPlayer {
   width: 2rem;
   height: 2rem;
 }
+#libraryDialog .ui-button.progressive {
+  background: linear-gradient(0, #f58400, #f58400) no-repeat;
+  background-size: 0;
+}
 #libraryDialog .ui-selectmenu-button.text {
   width: 3.5rem;
   height: 1.6rem;
@@ -599,6 +603,10 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 #playlistDialog .ui-button-icon-only {
   width: 2rem;
   height: 2rem;
+}
+#playlistDialog .ui-button.progressive {
+  background: linear-gradient(0, #f58400, #f58400) no-repeat;
+  background-size: 0;
 }
 #playlistDialog .operations {
   display: inline-block;

@@ -145,6 +145,7 @@ setTimeout(() => {
 
   player.addEventListener('entry', ({ detail: { entry } }) => {
     $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active')
+      .css('background-size', 0)
       .attr('title', 'Play')
       .find('iconify-icon').attr('icon', ICON_PLAY);
     if (player.playlist.name !== 'default') return;
@@ -162,6 +163,10 @@ setTimeout(() => {
       .attr('title', 'Play')
       .find('iconify-icon').attr('icon', ICON_PLAY);
   });
+  player.addEventListener('timeupdate', () => {
+    $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active')
+      .css('background-size', `${player.currentTime / player.duration * 100}%`);
+  });
 
   playlistController.init($('#playlist').DataTable());
 });
@@ -172,7 +177,7 @@ class PlaylistController {
     this._skipScroll = true;
     this.playlist = [];
     this.play = `
-      <button class="listen ui-button ui-button-icon-only" title="Play">
+      <button class="listen ui-button ui-button-icon-only progressive" title="Play">
         <iconify-icon icon="${ICON_PLAY}"></iconify-icon>
         <span class="demo">DEMO</span
       </button>
@@ -256,9 +261,11 @@ class PlaylistController {
     const active1 = this.table.cell(from, 'play:name').nodes().to$().find('button.ui-state-active').length > 0;
     const active2 = this.table.cell(to, 'play:name').nodes().to$().find('button.ui-state-active').length > 0;
     this.table.cell(from, 'play:name').nodes().to$().find('button').toggleClass('ui-state-active', active2)
+      .css('background-size', 0)
       .attr('title', 'Play')
       .find('iconify-icon').attr('icon', ICON_PLAY);
     this.table.cell(to, 'play:name').nodes().to$().find('button').toggleClass('ui-state-active', active1)
+      .css('background-size', 0)
       .attr('title', 'Play')
       .find('iconify-icon').attr('icon', ICON_PLAY);
     if (isPlaying)
