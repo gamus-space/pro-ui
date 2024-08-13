@@ -96,10 +96,13 @@ loadTracks().then(data => {
   });
   $('#library tbody').on('click', 'button.listen', (event) => {
     event.stopPropagation();
-    const data = $('#library').DataTable().row($(event.target).parents('tr')).data();
     const loaded = $(event.currentTarget).hasClass('ui-state-active');
-    if (!loaded) player.load(playerEntry(data));
-    else if (isPlaying) player.pause();
+    if (!loaded) {
+      const rows = $('#library').DataTable().rows(':visible');
+      const entry = rows.nodes().indexOf($('#library').DataTable().row($(event.target).parents('tr')).node());
+      setPlaylist({ entries: rows.data().toArray().map(playerEntry) }, entry);
+      player.load(entry);
+    } else if (isPlaying) player.pause();
     else player.play();
   });
 
@@ -364,10 +367,10 @@ loadTracks().then(data => {
   });
   $('#libraryDialog .addToPlaylist').click(() => {
     const data = $('#library').DataTable().rows('.selected').data().toArray();
-    setPlaylist([
-      ...player.playlist,
+    setPlaylist({ name: player.playlist.name, entries: [
+      ...player.playlist.entries,
       ...data.map(playerEntry),
-    ], undefined);
+    ] }, undefined);
     unselectAll();
   });
   function playerEntry({ url, platform, game, title, timeSec, originalTimeSec, year, artist }) {

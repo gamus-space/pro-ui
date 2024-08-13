@@ -2,7 +2,7 @@
 
 import { user } from './login.js';
 import { player } from './player.js';
-import { setPlaylist } from './script.js';
+import { initialPlaylist, setPlaylist } from './script.js';
 import { dialogOptions, initDialog, showDialog, time, trackTitle } from './utils.js';
 
 $('#playlistDialog').dialog({
@@ -65,10 +65,12 @@ setTimeout(() => {
   });
   $('#playlist tbody').on('click', 'button.listen', (event) => {
     event.stopPropagation();
-    const data = $('#playlist').DataTable().row($(event.target).parents('tr')).data();
     const loaded = $(event.currentTarget).hasClass('ui-state-active');
-    if (!loaded) player.load(data.no-1);
-    else if (isPlaying) player.pause();
+    if (!loaded) {
+      const data = $('#playlist').DataTable().row($(event.target).parents('tr')).data();
+      playlistController.updatePlaylist();
+      player.load(data.no-1);
+    } else if (isPlaying) player.pause();
     else player.play();
   });
 
@@ -145,6 +147,7 @@ setTimeout(() => {
     $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active')
       .attr('title', 'Play')
       .find('iconify-icon').attr('icon', ICON_PLAY);
+    if (player.playlist.name !== 'default') return;
     $('#playlist').DataTable().rows((row, data) => data.no-1 === entry).nodes().to$().find('button.listen').addClass('ui-state-active');
   });
   player.addEventListener('play', () => {
@@ -175,25 +178,32 @@ class PlaylistController {
       </button>
     `;
     this.entry = undefined;
-    player.addEventListener('playlist', ({ detail: { playlist } }) => {
+    player.addEventListener('playlist', ({ detail: { playlist: { name, entries } } }) => {
+      if (!name) return;
       if (this._skipUpdate) {
         this._skipUpdate = false;
         return;
       }
-      if (!this.playlist.every((url, i) => url === playlist[i].url)) {
+      if (!this.playlist.every((url, i) => url === entries[i].url)) {
         this.table.clear();
         this.playlist = [];
       }
-      this.addPlaylist(playlist.slice(this.playlist.length));
+      this.addPlaylist(entries.slice(this.playlist.length));
       if (!this._skipScroll) {
         this.table.row(':last').node()?.scrollIntoView();
       }
       this._skipScroll = false;
+      const button = this.table.rows((row, data) => data.no-1 === player.entry).nodes().to$().find('button.listen').addClass('ui-state-active');
+      if (isPlaying)
+        button
+          .attr('title', 'Pause')
+          .find('iconify-icon').attr('icon', ICON_PAUSE);
     });
   }
   init(table) {
     this.table = table;
-    this.addPlaylist(player.playlist);
+    const entries = player.playlist.name === 'default' ? player.playlist.entries : initialPlaylist.entries;
+    this.addPlaylist(entries);
   }
   addPlaylist(playlist) {
     if (!this.table) return;
@@ -213,7 +223,7 @@ class PlaylistController {
   }
   updatePlaylist() {
     this._skipUpdate = true;
-    setPlaylist(this.playlist, this.entry);
+    setPlaylist({ name: 'default', entries: this.playlist }, this.entry);
   }
   remove() {
     this.entry = player.entry;
@@ -245,8 +255,16 @@ class PlaylistController {
     });
     const active1 = this.table.cell(from, 'play:name').nodes().to$().find('button.ui-state-active').length > 0;
     const active2 = this.table.cell(to, 'play:name').nodes().to$().find('button.ui-state-active').length > 0;
-    this.table.cell(from, 'play:name').nodes().to$().find('button').toggleClass('ui-state-active', active2);
-    this.table.cell(to, 'play:name').nodes().to$().find('button').toggleClass('ui-state-active', active1);
+    this.table.cell(from, 'play:name').nodes().to$().find('button').toggleClass('ui-state-active', active2)
+      .attr('title', 'Play')
+      .find('iconify-icon').attr('icon', ICON_PLAY);
+    this.table.cell(to, 'play:name').nodes().to$().find('button').toggleClass('ui-state-active', active1)
+      .attr('title', 'Play')
+      .find('iconify-icon').attr('icon', ICON_PLAY);
+    if (isPlaying)
+      this.table.rows().nodes().to$().find('button.ui-state-active')
+        .attr('title', 'Pause')
+        .find('iconify-icon').attr('icon', ICON_PAUSE);
     $(this.table.row(from).node()).removeClass('selected');
     $(this.table.row(to).node()).addClass('selected');
   }
