@@ -32,9 +32,10 @@ let galleryCache = {};
 let currentState;
 loadScreenshots().then(res => {
   galleryIndex = res;
-  showTrack();
   if (currentState) {
-    loadScreenshotGroups();
+    loadScreenshotGroups().then(() => {
+      showTrack();
+    });
   }
 });
 
@@ -59,7 +60,7 @@ function loadScreenshotGroups() {
     setGallery(undefined, game);
     return;
   }
-  loadEntry(platform, game, index).then(gallery => {
+  return loadEntry(platform, game, index).then(gallery => {
     screenshotGroups = Map.groupBy(gallery.library, screenshot => screenshot.group ?? screenshot.relativeUrl.match(/^(.+)(-\d+)\.\w+$/)?.[1] ?? screenshot.relativeUrl);
     screenshotGroups.keys().forEach(key => {
       if ((!demo || key === 'demo') && (demo || key !== 'demo')) {
@@ -127,7 +128,7 @@ function loadEntry(platform, game, index) {
   });
 }
 
-const INTERVAL_SEC = 10;
+const INTERVAL_SEC = location.hostname === '127.0.0.1' ? 2 : 10;
 let galleryStatus = {
   list: null,
   index: 0,

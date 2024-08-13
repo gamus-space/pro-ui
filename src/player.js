@@ -21,7 +21,7 @@ class Player extends EventTarget {
 
   constructor() {
     super();
-    this._playlist = [];
+    this._playlist = { entries: [] };
     this._track = null;
     this._entry = null;
     this._loop = false;
@@ -39,9 +39,9 @@ class Player extends EventTarget {
     const ended = () => {
       this.isSeeking = true;
       if (this.entry == null) return;
-      if (this.entry < this.playlist.length-1)
+      if (this.entry < this.playlist.entries.length-1)
         this.load(this.entry+1);
-      if (this.entry === this.playlist.length-1 && this.loop)
+      if (this.entry === this.playlist.entries.length-1 && this.loop)
         this.load(0);
     };
 
@@ -125,13 +125,6 @@ class Player extends EventTarget {
     this._updateLoop(true);
     this.dispatchEvent(new CustomEvent('update', { detail: { loop: this._loop } }));
   }
-  get volume() {
-    return this.audio.volume;
-  }
-  set volume(v) {
-    this.audio.volume = v;
-    this.dispatchEvent(new CustomEvent('update', { detail: { volume: v } }));
-  }
   get duration() {
     return this._duration ?? (this.audio.duration || 0);
   }
@@ -155,8 +148,10 @@ class Player extends EventTarget {
       get() { return analyser; }
     });
     audioInput.connect(analyser);
+    const volumeNode = this.audioContext.createGain();
+    analyser.connect(volumeNode);
     const replayGainNode = this.audioContext.createGain();
-    analyser.connect(replayGainNode);
+    volumeNode.connect(replayGainNode);
     const splitter = this.audioContext.createChannelSplitter(2);
     replayGainNode.connect(splitter);
     const gainL1 = this.audioContext.createGain();
@@ -188,7 +183,6 @@ class Player extends EventTarget {
       get() { return replayGain; },
       set(v) {
         replayGain = v ?? 0;
-        console.log({ replayGain });
         replayGainNode.gain.value = Math.pow(10, replayGain/20);
       },
     });
@@ -206,13 +200,21 @@ class Player extends EventTarget {
       },
     });
     this.stereo = stereo;
+
+    Object.defineProperty(this, 'volume', {
+      get () { return volumeNode.gain.value; },
+      set (v) {
+        volumeNode.gain.value = v;
+        this.dispatchEvent(new CustomEvent('update', { detail: { volume: v } }));
+      },
+    });
   }
 
   load(data_or_entry, play = true) {
     if (this.loading) return;
     this.loading = true;
 
-    const data = typeof data_or_entry === 'number' ? this._playlist[data_or_entry] : data_or_entry;
+    const data = typeof data_or_entry === 'number' ? this._playlist.entries[data_or_entry] : data_or_entry;
     this._track = data;
     this._entry = typeof data_or_entry === 'number' ? data_or_entry : null;
     this._duration = data.duration;

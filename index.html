@@ -86,8 +86,8 @@
         <span class="duration"></span>
       </div>
       <div class="plpa">
-        <button class="play ui-button ui-button-icon-only">
-          <span class="ui-icon ui-icon-play"></span>
+        <button class="play ui-button ui-button-icon-only" title="Play">
+          <iconify-icon icon="ph:play-fill"></iconify-icon>
         </button>
       </div>
       <div class="seek">
@@ -95,7 +95,7 @@
         <div class="seekPlaylist" style="display: none"></div>
       </div>
       <div class="vol">
-        <div class="volume"></div>
+        <div class="volume" title="Volume"></div>
         <span class="icon-group volume-min">
           <span class="ui-icon ui-icon-volume-off"></span>
         </span>
@@ -104,7 +104,7 @@
         </span>
       </div>
       <div class="ster">
-        <div class="stereo"></div>
+        <div class="stereo" title="Stereo"></div>
         <span class="icon-group stereo-rev">
           <span class="ui-icon ui-icon-triangle-1-e"></span>
           <span class="ui-icon ui-icon-triangle-1-w"></span>
@@ -123,16 +123,16 @@
         <span class="total"></span>
       </div>
       <div class="nav">
-        <button class="previous ui-button ui-button-icon-only">
-          <span class="ui-icon ui-icon-seek-first"></span>
+        <button class="previous ui-button ui-button-icon-only" title="Previous">
+          <iconify-icon icon="ph:caret-line-left-fill"></iconify-icon>
         </button>
-        <button class="next ui-button ui-button-icon-only">
-          <span class="ui-icon ui-icon-seek-end"></span>
+        <button class="next ui-button ui-button-icon-only" title="Next">
+          <iconify-icon icon="ph:caret-line-right-fill"></iconify-icon>
         </button>
       </div>
       <div class="status">
-        <label class="loop ui-button-icon-only">
-          <span class="ui-icon ui-icon-arrowrefresh-1-n"></span>
+        <label class="loop ui-button-icon-only" title="Repeat">
+          <iconify-icon icon="ph:repeat"></iconify-icon>
           <input type="checkbox" />
         </label>
       </div>
@@ -151,18 +151,18 @@
       </div>
       <div class="controls">
         <span class="btns">
-          <label class="loop ui-button-icon-only">
-            <span class="ui-icon ui-icon-arrowrefresh-1-n"></span>
+          <label class="loop ui-button-icon-only" title="Repeat">
+            <iconify-icon icon="ph:repeat"></iconify-icon>
             <input type="checkbox" />
           </label>
-          <button class="previous ui-button ui-button-icon-only" style="display: none">
-            <span class="ui-icon ui-icon-seek-first"></span>
+          <button class="previous ui-button ui-button-icon-only" title="Previous" style="display: none">
+            <iconify-icon icon="ph:caret-line-left-fill"></iconify-icon>
           </button>
-          <button class="play ui-button ui-button-icon-only">
-            <span class="ui-icon ui-icon-play"></span>
+          <button class="play ui-button ui-button-icon-only" title="Play">
+            <iconify-icon icon="ph:play-fill"></iconify-icon>
           </button>
-          <button class="next ui-button ui-button-icon-only" style="display: none">
-            <span class="ui-icon ui-icon-seek-end"></span>
+          <button class="next ui-button ui-button-icon-only" title="Next" style="display: none">
+            <iconify-icon icon="ph:caret-line-right-fill"></iconify-icon>
           </button>
         </span>
         <span class="sk">
@@ -176,7 +176,7 @@
           </div>
         </span>
         <div class="vol">
-          <div class="volume"></div>
+          <div class="volume" title="Volume"></div>
           <span class="icon-group volume-min">
             <span class="ui-icon ui-icon-volume-off"></span>
           </span>
@@ -185,7 +185,7 @@
           </span>
         </div>
         <div class="ster">
-          <div class="stereo"></div>
+          <div class="stereo" title="Stereo"></div>
           <span class="icon-group stereo-rev">
             <span class="ui-icon ui-icon-triangle-1-e"></span>
             <span class="ui-icon ui-icon-triangle-1-w"></span>
@@ -236,12 +236,12 @@
   </div>
   <div id="backgroundDialog" title="background" style="display: none">
     <div class="controls">
-      <label class="cover ui-button-icon-only">
-        <span class="ui-icon ui-icon-arrow-4"></span>
+      <label class="cover ui-button-icon-only" title="Stretch">
+        <iconify-icon icon="ph:arrows-out-cardinal"></iconify-icon>
         <input type="checkbox" name="cover" />
       </label>
-      <label class="contain ui-button-icon-only">
-        <span class="ui-icon ui-icon-arrow-4-diag"></span>
+      <label class="contain ui-button-icon-only" title="Repeat">
+        <iconify-icon icon="ph:arrows-in-cardinal"></iconify-icon>
         <input type="checkbox" name="contain" />
       </label>
       <span class="name" style="display: none">
@@ -290,7 +290,14 @@
     <h3>credits</h3>
     <ul>
       <li><a href="https://www.myfreetextures.com/" target="_blank">My Free Textures</a> - background collection</li>
+      <li><a href="https://iconify.design/" target="_blank">Iconify</a> - icon library</li>
     </ul>
+    <h3>patrons</h3>
+    <ul>
+      <li>ArKey <iconify-icon icon="ph:medal-fill" class="medal silver"></iconify-icon></li>
+      <li>AguniekX <iconify-icon icon="ph:medal-fill" class="medal bronze"></iconify-icon></li>
+    </ul>
+    <h4>Thanks for your support!</h4>
   </div>
   <div id="loginOverlay">
     <div id="login" style="display: none" class="ui-widget ui-widget-content ui-corner-all ui-widget-shadow">
@@ -300,16 +307,19 @@
         </ul>
       </div>
       <div class="sources">
-        <label class="ui-button-icon-only">
+        <label>
           <iconify-icon icon="ph:browsers-fill"></iconify-icon>
+          <div class="title">DEMO</div>
           <input type="checkbox" name="demo" />
         </label>
-        <label class="ui-button-icon-only">
+        <label>
           <iconify-icon icon="ph:headphones-fill"></iconify-icon>
+          <div class="title">STD</div>
           <input type="checkbox" name="standard" />
         </label>
-        <label class="ui-button-icon-only">
+        <label>
           <iconify-icon icon="ph:speaker-hifi-fill"></iconify-icon>
+          <div class="title">HIFI</div>
           <input type="checkbox" name="hifi" />
         </label>
       </div>

@@ -122,8 +122,9 @@ class Controls {
   }
   set paused(v) {
     this._paused = v;
-    $('#playerDialog .play .ui-icon').toggleClass('ui-icon-play', this._paused);
-    $('#playerDialog .play .ui-icon').toggleClass('ui-icon-pause', !this._paused);
+    $('#playerDialog .play')
+      .attr('title', this._paused ? 'Play' : 'Pause')
+      .find('iconify-icon').attr('icon', this._paused ? 'ph:play-fill' : 'ph-pause-fill');
   }
   get duration() {
     return this._duration;
@@ -180,13 +181,9 @@ player.addEventListener('pause', () => {
 });
 player.addEventListener('timeupdate', (e) => {
   controls.position = player.currentTime;
-  const previous = $('#playerDialog .previous .ui-icon');
-  if (player.currentTime <= SEEK_START_LIMIT && previous.hasClass('ui-icon-seek-prev')) {
-    previous.removeClass('ui-icon-seek-prev').addClass('ui-icon-seek-first');
-  }
-  if (player.currentTime > SEEK_START_LIMIT && previous.hasClass('ui-icon-seek-first')) {
-    previous.removeClass('ui-icon-seek-first').addClass('ui-icon-seek-prev');
-  }
+  $('#playerDialog .previous')
+    .attr('title', player.currentTime <= SEEK_START_LIMIT ? 'Previous' : 'Restart')
+    .find('iconify-icon').attr('icon', player.currentTime <= SEEK_START_LIMIT ? 'ph:caret-line-left-fill' : 'ph:caret-double-left-fill');
   updatePreviousDisabled();
 });
 player.addEventListener('entry', ({ detail: track }) => {
@@ -202,12 +199,12 @@ player.addEventListener('entry', ({ detail: track }) => {
     .find('.year').text(track.year ?? '').end();
   updateEntry();
 });
-player.addEventListener('playlist', ({ detail: { playlist } }) => {
-  $('#playerDialog .entry .total').text(playlist.length);
+player.addEventListener('playlist', ({ detail: { playlist: { entries } } }) => {
+  $('#playerDialog .entry .total').text(entries.length);
   updateEntry();
   updatePlaylist();
 });
-$('#playerDialog .entry .total').text(player.playlist.length);
+$('#playerDialog .entry .total').text(player.playlist.entries.length);
 updatePlaylist();
 function updateEntry() {
   $('#playerDialog .entry').toggle(player.entry != null);
@@ -216,10 +213,10 @@ function updateEntry() {
   $('#playerDialog .miniPlayer .next,.previous').toggle(player.entry != null);
   $('#playerDialog .midiPlayer .seekPlaylist').toggle(player.entry != null);
   updatePreviousDisabled();
-  $('#playerDialog .next').button('option', 'disabled', player.entry == null || player.entry >= player.playlist.length-1);
+  $('#playerDialog .next').button('option', 'disabled', player.entry == null || player.entry >= player.playlist.entries.length-1);
 }
 function updatePlaylist() {
-  playlistDurations = player.playlist.map(({ time }) => time).reduce((res, time) => [...res, time + (res[res.length-1] ?? 0)], []);
+  playlistDurations = player.playlist.entries.map(({ time }) => time).reduce((res, time) => [...res, time + (res[res.length-1] ?? 0)], []);
   $('#playerDialog .seekPlaylist').slider('option', 'max', playlistDurations[playlistDurations.length-1] ?? 0);
 }
 function updatePreviousDisabled() {

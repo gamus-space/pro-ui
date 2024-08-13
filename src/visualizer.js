@@ -6,7 +6,7 @@ import { dialogOptions, initDialog, showDialog } from './utils.js';
 $('#visualizerDialog').dialog({
   ...dialogOptions,
   width: 400,
-  height: 400,
+  height: 300,
   position: { my: "center", at: "center", of: window },
 });
 initDialog($('#visualizerDialog'), { icon: 'ph:equalizer' });
@@ -16,7 +16,7 @@ export function show() {
 }
 
 const analyser = player.analyser;
-analyser.fftSize = 64;
+analyser.fftSize = 1024;
 
 const waveData = new Float32Array(analyser.frequencyBinCount);
 const waveContext = $('#visualizerDialog canvas.wave')[0].getContext('2d');
@@ -40,12 +40,32 @@ function drawWave() {
   }
   context.stroke();
 }
+
 function drawFreq() {
+  const bars = 20;
   const context = freqContext;
-  const data = freqData;
+  const linData = freqData;
+  analyser.getByteFrequencyData(linData);
+  const maxFreq = analyser.context.sampleRate / 2;
+  const minFreq = 20;
+  const exp = Math.exp(Math.log(maxFreq/minFreq) / bars);
+  const linStep = maxFreq / linData.length;
+  const logData = new Array(bars).fill(0);
+  let logFreq = 0;
+  let linFreq = 0;
+  let linPtr = 0;
+  for (let i = 0; i < logData.length; i++) {
+      logFreq = i === 0 ? minFreq : logFreq * exp;
+      while (linFreq < logFreq) {
+        linPtr++;
+        linFreq += linStep;
+      }
+      const s = (linFreq - logFreq) / linStep;
+      logData[i] = s * linData[linPtr-1] + (1-s) * linData[linPtr];
+  }
+  const data = logData;
   const width = freqContext.canvas.width;
   const height = freqContext.canvas.height;
-  analyser.getByteFrequencyData(data);
   context.clearRect(0, 0, width, height);
   let x = 0;
   for (let i = 0; i < data.length; i++) {
@@ -54,9 +74,11 @@ function drawFreq() {
     x += width / data.length;
   }
 }
+
 function draw() {
   drawWave();
   drawFreq();
-  requestAnimationFrame(draw);
+  if ($('#visualizerDialog').dialog('isOpen'))
+    requestAnimationFrame(draw);
 }
-draw();
+$('#visualizerDialog').on('dialogopen', draw);

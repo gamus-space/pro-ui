@@ -48,7 +48,8 @@ $('#user .logout').click(() => {
 
 export function setPlaylist(playlist, entry) {
   player.setPlaylist(playlist, entry);
-  localStorage.setItem('playlist', JSON.stringify(playlist));
+  if (playlist.name)
+    localStorage.setItem('playlist', JSON.stringify(playlist));
 }
 
 export function setPlayerOptions({ volume, stereo, loop }) {
@@ -69,7 +70,9 @@ export function setPlayerOptions({ volume, stereo, loop }) {
 player.volume = localStorage.getItem('volume') == null ? 1 : parseFloat(localStorage.getItem('volume'));
 player.stereo = localStorage.getItem('stereo') == null ? 1 : parseFloat(localStorage.getItem('stereo'));;
 player.loop = localStorage.getItem('loop') === 'true';
-setPlaylist(JSON.parse(localStorage.getItem('playlist') ?? '[]'), undefined);
+const playlist = JSON.parse(localStorage.getItem('playlist') ?? '[]');
+export const initialPlaylist = Array.isArray(playlist) ? { name: 'default', entries: playlist } : playlist;
+setPlaylist(initialPlaylist, undefined);
 $('body').css('background-image', localStorage.getItem('backgroundImageUrl') == null ? '' : `url(${localStorage.getItem('backgroundImageUrl')})`);
 $('body').css('background-size', localStorage.getItem('backgroundSize'));
 
