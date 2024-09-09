@@ -24,8 +24,11 @@ $('#launcher .library').click(() => {
 $('#launcher .player').click(() => {
   import('./controls.js').then(({ show }) => show());
 });
-$('#launcher .playlist').click(() => {
-  import('./playlist.js').then(({ show }) => show());
+export let playlistLoaded = new Promise(resolve => {
+  $('#launcher .playlist').click(() => {
+    import('./playlist.js').then(({ show }) => show());
+    resolve();
+  });
 });
 $('#launcher .gallery').click(() => {
   import('./gallery.js').then(({ show }) => show());
@@ -46,12 +49,6 @@ $('#user .logout').click(() => {
   });
 });
 
-export function setPlaylist(playlist, entry) {
-  player.setPlaylist(playlist, entry);
-  if (playlist.name)
-    localStorage.setItem('playlist', JSON.stringify(playlist));
-}
-
 export function setPlayerOptions({ volume, stereo, loop }) {
   if (loop != null) {
     player.loop = loop;
@@ -70,9 +67,6 @@ export function setPlayerOptions({ volume, stereo, loop }) {
 player.volume = localStorage.getItem('volume') == null ? 1 : parseFloat(localStorage.getItem('volume'));
 player.stereo = localStorage.getItem('stereo') == null ? 1 : parseFloat(localStorage.getItem('stereo'));;
 player.loop = localStorage.getItem('loop') === 'true';
-const playlist = JSON.parse(localStorage.getItem('playlist') ?? '[]');
-export const initialPlaylist = Array.isArray(playlist) ? { name: 'default', entries: playlist } : playlist;
-setPlaylist(initialPlaylist, undefined);
 $('body').css('background-image', localStorage.getItem('backgroundImageUrl') == null ? '' : `url(${localStorage.getItem('backgroundImageUrl')})`);
 $('body').css('background-size', localStorage.getItem('backgroundSize'));
 

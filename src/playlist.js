@@ -2,7 +2,6 @@
 
 import { user } from './login.js';
 import { player } from './player.js';
-import { initialPlaylist, setPlaylist } from './script.js';
 import { dialogOptions, initDialog, showDialog, time, trackTitle } from './utils.js';
 
 $('#playlistDialog').dialog({
@@ -68,7 +67,7 @@ setTimeout(() => {
     const loaded = $(event.currentTarget).hasClass('ui-state-active');
     if (!loaded) {
       const data = $('#playlist').DataTable().row($(event.target).parents('tr')).data();
-      playlistController.updatePlaylist();
+      playlistController.updatePlaylist(true);
       player.load(data.no-1);
     } else if (isPlaying) player.pause();
     else player.play();
@@ -173,8 +172,6 @@ setTimeout(() => {
 
 class PlaylistController {
   constructor() {
-    this._skipUpdate = false;
-    this._skipScroll = true;
     this.playlist = [];
     this.play = `
       <button class="listen ui-button ui-button-icon-only progressive" title="Play">
@@ -183,34 +180,14 @@ class PlaylistController {
       </button>
     `;
     this.entry = undefined;
-    player.addEventListener('playlist', ({ detail: { playlist: { name, entries } } }) => {
-      if (!name) return;
-      if (this._skipUpdate) {
-        this._skipUpdate = false;
-        return;
-      }
-      if (!this.playlist.every((url, i) => url === entries[i].url)) {
-        this.table.clear();
-        this.playlist = [];
-      }
-      this.addPlaylist(entries.slice(this.playlist.length));
-      if (!this._skipScroll) {
-        this.table.row(':last').node()?.scrollIntoView();
-      }
-      this._skipScroll = false;
-      const button = this.table.rows((row, data) => data.no-1 === player.entry).nodes().to$().find('button.listen').addClass('ui-state-active');
-      if (isPlaying)
-        button
-          .attr('title', 'Pause')
-          .find('iconify-icon').attr('icon', ICON_PAUSE);
-    });
   }
   init(table) {
     this.table = table;
-    const entries = player.playlist.name === 'default' ? player.playlist.entries : initialPlaylist.entries;
-    this.addPlaylist(entries);
+    const playlist = JSON.parse(localStorage.getItem('playlist') ?? '[]');
+    const initialPlaylist = Array.isArray(playlist) ? { name: 'default', entries: playlist } : playlist;
+    this.addPlaylist(initialPlaylist.entries, false);
   }
-  addPlaylist(playlist) {
+  addPlaylist(playlist, scroll) {
     if (!this.table) return;
     this.entry = undefined;
     playlist.forEach(track => {
@@ -225,10 +202,14 @@ class PlaylistController {
       });
     });
     this.table.draw(false);
+    this.updatePlaylist(false);
+    if (scroll)
+      this.table?.row(':last').node()?.scrollIntoView();
   }
-  updatePlaylist() {
-    this._skipUpdate = true;
-    setPlaylist({ name: 'default', entries: this.playlist }, this.entry);
+  updatePlaylist(forcePlayerUpdate) {
+    if (forcePlayerUpdate || player.playlist.name === 'default')
+      player.setPlaylist({ name: 'default', entries: this.playlist }, this.entry);
+    localStorage.setItem('playlist', JSON.stringify(this.playlist));
   }
   remove() {
     this.entry = player.entry;
@@ -238,7 +219,7 @@ class PlaylistController {
     this.playlist = this.playlist.filter((_, i) => !indexes.has(i));
     this.table.rows('.selected').remove().draw(false);
     this.renumber();
-    this.updatePlaylist();
+    this.updatePlaylist(false);
   }
   renumber() {
     this.table.cells(null, 'no:name').every(function(i) {
@@ -281,7 +262,7 @@ class PlaylistController {
       this.moveRow(i, i-1);
     });
     this.renumber();
-    this.updatePlaylist();
+    this.updatePlaylist(false);
   }
   moveDown() {
     this.entry = player.entry;
@@ -289,7 +270,7 @@ class PlaylistController {
       this.moveRow(i, i+1);
     });
     this.renumber();
-    this.updatePlaylist();
+    this.updatePlaylist(false);
   }
 }
 export const playlistController = new PlaylistController();
