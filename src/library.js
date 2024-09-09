@@ -4,7 +4,7 @@ import { loadTracks } from './db.js';
 import { user } from './login.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
 import { subscribeState } from './route.js';
-import { setPlaylist } from './script.js';
+import { playlistLoaded } from './script.js';
 import { dialogOptions, fetchJson, initDialog, showDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
@@ -100,7 +100,7 @@ loadTracks().then(data => {
     if (!loaded) {
       const rows = $('#library').DataTable().rows(':visible');
       const entry = rows.nodes().indexOf($('#library').DataTable().row($(event.target).parents('tr')).node());
-      setPlaylist({ entries: rows.data().toArray().map(playerEntry) }, entry);
+      player.setPlaylist({ entries: rows.data().toArray().map(playerEntry) }, entry);
       player.load(entry);
     } else if (isPlaying) player.pause();
     else player.play();
@@ -342,10 +342,19 @@ loadTracks().then(data => {
   function updateInfo() {
     $('#libraryDialog .info').text(`Showing ${rowsStats({ search: 'applied' }, true)} tracks`);
   };
+  const updateAddToPlaylist = () => {
+    const emptySelection = $('#library').DataTable().$('tr.selected').length === 0;
+    $('#libraryDialog .addToPlaylist').button({ disabled: emptySelection || !hasPlaylist });
+  };
+  let hasPlaylist = false;
+  playlistLoaded.then(() => {
+    hasPlaylist = true;
+    updateAddToPlaylist();
+  });
   const updateSelection = () => {
-    const disabled = $('#library').DataTable().$('tr.selected').length === 0;
-    $('#libraryDialog .addToPlaylist').button({ disabled });
-    $('#libraryDialog .downloadSelector').iconsselectmenu('option', 'disabled', disabled);
+    updateAddToPlaylist();
+    const emptySelection = $('#library').DataTable().$('tr.selected').length === 0;
+    $('#libraryDialog .downloadSelector').iconsselectmenu('option', 'disabled', emptySelection);
     const stats = rowsStats('.selected', false);
     $('#libraryDialog .status').text(stats == null ? '' : `Selected: ${stats}`);
   };
@@ -367,10 +376,9 @@ loadTracks().then(data => {
   });
   $('#libraryDialog .addToPlaylist').click(() => {
     const data = $('#library').DataTable().rows('.selected').data().toArray();
-    setPlaylist({ name: player.playlist.name, entries: [
-      ...player.playlist.entries,
-      ...data.map(playerEntry),
-    ] }, undefined);
+    import('./playlist.js').then(({ playlistController }) => {
+      playlistController.addPlaylist(data.map(playerEntry), true);
+    });
     unselectAll();
   });
   function playerEntry({ url, platform, game, title, timeSec, originalTimeSec, year, artist }) {
