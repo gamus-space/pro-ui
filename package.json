@@ -2,7 +2,7 @@
   "name": "pro-ui",
   "version": "1.0.0",
   "scripts": {
-    "build": "npm run emit && npm run ssg",
+    "build": "npm run emit && npm run ssg && cp --remove-destination dist/index.html 404.html",
     "emit": "mkdir dist && cp -R index.html style.css jquery-ui.css src/ lib/ images/ dist/",
     "ssg": "node utils/ssg.js dist/"
   },
