@@ -1,0 +1,955 @@
+body {
+  background-color: #777;
+  &.demo {
+    background: linear-gradient(#59b4d4, #59b4d4 30%, #f58400b0 85%, #000 85%, #777) fixed;
+  }
+  &.standard {
+    background: linear-gradient(#59b4d4, #f58400b0, #000) fixed;
+  }
+  &.hifi {
+    background: conic-gradient(at -10% 40%, #59b4d4 20%, #f58400b0 25%, #000 30%, #777 50%) fixed;
+  }
+  background-position: center;
+}
+
+body .ui-widget {
+  font-family: Kanit,Segoe UI,Arial,sans-serif;
+  font-weight: 200;
+}
+.ui-dialog.ui-widget {
+  padding: 0 0.2em;
+}
+.ui-dialog .ui-dialog-title {
+  font-weight: normal;
+}
+.ui-dialog .ui-dialog-title > * {
+  vertical-align: sub;
+  padding-right: 0.5rem;
+  font-size: 1.25em;
+}
+.ui-dialog.ui-widget.ui-widget-content {
+  border: 1px solid black;
+}
+.ui-dialog .dataTables_scrollBody,
+.ui-dialog .scrollable,
+.ui-selectmenu-menu.scrollable ul {
+  scrollbar-width: thin;
+  scrollbar-color: #777 #222;
+}
+.ui-slider.ui-slider-vertical {
+  background-position: 25% 50%;
+}
+.ui-state-active {
+  font-weight: normal !important;
+}
+.ui-widget-header {
+  background-size: 60px 150px !important;
+}
+.ui-button-icon-only iconify-icon {
+  display: block;
+  position: absolute;
+  inset: 30%;
+}
+.dataTables_paginate .paginate_button.disabled {
+  opacity: 0.5;
+}
+.dataTables_paginate .paginate_button {
+  padding: 0.2rem 0.5rem !important;
+}
+
+#launcher {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+#launcher .ui-button {
+  width: 4rem;
+  height: 4rem;
+  font-size: 2rem;
+  padding: 0;
+}
+#launcher .ui-button > * {
+  vertical-align: sub;
+}
+
+#user {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+#user .ui-button {
+  width: 4rem;
+  height: 4rem;
+  font-size: 2rem;
+  padding: 0;
+}
+#user .ui-button > * {
+  vertical-align: sub;
+}
+#user .ui-checkboxradio-label > * {
+  vertical-align: bottom;
+}
+
+body #playerDialog {
+  container-type: size;
+  overflow: hidden;
+}
+body #playerDialog .miniPlayer {
+  display: none;
+}
+@container (width < 400px) or (height < 200px) {
+  body #playerDialog .midiPlayer {
+    display: none;
+  }
+  body #playerDialog .miniPlayer {
+    display: flex;
+  }
+}
+
+#playerDialog .midiPlayer {
+  height: calc(100% - 2rem);
+  display: grid;
+  grid-template:
+    "status plpa info vol  ster" 6rem
+    "entry  nav  info time time" minmax(3rem, auto)
+    "seek   seek seek seek seek" 3rem
+  /  3rem   6rem auto 3rem 3rem;
+  place-items: center;
+  margin: 1rem;
+
+  .plpa {
+    grid-area: plpa;
+  }
+  .plpa .play {
+    width: 2rem;
+    height: 2rem;
+    transform: scale(2);
+  }
+  .info {
+    display: none;
+    grid-area: info;
+    place-self: stretch;
+    contain: strict;
+    padding: 0.2rem 1rem;
+  }
+  .info .row {
+    margin-top: 0.8rem;
+  }
+  .info .row .major {
+    display: inline-block;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  .info .row .medium {
+    display: inline-block;
+    font-size: 1rem;
+  }
+  .info .row .minor {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+  }
+  .time {
+    grid-area: time;
+  }
+  .status {
+    grid-area: status;
+  }
+  .status .loop {
+    width: 2rem;
+    height: 2rem;
+  }
+  .seek {
+    grid-area: seek;
+    justify-self: stretch;
+  }
+  .vol {
+    grid-area: vol;
+    display: grid;
+    grid-template:
+      "volume max" 1fr
+      "volume min" 1fr
+    / 1fr 1fr
+  }
+  .vol .volume {
+    grid-area: volume;
+    height: 5rem;
+  }
+  .vol .volume-min {
+    grid-area: min;
+    align-self: end;
+  }
+  .vol .volume-max {
+    grid-area: max;
+    align-self: start;
+  }
+  .ster {
+    grid-area: ster;
+    display: grid;
+    grid-template:
+      "stereo max" 1fr
+      "stereo med" 1fr
+      "stereo min" 1fr
+    / 1fr 1fr
+  }
+  .ster .stereo {
+    grid-area: stereo;
+    height: 5rem;
+  }
+  .ster .stereo-rev {
+    grid-area: min;
+    align-self: end;
+  }
+  .ster .mono {
+    grid-area: med;
+    align-self: center;
+  }
+  .ster .stereo-full {
+    grid-area: max;
+    align-self: start;
+  }
+  .ster .icon-group {
+    white-space: nowrap;
+    margin: -0.1em 0.2em;
+    text-align: center;
+  }
+  .ster .icon-group * {
+    margin: 0 -0.5em;
+  }
+  .entry {
+    grid-area: entry;
+    display: none;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  .nav {
+    grid-area: nav;
+    display: none;
+  }
+  .nav button {
+    width: 2rem;
+    height: 2rem;
+  }
+  .seekPlaylist {
+    height: 0.8rem;
+    margin-top: 0.5rem;
+  }
+  .seekPlaylist.ui-slider .ui-slider-handle {
+    width: 0.8rem;
+    height: 0.8rem;
+    top: -1px;
+  }
+  .seekPlaylist.ui-slider .ui-slider-range {
+    top: -1px;
+  }
+  .seekTrack {
+    height: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  .seekTrack.ui-slider .ui-slider-handle {
+    width: 1.5rem;
+    height: 1.5rem;
+    top: -1px;
+  }
+  .seekTrack.ui-slider .ui-slider-range {
+    top: -1px;
+  }
+  .seekTrack .label {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+    font-weight: bold;
+    font-size: 1rem;
+    initial-letter: 0.2rem;
+  }
+  .volume,
+  .stereo {
+    width: 0.8rem;
+  }
+  .volume.ui-slider .ui-slider-handle,
+  .stereo.ui-slider .ui-slider-handle {
+    width: 0.8rem;
+    height: 0.8rem;
+    left: -1px;
+  }
+  .volume.ui-slider .ui-slider-range,
+  .stereo.ui-slider .ui-slider-range {
+    left: -1px;
+  }
+}
+
+#playerDialog .miniPlayer {
+  height: 100%;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+
+  .ui-button-icon-only {
+    height: 2rem;
+    width: 2rem;
+  }
+  .ui-visual-focus {
+    box-shadow: none;
+  }
+  .header {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  .header .info {
+    width: 100%;
+    min-width: 0;
+    text-align: center;
+  }
+  .header .info > * {
+    font-size: 1.5em;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .header .entry {
+    white-space: nowrap;
+  }
+  .controls {
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+  }
+  .controls .sk {
+    flex-grow: 1;
+    align-self: end;
+  }
+  .controls .sk .seekTrack {
+    margin: 0 1rem;
+    min-width: 4rem;
+  }
+  .controls .sk .scale {
+    text-align: center;
+  }
+  .seekTrack {
+    height: 0.8rem;
+  }
+  .seekTrack.ui-slider .ui-slider-handle {
+    width: 0.8rem;
+    height: 0.8rem;
+    top: -1px;
+  }
+  .seekTrack.ui-slider .ui-slider-range {
+    top: -1px;
+  }
+  .seekTrack .label {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+    font-weight: bold;
+    font-size: 0.5rem;
+    initial-letter: 0.1rem;
+  }
+  .vol {
+    display: grid;
+    grid-template:
+      "volume max" 1fr
+      "volume min" 1fr
+    / 1fr 1fr
+  }
+  .vol .volume {
+    grid-area: volume;
+    height: 3rem;
+  }
+  .vol .volume-min {
+    grid-area: min;
+    align-self: end;
+  }
+  .vol .volume-max {
+    grid-area: max;
+    align-self: start;
+  }
+  .ster {
+    margin-left: 1rem;
+    display: grid;
+    grid-template:
+      "stereo max" 1fr
+      "stereo med" 1fr
+      "stereo min" 1fr
+    / 1fr 1fr
+  }
+  .ster .stereo {
+    grid-area: stereo;
+    height: 3rem;
+  }
+  .ster .stereo-rev {
+    grid-area: min;
+    align-self: end;
+  }
+  .ster .mono {
+    grid-area: med;
+    align-self: center;
+  }
+  .ster .stereo-full {
+    grid-area: max;
+    align-self: start;
+  }
+  .ster .icon-group {
+    white-space: nowrap;
+    margin: -0.1em 0.2em;
+    text-align: center;
+  }
+  .ster .icon-group * {
+    margin: 0 -0.5em;
+  }
+  .volume,
+  .stereo {
+    width: 0.5rem;
+  }
+  .volume.ui-slider .ui-slider-handle,
+  .stereo.ui-slider .ui-slider-handle {
+    width: 0.5rem;
+    height: 0.5rem;
+    left: -1px;
+  }
+  .volume.ui-slider .ui-slider-range,
+  .stereo.ui-slider .ui-slider-range {
+    left: -1px;
+  }
+}
+
+#gamesDialog .dataTables_filter {
+  padding-top: 0.3rem;
+}
+#gamesDialog input[type=search] {
+  color: white;
+}
+#gamesDialog input[type=search]::-webkit-search-cancel-button {
+  filter: grayscale(100%);
+}
+#games tr {
+  cursor: pointer;
+}
+#games tr.even td,
+#games tr.even td.sorting_1 {
+  box-shadow: none;
+}
+#games tr.odd td,
+#games tr.odd td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 5%);
+}
+#games tr:hover td,
+#games tr:hover td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 10%);
+}
+#games tr.selected td {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
+}
+#games tr.selected:hover td {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%) !important;
+}
+#games tr.selected td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
+}
+#games .thumbnail {
+  min-width: 80px;
+  min-height: 48px;
+  background: radial-gradient(#666 0, transparent 75%);
+}
+
+#infoDialog {
+  .views {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .empty, .missing {
+      display: flex;
+      align-items: center;
+      gap: 0.3em;
+      font-size: 2rem;
+    }
+
+    .content {
+      height: 100%;
+      h1 {
+        text-align: center;
+      }
+      table {
+        width: 100%;
+      }
+    }
+  }
+}
+
+#libraryDialog {
+  overflow: hidden;
+}
+#libraryDialog .loader {
+  right: 1rem;
+}
+#libraryDialog .ui-button-icon-only {
+  width: 2rem;
+  height: 2rem;
+}
+#libraryDialog .ui-button.progressive {
+  background: linear-gradient(0, #f58400, #f58400) no-repeat;
+  background-size: 0;
+}
+#libraryDialog .ui-selectmenu-button.text {
+  width: 3.5rem;
+  height: 1.6rem;
+  padding: 0.4rem 0.4rem 0 0.4rem;
+}
+#libraryDialog .ui-selectmenu-button.text .ui-selectmenu-icon {
+  margin-top: 3px;
+}
+#libraryDialog .ui-selectmenu-button.icon {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+}
+#libraryDialog .ui-selectmenu-button.icon .ui-selectmenu-text {
+  display: none;
+}
+#libraryDialog .ui-selectmenu-button.icon iconify-icon {
+  position: absolute;
+  inset: 30%;
+}
+body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
+  text-align: center;
+  padding: 0.5em;
+}
+.ui-menu.icons .ui-menu-item-wrapper {
+  padding-left: 2em;
+  iconify-icon {
+    position: absolute;
+    inset: 24% 0.4em;
+  }
+}
+#libraryDialog .operations {
+  display: inline-block;
+}
+#libraryDialog .dataTables_filter {
+  padding-top: 0.3rem;
+}
+#libraryDialog input[type=search] {
+  color: white;
+}
+#libraryDialog input[type=search]::-webkit-search-cancel-button {
+  filter: grayscale(100%);
+}
+#libraryDialog .info {
+  float: left;
+  padding-top: 0.75em;
+}
+#libraryDialog .status {
+  float: right;
+  padding-top: 0.75em;
+}
+
+#library td {
+  padding: 4px;
+}
+#library tr.even td,
+#library tr.even td.sorting_1 {
+  box-shadow: none;
+}
+#library tr.odd td,
+#library tr.odd td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 5%);
+}
+#library tr:hover td,
+#library tr:hover td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 10%);
+}
+#library tr.selected td {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
+}
+#library tr.selected:hover td {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%) !important;
+}
+#library tr.selected td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
+}
+#library .ui-button-icon-only {
+  width: 1.5rem;
+  height: 1.5rem;
+  iconify-icon {
+    inset: 24%;
+  }
+}
+#library.demo .listen.ui-state-active .demo {
+  position: absolute;
+  text-indent: 0;
+  top: -0.5rem;
+  right: -1.5rem;
+  writing-mode: vertical-lr;
+}
+
+#playlistDialog {
+  overflow: hidden;
+}
+#playlistDialog .ui-button-icon-only {
+  width: 2rem;
+  height: 2rem;
+}
+#playlistDialog .ui-button.progressive {
+  background: linear-gradient(0, #f58400, #f58400) no-repeat;
+  background-size: 0;
+}
+#playlistDialog .operations {
+  display: inline-block;
+}
+#playlistDialog .dataTables_filter {
+  padding-top: 0.3rem;
+}
+#playlistDialog input[type=search] {
+  width: 8rem;
+  color: white;
+}
+#playlistDialog input[type=search]::-webkit-search-cancel-button {
+  filter: grayscale(100%);
+}
+#playlistDialog .info {
+  float: left;
+  padding-top: 0.75em;
+}
+#playlistDialog .status {
+  float: right;
+  padding-top: 0.75em;
+}
+
+#playlist td {
+  padding: 4px;
+}
+#playlist tr.even td,
+#playlist tr.even td.sorting_1 {
+  box-shadow: none;
+}
+#playlist tr.odd td,
+#playlist tr.odd td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 5%);
+}
+#playlist tr:hover td,
+#playlist tr:hover td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 10%);
+}
+#playlist tr.selected td {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
+}
+#playlist tr.selected:hover td {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%) !important;
+}
+#playlist tr.selected td.sorting_1 {
+  box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
+}
+#playlist .ui-button-icon-only {
+  width: 1.5rem;
+  height: 1.5rem;
+  iconify-icon {
+    inset: 24%;
+  }
+}
+#playlist.demo .listen.ui-state-active .demo {
+  position: absolute;
+  text-indent: 0;
+  top: -0.5rem;
+  right: -1.5rem;
+  writing-mode: vertical-lr;
+}
+
+
+#backgroundDialog {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#backgroundDialog #backgrounds {
+  overflow-y: scroll;
+}
+#backgroundDialog .controls {
+  margin: 1rem;
+  display: flex;
+  align-items: center;
+}
+#backgroundDialog .cover,
+#backgroundDialog .contain,
+#backgroundDialog .reset {
+  width: 2rem;
+  height: 2rem;
+}
+#backgroundDialog .name {
+  margin: 0 2rem;
+}
+
+#backgroundDialog .block {
+  display: inline-block;
+  width: 22%;
+  min-width: 4rem;
+  height: 4rem;
+  margin: 5px;
+}
+#backgroundDialog .block img {
+  width: 100%;
+}
+
+#visualizerDialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .wave, .freq {
+    width: 300px;
+    height: 100px;
+  }
+}
+
+#galleryDialog {
+  position: relative;
+  overflow: hidden;
+}
+#galleryDialog .image {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transition: opacity 2s ease 0.5s;
+}
+#galleryDialog .data {
+  position: absolute;
+  right: 2rem;
+  bottom: 2rem;
+  padding: 1em 2em;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 1px solid white;
+  background: black;
+  box-shadow: 0px 0px 20px white;
+  transition: opacity 2s ease 0.5s;
+  cursor: move;
+}
+#galleryDialog .controls {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  padding: 1em 2em;
+  border: 1px solid white;
+  background: black;
+  box-shadow: 0px 0px 20px white;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 2rem;
+  opacity: 0.6;
+  cursor: move;
+  .mode {
+    cursor: pointer;
+    padding-top: 0.4rem;
+  }
+  .ui-selectmenu-button.text {
+    width: 16rem;
+    height: 1.6rem;
+    padding: 0.4rem 0.4rem 0 0.4rem;
+    .ui-selectmenu-icon {
+      margin-top: 3px;
+    }
+  }
+}
+.ui-selectmenu-menu.screenshot-list .ui-menu {
+  max-height: 50vh;
+  .ui-menu-item-wrapper {
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: 0.75rem;
+  }
+}
+#galleryDialog .image.active {
+  opacity: 1;
+}
+#galleryDialog .data.active {
+  opacity: 0.6;
+}
+#galleryDialog .passive {
+  opacity: 0;
+}
+#galleryDialog .demo {
+  position: absolute;
+  inset: 50%;
+  font-size: 6rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: rotate(-20deg);
+  text-shadow: black -20px -12px 4px;
+  opacity: 0.6;
+}
+#aboutDialog {
+  h1 {
+    text-align: center;
+  }
+  h3 {
+    margin-bottom: 0;
+  }
+  ul {
+    margin-top: 0;
+  }
+  .links {
+    display: flex;
+    justify-content: space-evenly;
+  }
+  .medal {
+    vertical-align: sub;
+    &.gold {
+      color: #ffff00;
+    }
+    &.silver {
+      color: #bbbbbb;
+    }
+    &.bronze {
+      color: #a05000;
+    }
+  }
+}
+
+#loginOverlay {
+  z-index: 1000;
+  background: #5c5c5ccc;
+  opacity: 1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#login {
+  z-index: 1100;
+  padding: 1rem 4rem 2rem 3rem;
+}
+#login.ui-widget-shadow {
+  box-shadow: 10px 10px 20px #cccccc;
+}
+#login .type {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 0.5rem 0;
+}
+#login h1.fade {
+  max-width: 4rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+#login h1.selected {
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+#login .features {
+  list-style: square;
+}
+#login h2 {
+  margin-top: 2rem;
+}
+#login form div {
+  display: flex;
+  margin-top: 1rem;
+}
+#login form div label {
+  width: 5rem;
+}
+#login form div input {
+  width: 10rem;
+}
+#login input:focus {
+  box-shadow: 0px 0px 20px #f58400;
+}
+#login button {
+  margin: 1rem auto;
+}
+#login .sources {
+  display: flex;
+  justify-content: space-around;
+}
+#login .sources .ui-checkboxradio-label {
+  text-indent: initial;
+  width: 4rem;
+}
+#login .sources .ui-button {
+  font-size: 2rem;
+  padding: 0;
+}
+#login .sources .ui-button iconify-icon {
+  vertical-align: bottom;
+}
+#login .sources .title {
+  font-size: 1rem;
+  font-weight: 400 !important;
+  margin-bottom: 0.3rem;
+}
+#login .links {
+  font-size: 90%;
+  text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: -0.5rem;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #FFF;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  position: relative;
+  animation: pulse 1s linear infinite;
+}
+.loader:after {
+  content: '';
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border: 5px solid #FFF;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  animation: scaleUp 1s linear infinite;
+}
+@keyframes scaleUp {
+  0% { transform: translate(-50%, -50%) scale(0) }
+  60% , 100% { transform: translate(-50%, -50%)  scale(1)}
+}
+@keyframes pulse {
+  0% , 60% , 100%{ transform:  scale(1) }
+  80% { transform:  scale(1.2)}
+}
+.loader {
+  position: absolute;
+  z-index: 1;
+  transition: opacity 2s ease;
+}
+.loader.on {
+  opacity: 1;
+}
+.loader.off {
+  opacity: 0;
+}
