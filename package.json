@@ -1,0 +1,11 @@
+{
+  "name": "pro-ui",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npm run emit && npm run ssg",
+    "emit": "mkdir dist && cp -R index.html style.css jquery-ui.css src/ lib/ images/ dist/",
+    "ssg": "node utils/ssg.js dist/"
+  },
+  "author": "krzykos",
+  "license": "ISC"
+}
