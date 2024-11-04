@@ -4,7 +4,7 @@ import { loadInfo } from './db.js';
 import { pushUrl, subscribeState } from './route.js';
 import { dialogOptions, fetchAny, initDialog, showDialog } from './utils.js';
 
-import { marked } from 'https://cdn.jsdelivr.net/npm/marked@12.0.1/lib/marked.esm.js';
+import { marked } from 'https://cdn.jsdelivr.net/npm/marked@14.1.3/lib/marked.esm.js';
 
 $.widget("custom.dialogwithoutfocus", $.ui.dialog, {
   _focusTabbable: () => {},
