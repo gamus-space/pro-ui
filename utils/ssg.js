@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const process = require('process');
+const { marked } = require('marked');
 
 const DB_URL = 'https://d1e7jf8j2bpzti.cloudfront.net';
 
@@ -33,10 +34,14 @@ function time(t) {
     const index = fs.readFileSync(indexPath, 'utf-8');
 
     const musicDb = await (await fetch(`${DB_URL}/music/index.json`)).json();
+    const textDb = await (await fetch(`${DB_URL}/text/index.json`)).json();
     for (const { platform, game, gameIndex } of Object.entries(musicDb).flatMap(([platform, games]) => Object.entries(games).map(([game, gameIndex]) => ({ platform, game, gameIndex })))) {
         if (process.platform === 'win32' && game.match(/[:"]/))
             continue;
         const songs = await (await fetch(`${DB_URL}/music/${gameIndex}`)).json();
+        const textPath = textDb[platform]?.[game];
+        const text = textPath && await (await fetch(`${DB_URL}/text/${textPath}`)).text();
+        const textHtml = text && marked.parse(text);
         const content = `
             <!DOCTYPE html>
             <html><body>
@@ -44,11 +49,19 @@ function time(t) {
                 location = '/__' + location.pathname;
             </script>
             <h1>${game} ${platform} soundtrack</h1>
-            <ul>
+            <table>
+            <thead>
+                <tr><th>#</th><th>title</th><th>time</th><th>kind</th><th>artist</th></tr>
+            </thead>
+            <tbody>
                 ${songs.map(({ ordinal, title, kind, time: t, artist }) =>
-                    `<li>${ordinal} ${title} ${time(t)} ${kind} - ${artist}</li>\n`
+                    `<tr><td>${ordinal}</td><td>${title}</td><td>${time(t)}</td><td>${kind}</td><td>${artist}</td></tr>\n`
                 ).join('')}
-            </ul>
+            </tbody>
+            </table>
+            <section>
+                ${textHtml}
+            </section>
             </body></html>
         `;
         const contentPath = path.join(dir, platform, game, 'index.html');
