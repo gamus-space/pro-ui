@@ -48,3 +48,24 @@ export function loadInfo() {
     ]))
   ));
 }
+
+const tracksCache = {};
+
+export function loadGamesTracks(platform, game, index) {
+  const cacheKey = `${platform}\t${game}`;
+  if (tracksCache[cacheKey]) {
+    return Promise.resolve(tracksCache[cacheKey]);
+  }
+  return fetchJson(index).then(preprocessTracks(index)).then(tracks => {
+    tracksCache[cacheKey] = tracks;
+    return tracksCache[cacheKey];
+  }).finally(() => {
+  });
+}
+
+const preprocessTracks = baseUrl => tracks => {
+  return tracks.map(track => ({
+    ...track,
+    files: track.files.map(file => ({ ...file, url: new URL(file.url, baseUrl).href })),
+  }));
+};

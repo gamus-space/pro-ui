@@ -2,16 +2,23 @@
 
 import { logout, user } from './login.js';
 import { player } from './player.js';
+import './utils.js';
 
 $.fn.DataTable.ext.pager.numbers_length = 5;
 
 import('./controls.js');
-import('./games.js').then(({ show }) => show());
+import('./games.js').then(({ show }) => {
+  show();
+  import('./randomizer.js').then(({ show }) => show());
+});
 import('./info.js').then(({ show }) => {
   show();
   import('./library.js').then(({ show }) => show());
 });
 
+$('#launcher .randomizer').click(() => {
+  import('./randomizer.js').then(({ show }) => show());
+});
 $('#launcher .games').click(() => {
   import('./games.js').then(({ show }) => show());
 });
@@ -48,6 +55,32 @@ $('#user .logout').click(() => {
     location.reload();
   });
 });
+
+export const DEFAULT_KINDS = Object.freeze({
+  track: true,
+  short: true,
+  jingle: true,
+  ambient: true,
+  story: true,
+});
+class BrowserOptions extends EventTarget {
+  constructor() {
+    super();
+    this._kinds = {
+      ...DEFAULT_KINDS,
+      ...JSON.parse(localStorage.getItem('kinds') ?? '{}'),
+    };
+  }
+  get kinds() {
+    return { ...this._kinds };
+  }
+  set kinds(kinds) {
+    this._kinds = kinds;
+    localStorage.setItem('kinds', JSON.stringify(kinds));
+    this.dispatchEvent(new CustomEvent('kinds'));
+  }
+}
+export const browserOptions = new BrowserOptions();
 
 export function setPlayerOptions({ volume, stereo, loop }) {
   if (loop != null) {

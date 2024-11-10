@@ -427,6 +427,80 @@ body #playerDialog .miniPlayer {
   }
 }
 
+@keyframes rotate-ccw {
+  to { transform: rotate(-360deg); }
+}
+
+#randomizerDialog {
+  .container {
+    display: grid;
+    grid-template:
+      "button kind" 3rem
+      "button amount" 3rem
+    /  4rem   auto;
+    place-items: center stretch;
+  }
+  .shuffle {
+    grid-area: button;
+    width: 2rem;
+    height: 2rem;
+    transform: scale(2);
+    margin: 1rem;
+    .rotate {
+      animation: rotate-ccw 1.5s linear infinite;
+    }
+    &.demo .demo {
+      text-indent: initial;
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      font-size: 0.5rem;
+    }
+  }
+  .kind {
+    grid-area: kind;
+    padding-top: 1rem;
+    padding-left: 1rem;
+    .ui-selectmenu-button.icon {
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+    }
+    .ui-selectmenu-button.icon .ui-selectmenu-text {
+      display: none;
+    }
+    .ui-selectmenu-button.icon iconify-icon {
+      position: absolute;
+      inset: 30%;
+    }
+    .label {
+      margin-left: 0.5rem;
+    }
+  }
+  .amount {
+    grid-area: amount;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    .bar {
+      flex-grow: 1;
+      margin: 0 0.5rem 0.2rem 0.5rem;
+      & {
+        height: 0.8rem;
+      }
+      & .ui-slider-handle {
+        width: 0.8rem;
+        height: 0.8rem;
+        top: -1px;
+      }
+      & .ui-slider-range {
+        top: -1px;
+      }
+    }
+  }
+}
+
 #gamesDialog .dataTables_filter {
   padding-top: 0.3rem;
 }

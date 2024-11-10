@@ -46,17 +46,20 @@
     </button>
   </div>
   <div id="launcher">
+    <button type="button" title="Player" class="player ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:play"></iconify-icon>
+    </button>
+    <button type="button" title="Randomizer" class="randomizer ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:arrows-counter-clockwise"></iconify-icon>
+    </button>
     <button type="button" title="Games" class="games ui-button ui-widget ui-corner-all">
       <iconify-icon icon="ph:game-controller"></iconify-icon>
-    </button>
-    <button type="button" title="Info" class="info ui-button ui-widget ui-corner-all">
-      <iconify-icon icon="ph:book"></iconify-icon>
     </button>
     <button type="button" title="Library" class="library ui-button ui-widget ui-corner-all">
       <iconify-icon icon="ph:folder-open"></iconify-icon>
     </button>
-    <button type="button" title="Player" class="player ui-button ui-widget ui-corner-all">
-      <iconify-icon icon="ph:play"></iconify-icon>
+    <button type="button" title="Info" class="info ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:book"></iconify-icon>
     </button>
     <button type="button" title="Playlist" class="playlist ui-button ui-widget ui-corner-all">
       <iconify-icon icon="ph:playlist"></iconify-icon>
@@ -207,6 +210,42 @@
             <span class="ui-icon ui-icon-triangle-1-e"></span>
           </span>
         </div>
+      </div>
+    </div>
+  </div>
+  <div id="randomizerDialog" title="randomizer" style="display: none">
+    <div class="container">
+      <label class="shuffle ui-button-icon-only" title="Shuffle">
+        <iconify-icon icon="ph:arrows-counter-clockwise"></iconify-icon>
+        <input type="checkbox" />
+        <span class="demo">DEMO</span>
+      </label>
+      <div class="kind">
+        <select class="kindSelector" title="Filter kinds">
+          <optgroup label="Kinds">
+            <option value="track" data-checked="checked">Track</option>
+            <option value="short" data-checked="checked">Short</option>
+            <option value="jingle" data-checked="checked">Jingle</option>
+            <option value="ambient" data-checked="checked">Ambient</option>
+            <option value="story" data-checked="checked">storY</option>
+          </optgroup>
+          <optgroup label="Selection">
+            <option data-role="selectAll" data-icon="ph:check-square">Select all</option>
+            <option data-role="unselectAll" data-icon="ph:square">Unselect all</option>
+            <option data-role="invertSelection" data-icon="ph:swap">Invert</option>
+            <option data-role="reset" data-icon="ph:question-mark">Set defaults</option>
+          </optgroup>
+        </select>
+        <span class="label">...</span>
+      </div>
+      <div class="amount">
+        <span class="min">
+          <iconify-icon icon="ph:circle" title="Single track"></iconify-icon>
+        </span>
+        <div class="bar"></div>
+        <span class="max">
+          <iconify-icon icon="ph:circle-fill" title="All tracks"></iconify-icon>
+        </span>
       </div>
     </div>
   </div>

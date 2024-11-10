@@ -39,10 +39,14 @@ class Player extends EventTarget {
     const ended = () => {
       this.isSeeking = true;
       if (this.entry == null) return;
-      if (this.entry < this.playlist.entries.length-1)
+      if (this.entry < this.playlist.entries.length-1) {
         this.load(this.entry+1);
-      if (this.entry === this.playlist.entries.length-1 && this.loop)
-        this.load(0);
+      } else {
+        if (this.loop)
+          this.load(0);
+        else
+          this.dispatchEvent(new CustomEvent('playlistEnded'));
+      }
     };
 
     ['play', 'pause'].forEach(method => {

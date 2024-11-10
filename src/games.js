@@ -6,9 +6,9 @@ import { dialogOptions, initDialog, showDialog } from './utils.js';
 
 $('#gamesDialog').dialog({
   ...dialogOptions,
-  width: 560,
+  width: 600,
   height: 400,
-  position: { my: "left", at: "left+8% center", of: window },
+  position: { my: "left center", at: "left+8% center+10%", of: window },
   resize: (e, { size: { height } }) => {
     resizeTable(height);
   },
