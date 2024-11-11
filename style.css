@@ -208,10 +208,14 @@ body #playerDialog .miniPlayer {
   .vol .volume-min {
     grid-area: min;
     align-self: end;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .vol .volume-max {
     grid-area: max;
     align-self: start;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster {
     grid-area: ster;
@@ -225,26 +229,35 @@ body #playerDialog .miniPlayer {
   .ster .stereo {
     grid-area: stereo;
     height: 5rem;
+    justify-self: end;
   }
   .ster .stereo-rev {
     grid-area: min;
     align-self: end;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .mono {
     grid-area: med;
     align-self: center;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .stereo-full {
     grid-area: max;
     align-self: start;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .icon-group {
     white-space: nowrap;
-    margin: -0.1em 0.2em;
     text-align: center;
-  }
-  .ster .icon-group * {
-    margin: 0 -0.5em;
+    iconify-icon {
+      margin: 0;
+      &:not(:first-child) {
+        margin-left: -0.6rem;
+      }
+    }
   }
   .entry {
     grid-area: entry;
@@ -390,17 +403,22 @@ body #playerDialog .miniPlayer {
   .vol .volume {
     grid-area: volume;
     height: 3rem;
+    justify-self: center;
   }
   .vol .volume-min {
     grid-area: min;
     align-self: end;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .vol .volume-max {
     grid-area: max;
     align-self: start;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster {
-    margin-left: 1rem;
+    margin-left: 0.5rem;
     display: grid;
     grid-template:
       "stereo max" 1fr
@@ -411,26 +429,35 @@ body #playerDialog .miniPlayer {
   .ster .stereo {
     grid-area: stereo;
     height: 3rem;
+    justify-self: end;
   }
   .ster .stereo-rev {
     grid-area: min;
     align-self: end;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .mono {
     grid-area: med;
     align-self: center;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .stereo-full {
     grid-area: max;
     align-self: start;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .icon-group {
     white-space: nowrap;
-    margin: -0.1em 0.2em;
     text-align: center;
-  }
-  .ster .icon-group * {
-    margin: 0 -0.5em;
+    iconify-icon {
+      margin: 0;
+      &:not(:first-child) {
+        margin-left: -0.6rem;
+      }
+    }
   }
   .volume,
   .stereo {
