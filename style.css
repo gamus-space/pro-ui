@@ -960,12 +960,50 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   align-items: center;
   justify-content: center;
 }
+#stats {
+  position: absolute;
+  left: 10%;
+  padding: 1rem 2rem;
+  &.ui-widget-shadow {
+    box-shadow: -10px 10px 20px #cccccc;
+  }
+  iconify-icon {
+    vertical-align: sub;
+    padding: 0.1rem;
+  }
+  ul {
+    list-style: square;
+    ul {
+      list-style: none;
+      text-align: center;
+      padding-inline-start: 30px;
+    }
+  }
+  .stat {
+    font-weight: bold;
+  }
+}
+#features {
+  position: absolute;
+  right: 10%;
+  padding: 1rem 2rem;
+  &.ui-widget-shadow {
+    box-shadow: 10px 10px 20px #cccccc;
+  }
+  iconify-icon {
+    vertical-align: sub;
+    padding: 0.1rem;
+  }
+  ul {
+    list-style: square;
+  }
+}
 #login {
   z-index: 1100;
-  padding: 1rem 4rem 2rem 3rem;
+  padding: 1rem 3rem 2rem 3rem;
 }
 #login.ui-widget-shadow {
-  box-shadow: 10px 10px 20px #cccccc;
+  box-shadow: 0 10px 20px #cccccc;
 }
 #login .type {
   display: flex;
