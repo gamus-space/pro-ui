@@ -103,6 +103,35 @@ player.loop = localStorage.getItem('loop') === 'true';
 $('body').css('background-image', localStorage.getItem('backgroundImageUrl') == null ? '' : `url(${localStorage.getItem('backgroundImageUrl')})`);
 $('body').css('background-size', localStorage.getItem('backgroundSize'));
 
+function setVolume(volume) {
+  $('#user .volume .slider').css('background-size', `${volume*100}%`);
+  $('#user .volume iconify-icon').attr('icon', volume === 0 ? 'ph:speaker-x' :
+    volume === 1 ? 'ph:speaker-high': 'ph:speaker-low');
+}
+setVolume(player.volume);
+player.addEventListener('update', ({ detail: updates }) => {
+  if (updates.volume != null) setVolume(updates.volume);
+});
+function updateVolume(event) {
+  let volume = 1 - event.originalEvent.offsetY / event.currentTarget.clientHeight;
+  if (volume < 0.05) volume = 0;
+  if (volume > 0.95) volume = 1;
+  setVolume(volume);
+  setPlayerOptions({ volume });
+}
+let volumeSlide = false;
+$('#user .volume').on('mousedown', event => {
+  volumeSlide = true;
+  $('body').one('mouseup', () => {
+    volumeSlide = undefined;
+  });
+  updateVolume(event);
+});
+$('#user .volume').on('mousemove', event => {
+  if (!volumeSlide) return;
+  updateVolume(event);
+});
+
 user.then(user => {
   player.stream = !user.demo;
 });

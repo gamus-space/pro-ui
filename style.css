@@ -84,18 +84,39 @@ body .ui-widget {
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
-}
-#user .ui-button {
-  width: 4rem;
-  height: 4rem;
-  font-size: 2rem;
-  padding: 0;
-}
-#user .ui-button > * {
-  vertical-align: sub;
-}
-#user .ui-checkboxradio-label > * {
-  vertical-align: bottom;
+  .ui-button {
+    width: 4rem;
+    height: 4rem;
+    font-size: 2rem;
+    padding: 0;
+    & > * {
+      vertical-align: sub;
+    }
+    &.volume {
+      position: relative;
+      &:active {
+        background: #555555 url(images/ui-bg_glass_20_555555_1x400.png) 50% 50% repeat-x;
+      }
+      iconify-icon {
+        pointer-events: none;
+        position: absolute;
+        top: 25%;
+        left: 25%;
+        z-index: 1;
+      }
+      .slider {
+        pointer-events: none;
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(0, #f58400, #f58400) no-repeat;
+        background-size: 0;
+        transform: rotate(-90deg);
+      }
+    }
+  }
+  .ui-checkboxradio-label > * {
+    vertical-align: bottom;
+  }
 }
 
 body #playerDialog {
