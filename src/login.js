@@ -1,6 +1,7 @@
 'use strict';
 
 import { setBaseUrl } from './db.js';
+import { time } from './utils.js';
 
 const dev = location.hostname === '127.0.0.1';
 const apiUrl = dev ? 'https://localhost:8000/media-priv' : 'https://d1e7jf8j2bpzti.cloudfront.net';
@@ -24,6 +25,8 @@ const ANONYMOUS = { username: 'preview', mp3: true, flac: false, demo: true };
 
 function loginUser(user) {
   $('#login').hide('fade', {}, 500);
+  $('#stats').hide('drop', { direction: 'left' }, 500);
+  $('#features').hide('drop', { direction: 'right' }, 500);
   $('#loginOverlay').hide('fade', {}, 1500);
   setUser(user);
   setBaseUrl(apiUrl);
@@ -35,7 +38,19 @@ fetch(`${apiUrl}/api/user`, { credentials: 'include' }).then(response =>
   response.status !== 401 ? response.json() : undefined
 ).then(user => {
   if (user) loginUser(user);
-  else $('#login').toggle(true);
+  else {
+    $('#login').toggle(true);
+    fetch(`${apiUrl}/stats.json`).then(response => response.json()).then(stats => {
+      const formatter = new Intl.NumberFormat();
+      $('#stats .stat.games').text(formatter.format(stats.games.games));
+      $('#stats .stat.tracks').text(formatter.format(stats.music.tracks));
+      $('#stats .stat.duration').text(time(stats.music.seconds));
+      $('#stats .stat.screenshots').text(formatter.format(stats.screenshots.screenshots));
+      $('#stats .stat.articles').text(formatter.format(stats.text.articles));
+      $('#stats').show('drop', { direction: 'left' }, 1000);
+      $('#features').show('drop', { direction: 'right' }, 1000);
+    });
+  }
 });
 
 $('#login form input').on('input', e => {

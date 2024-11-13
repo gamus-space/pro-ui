@@ -56,3 +56,40 @@ export function fetchJson(url) {
 export function escapeRegex(string) {
   return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
 }
+
+export function randomInt(range) {
+  return Math.floor(Math.random() * range);
+}
+
+$.widget("custom.iconsselectmenu", $.ui.selectmenu, {
+  _renderItem: function(ul, item) {
+    ul.addClass('icons');
+    const li = $("<li>", { class: item.disabled ? "ui-state-disabled" : "" }).append(
+      $("<div>", { text: item.label }).append(
+        $("<iconify-icon>", {
+          style: item.element.attr("data-style"),
+          'data-value': item.value,
+          icon: item.element.attr("data-icon") || (!!item.element.attr("data-checked") ? "ph:check" : "ph:dot"),
+        })
+      )
+    );
+    return li.appendTo(ul);
+  },
+  super_drawButton: $.ui.selectmenu.prototype._drawButton,
+  _drawButton: function() {
+    this.super_drawButton();
+    this.button.find('.ui-icon').remove();
+    if (this.options.icons?.button)
+      $("<iconify-icon>", {
+        icon: this.options.icons?.button,
+      }).appendTo(this.button);
+  },
+  superClose: $.ui.selectmenu.prototype.close,
+  close() {
+    if (!this.dontClose) this.superClose();
+    this.dontClose = false;
+  },
+  preventClose() {
+    this.dontClose = true;
+  },
+});

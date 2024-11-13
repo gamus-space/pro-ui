@@ -84,18 +84,39 @@ body .ui-widget {
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
-}
-#user .ui-button {
-  width: 4rem;
-  height: 4rem;
-  font-size: 2rem;
-  padding: 0;
-}
-#user .ui-button > * {
-  vertical-align: sub;
-}
-#user .ui-checkboxradio-label > * {
-  vertical-align: bottom;
+  .ui-button {
+    width: 4rem;
+    height: 4rem;
+    font-size: 2rem;
+    padding: 0;
+    & > * {
+      vertical-align: sub;
+    }
+    &.volume {
+      position: relative;
+      &:active {
+        background: #555555 url(images/ui-bg_glass_20_555555_1x400.png) 50% 50% repeat-x;
+      }
+      iconify-icon {
+        pointer-events: none;
+        position: absolute;
+        top: 25%;
+        left: 25%;
+        z-index: 1;
+      }
+      .slider {
+        pointer-events: none;
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(0, #f58400, #f58400) no-repeat;
+        background-size: 0;
+        transform: rotate(-90deg);
+      }
+    }
+  }
+  .ui-checkboxradio-label > * {
+    vertical-align: bottom;
+  }
 }
 
 body #playerDialog {
@@ -187,10 +208,14 @@ body #playerDialog .miniPlayer {
   .vol .volume-min {
     grid-area: min;
     align-self: end;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .vol .volume-max {
     grid-area: max;
     align-self: start;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster {
     grid-area: ster;
@@ -204,26 +229,35 @@ body #playerDialog .miniPlayer {
   .ster .stereo {
     grid-area: stereo;
     height: 5rem;
+    justify-self: end;
   }
   .ster .stereo-rev {
     grid-area: min;
     align-self: end;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .mono {
     grid-area: med;
     align-self: center;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .stereo-full {
     grid-area: max;
     align-self: start;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .icon-group {
     white-space: nowrap;
-    margin: -0.1em 0.2em;
     text-align: center;
-  }
-  .ster .icon-group * {
-    margin: 0 -0.5em;
+    iconify-icon {
+      margin: 0;
+      &:not(:first-child) {
+        margin-left: -0.6rem;
+      }
+    }
   }
   .entry {
     grid-area: entry;
@@ -369,17 +403,22 @@ body #playerDialog .miniPlayer {
   .vol .volume {
     grid-area: volume;
     height: 3rem;
+    justify-self: center;
   }
   .vol .volume-min {
     grid-area: min;
     align-self: end;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .vol .volume-max {
     grid-area: max;
     align-self: start;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster {
-    margin-left: 1rem;
+    margin-left: 0.5rem;
     display: grid;
     grid-template:
       "stereo max" 1fr
@@ -390,26 +429,35 @@ body #playerDialog .miniPlayer {
   .ster .stereo {
     grid-area: stereo;
     height: 3rem;
+    justify-self: end;
   }
   .ster .stereo-rev {
     grid-area: min;
     align-self: end;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .mono {
     grid-area: med;
     align-self: center;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .stereo-full {
     grid-area: max;
     align-self: start;
+    line-height: 0;
+    padding: 0.1rem;
   }
   .ster .icon-group {
     white-space: nowrap;
-    margin: -0.1em 0.2em;
     text-align: center;
-  }
-  .ster .icon-group * {
-    margin: 0 -0.5em;
+    iconify-icon {
+      margin: 0;
+      &:not(:first-child) {
+        margin-left: -0.6rem;
+      }
+    }
   }
   .volume,
   .stereo {
@@ -424,6 +472,80 @@ body #playerDialog .miniPlayer {
   .volume.ui-slider .ui-slider-range,
   .stereo.ui-slider .ui-slider-range {
     left: -1px;
+  }
+}
+
+@keyframes rotate-ccw {
+  to { transform: rotate(-360deg); }
+}
+
+#randomizerDialog {
+  .container {
+    display: grid;
+    grid-template:
+      "button kind" 3rem
+      "button amount" 3rem
+    /  4rem   auto;
+    place-items: center stretch;
+  }
+  .shuffle {
+    grid-area: button;
+    width: 2rem;
+    height: 2rem;
+    transform: scale(2);
+    margin: 1rem;
+    .rotate {
+      animation: rotate-ccw 1.5s linear infinite;
+    }
+    &.demo .demo {
+      text-indent: initial;
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      font-size: 0.5rem;
+    }
+  }
+  .kind {
+    grid-area: kind;
+    padding-top: 1rem;
+    padding-left: 1rem;
+    .ui-selectmenu-button.icon {
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+    }
+    .ui-selectmenu-button.icon .ui-selectmenu-text {
+      display: none;
+    }
+    .ui-selectmenu-button.icon iconify-icon {
+      position: absolute;
+      inset: 30%;
+    }
+    .label {
+      margin-left: 0.5rem;
+    }
+  }
+  .amount {
+    grid-area: amount;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    .bar {
+      flex-grow: 1;
+      margin: 0 0.5rem 0.2rem 0.5rem;
+      & {
+        height: 0.8rem;
+      }
+      & .ui-slider-handle {
+        width: 0.8rem;
+        height: 0.8rem;
+        top: -1px;
+      }
+      & .ui-slider-range {
+        top: -1px;
+      }
+    }
   }
 }
 
@@ -838,12 +960,50 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   align-items: center;
   justify-content: center;
 }
+#stats {
+  position: absolute;
+  left: 10%;
+  padding: 1rem 2rem;
+  &.ui-widget-shadow {
+    box-shadow: -10px 10px 20px #cccccc;
+  }
+  iconify-icon {
+    vertical-align: sub;
+    padding: 0.1rem;
+  }
+  ul {
+    list-style: square;
+    ul {
+      list-style: none;
+      text-align: center;
+      padding-inline-start: 30px;
+    }
+  }
+  .stat {
+    font-weight: bold;
+  }
+}
+#features {
+  position: absolute;
+  right: 10%;
+  padding: 1rem 2rem;
+  &.ui-widget-shadow {
+    box-shadow: 10px 10px 20px #cccccc;
+  }
+  iconify-icon {
+    vertical-align: sub;
+    padding: 0.1rem;
+  }
+  ul {
+    list-style: square;
+  }
+}
 #login {
   z-index: 1100;
-  padding: 1rem 4rem 2rem 3rem;
+  padding: 1rem 3rem 2rem 3rem;
 }
 #login.ui-widget-shadow {
-  box-shadow: 10px 10px 20px #cccccc;
+  box-shadow: 0 10px 20px #cccccc;
 }
 #login .type {
   display: flex;

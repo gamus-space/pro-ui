@@ -8,7 +8,7 @@ $('#playlistDialog').dialog({
   ...dialogOptions,
   width: 400,
   height: 400,
-  position: { my: "left", at: "left+10% center", of: window },
+  position: { my: "left top", at: "left+15% top+10%", of: window },
   resize: (e, { size: { height } }) => {
     resizeTable(height);
   },

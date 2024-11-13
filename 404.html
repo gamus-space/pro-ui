@@ -58,14 +58,21 @@
 <li><a href="PC/Lost_Vikings_II">Lost Vikings II PC</a></li>
 <li><a href="PC/MDK">MDK PC</a></li>
 <li><a href="PC/Mega_Man_X3">Mega Man X3 PC</a></li>
+<li><a href="PC/MegaRace_2">MegaRace 2 PC</a></li>
 <li><a href="PC/Mortal_Kombat">Mortal Kombat PC</a></li>
 <li><a href="PC/Mortal_Kombat_3">Mortal Kombat 3 PC</a></li>
 <li><a href="PC/Mortal_Kombat_3_(Windows)">Mortal Kombat 3 (Windows) PC</a></li>
+<li><a href="PC/Mortal_Kombat_4">Mortal Kombat 4 PC</a></li>
 <li><a href="PC/Mortal_Kombat_Trilogy">Mortal Kombat Trilogy PC</a></li>
 <li><a href="PC/Need_for_Speed">Need for Speed PC</a></li>
+<li><a href="PC/Need_for_Speed_II">Need for Speed II PC</a></li>
+<li><a href="PC/Need_for_Speed_II:_Special_Edition">Need for Speed II: Special Edition PC</a></li>
 <li><a href="PC/Need_for_Speed:_Special_Edition">Need for Speed: Special Edition PC</a></li>
 <li><a href="PC/POD">POD PC</a></li>
 <li><a href="PC/Quake">Quake PC</a></li>
+<li><a href="PC/Quake_II">Quake II PC</a></li>
+<li><a href="PC/Quake_II:_Ground_Zero">Quake II: Ground Zero PC</a></li>
+<li><a href="PC/Quake_II:_The_Reckoning">Quake II: The Reckoning PC</a></li>
 <li><a href="PC/Quake:_Dissolution_of_Eternity">Quake: Dissolution of Eternity PC</a></li>
 <li><a href="PC/Quake:_Scourge_of_Armagon">Quake: Scourge of Armagon PC</a></li>
 <li><a href="PC/Rayman">Rayman PC</a></li>
@@ -77,6 +84,7 @@
 <li><a href="PC/StarCraft:_Brood_War">StarCraft: Brood War PC</a></li>
 <li><a href="PC/Street_Fighter_Alpha">Street Fighter Alpha PC</a></li>
 <li><a href="PC/Street_Fighter_Alpha_2">Street Fighter Alpha 2 PC</a></li>
+<li><a href="PC/Super_Street_Fighter_II_Turbo">Super Street Fighter II Turbo PC</a></li>
 <li><a href="PC/Tomb_Raider">Tomb Raider PC</a></li>
 <li><a href="PC/Tomb_Raider_II:_Starring_Lara_Croft">Tomb Raider II: Starring Lara Croft PC</a></li>
 <li><a href="PC/Tomb_Raider_II:_The_Golden_Mask">Tomb Raider II: The Golden Mask PC</a></li>
@@ -94,7 +102,9 @@
 <li><a href="PC/Wipeout_2097">Wipeout 2097 PC</a></li>
 <li><a href="PC/World_of_Aden:_Thunderscape">World of Aden: Thunderscape PC</a></li>
 <li><a href="PC/Worms">Worms PC</a></li>
+<li><a href="PC/Worms_2">Worms 2 PC</a></li>
 <li><a href="PC/Worms_United">Worms United PC</a></li>
+<li><a href="PC/X%2DMen:_Children_of_the_Atom">X-Men: Children of the Atom PC</a></li>
 
             </ul>
         </section>
@@ -107,6 +117,10 @@
       <iconify-icon icon="ph:lock"></iconify-icon>
       <input type="checkbox" />
     </label>
+    <button type="button" title="Volume" class="volume ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:speaker-high"></iconify-icon>
+      <div class="slider"></div>
+    </button>
     <button type="button" title="Background" class="background ui-button ui-widget ui-corner-all">
       <iconify-icon icon="ph:image"></iconify-icon>
     </button>
@@ -115,17 +129,20 @@
     </button>
   </div>
   <div id="launcher">
+    <button type="button" title="Player" class="player ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:play"></iconify-icon>
+    </button>
+    <button type="button" title="Randomizer" class="randomizer ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:arrows-counter-clockwise"></iconify-icon>
+    </button>
     <button type="button" title="Games" class="games ui-button ui-widget ui-corner-all">
       <iconify-icon icon="ph:game-controller"></iconify-icon>
-    </button>
-    <button type="button" title="Info" class="info ui-button ui-widget ui-corner-all">
-      <iconify-icon icon="ph:book"></iconify-icon>
     </button>
     <button type="button" title="Library" class="library ui-button ui-widget ui-corner-all">
       <iconify-icon icon="ph:folder-open"></iconify-icon>
     </button>
-    <button type="button" title="Player" class="player ui-button ui-widget ui-corner-all">
-      <iconify-icon icon="ph:play"></iconify-icon>
+    <button type="button" title="Info" class="info ui-button ui-widget ui-corner-all">
+      <iconify-icon icon="ph:book"></iconify-icon>
     </button>
     <button type="button" title="Playlist" class="playlist ui-button ui-widget ui-corner-all">
       <iconify-icon icon="ph:playlist"></iconify-icon>
@@ -174,25 +191,25 @@
       </div>
       <div class="vol">
         <div class="volume" title="Volume"></div>
-        <span class="icon-group volume-min">
-          <span class="ui-icon ui-icon-volume-off"></span>
+        <span class="icon-group volume-min" title="Mute">
+          <iconify-icon icon="ph:speaker-slash"></iconify-icon>
         </span>
-        <span class="icon-group volume-max">
-          <span class="ui-icon ui-icon-volume-on"></span>
+        <span class="icon-group volume-max" title="Max volume">
+          <iconify-icon icon="ph:speaker-high"></iconify-icon>
         </span>
       </div>
       <div class="ster">
         <div class="stereo" title="Stereo"></div>
-        <span class="icon-group stereo-rev">
-          <span class="ui-icon ui-icon-triangle-1-e"></span>
-          <span class="ui-icon ui-icon-triangle-1-w"></span>
+        <span class="icon-group stereo-rev" title="Reversed stereo">
+          <iconify-icon icon="ph:caret-right-fill"></iconify-icon>
+          <iconify-icon icon="ph:caret-left-fill"></iconify-icon>
         </span>
-        <span class="icon-group mono">
-          <span class="ui-icon ui-icon-bullet"></span>
+        <span class="icon-group mono" title="Mono">
+          <iconify-icon icon="ph:headphones"></iconify-icon>
         </span>
-        <span class="icon-group stereo-full">
-          <span class="ui-icon ui-icon-triangle-1-w"></span>
-          <span class="ui-icon ui-icon-triangle-1-e"></span>
+        <span class="icon-group stereo-full" title="Full stereo">
+          <iconify-icon icon="ph:caret-left-fill"></iconify-icon>
+          <iconify-icon icon="ph:caret-right-fill"></iconify-icon>
         </span>
       </div>
       <div class="entry">
@@ -255,27 +272,63 @@
         </span>
         <div class="vol">
           <div class="volume" title="Volume"></div>
-          <span class="icon-group volume-min">
-            <span class="ui-icon ui-icon-volume-off"></span>
+          <span class="icon-group volume-min" title="Mute">
+            <iconify-icon icon="ph:speaker-slash"></iconify-icon>
           </span>
-          <span class="icon-group volume-max">
-            <span class="ui-icon ui-icon-volume-on"></span>
+          <span class="icon-group volume-max" title="Max volume">
+            <iconify-icon icon="ph:speaker-high"></iconify-icon>
           </span>
         </div>
         <div class="ster">
           <div class="stereo" title="Stereo"></div>
-          <span class="icon-group stereo-rev">
-            <span class="ui-icon ui-icon-triangle-1-e"></span>
-            <span class="ui-icon ui-icon-triangle-1-w"></span>
+          <span class="icon-group stereo-rev" title="Reversed stereo">
+            <iconify-icon icon="ph:caret-right-fill"></iconify-icon>
+            <iconify-icon icon="ph:caret-left-fill"></iconify-icon>
           </span>
-          <span class="icon-group mono">
-            <span class="ui-icon ui-icon-bullet"></span>
+          <span class="icon-group mono" title="Mono">
+            <iconify-icon icon="ph:headphones"></iconify-icon>
           </span>
-          <span class="icon-group stereo-full">
-            <span class="ui-icon ui-icon-triangle-1-w"></span>
-            <span class="ui-icon ui-icon-triangle-1-e"></span>
+          <span class="icon-group stereo-full" title="Full stereo">
+            <iconify-icon icon="ph:caret-left-fill"></iconify-icon>
+            <iconify-icon icon="ph:caret-right-fill"></iconify-icon>
           </span>
         </div>
+      </div>
+    </div>
+  </div>
+  <div id="randomizerDialog" title="randomizer" style="display: none">
+    <div class="container">
+      <label class="shuffle ui-button-icon-only" title="Shuffle">
+        <iconify-icon icon="ph:arrows-counter-clockwise"></iconify-icon>
+        <input type="checkbox" />
+        <span class="demo">DEMO</span>
+      </label>
+      <div class="kind">
+        <select class="kindSelector" title="Filter kinds">
+          <optgroup label="Kinds">
+            <option value="track" data-checked="checked">Track</option>
+            <option value="short" data-checked="checked">Short</option>
+            <option value="jingle" data-checked="checked">Jingle</option>
+            <option value="ambient" data-checked="checked">Ambient</option>
+            <option value="story" data-checked="checked">storY</option>
+          </optgroup>
+          <optgroup label="Selection">
+            <option data-role="selectAll" data-icon="ph:check-square">Select all</option>
+            <option data-role="unselectAll" data-icon="ph:square">Unselect all</option>
+            <option data-role="invertSelection" data-icon="ph:swap">Invert</option>
+            <option data-role="reset" data-icon="ph:question-mark">Set defaults</option>
+          </optgroup>
+        </select>
+        <span class="label">...</span>
+      </div>
+      <div class="amount">
+        <span class="min">
+          <iconify-icon icon="ph:circle" title="Single track"></iconify-icon>
+        </span>
+        <div class="bar"></div>
+        <span class="max">
+          <iconify-icon icon="ph:circle-fill" title="All tracks"></iconify-icon>
+        </span>
       </div>
     </div>
   </div>
@@ -325,8 +378,8 @@
       <span class="name" style="display: none">
         <a href="#" target="_blank">-</a>
       </span>
-      <button class="reset ui-button ui-button-icon-only" style="display: none">
-        <span class="ui-icon ui-icon-closethick"></span>
+      <button class="reset ui-button ui-button-icon-only" title="Clear" style="display: none">
+        <iconify-icon icon="ph:x"></iconify-icon>
       </button>
     </div>
     <div id="backgrounds" class="scrollable">
@@ -426,6 +479,36 @@
           site
         </div>
       </div>
+    </div>
+    <div id="features" style="display: none" class="ui-widget ui-widget-content ui-corner-all ui-widget-shadow">
+      <h2>
+        <iconify-icon icon="ph:lightbulb"></iconify-icon>
+        Features
+      </h2>
+      <ul>
+        <li>music in game order</li>
+        <li>autoplay or create own playlist</li>
+        <li>perfect quality (FLAC)</li>
+        <li>normalized volume</li>
+        <li>headphones support</li>
+        <li>no ads</li>
+        <li>does not stop playing<br /> when screen is off</li>
+      </ul>
+    </div>
+    <div id="stats" style="display: none" class="ui-widget ui-widget-content ui-corner-all ui-widget-shadow">
+      <h2>
+        <iconify-icon icon="ph:chart-bar"></iconify-icon>
+        Stats
+      </h2>
+      <ul>
+        <li>Games: <span class="stat games"></span></li>
+        <li>Music<ul>
+          <li><span class="stat tracks"></span> tracks</li>
+          <li><span class="stat duration"></span> duration</li>
+        </ul></li>
+        <li>Screenshots: <span class="stat screenshots"></span></li>
+        <li>Articles: <span class="stat articles"></span></li>
+      </ul>
     </div>
   </div>
 </body>
