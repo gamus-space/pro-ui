@@ -1,17 +1,17 @@
 'use strict';
 
-import { loadTracks } from './db.js';
+import { loadGamesTracks, loadTracks } from './db.js';
 import { user } from './login.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
 import { subscribeState } from './route.js';
-import { playlistLoaded } from './script.js';
-import { dialogOptions, fetchJson, initDialog, showDialog, size, time, trackTitle } from './utils.js';
+import { browserOptions, DEFAULT_KINDS, playlistLoaded } from './script.js';
+import { dialogOptions, initDialog, showDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
   ...dialogOptions,
   width: 480,
-  height: 400,
-  position: { my: "right", at: "right-8% center", of: window },
+  height: 360,
+  position: { my: "right top", at: "right-8% top+5%", of: window },
   resize: (e, { size: { height } }) => {
     resizeTable(height);
   },
@@ -40,7 +40,6 @@ const ICON_PAUSE = 'ph:pause-fill';
 
 let isPlaying = false;
 let tracksIndex;
-let tracksCache = {};
 
 loadTracks().then(data => {
   tracksIndex = data;
@@ -162,40 +161,8 @@ loadTracks().then(data => {
     </select>
   `));
 
-  $.widget("custom.iconsselectmenu", $.ui.selectmenu, {
-    _renderItem: function(ul, item) {
-      ul.addClass('icons');
-      const li = $("<li>", { class: item.disabled ? "ui-state-disabled" : "" }).append(
-        $("<div>", { text: item.label }).append(
-          $("<iconify-icon>", {
-            style: item.element.attr("data-style"),
-            'data-value': item.value,
-            icon: item.element.attr("data-icon") || (!!item.element.attr("data-checked") ? "ph:check" : "ph:dot"),
-          })
-        )
-      );
-      return li.appendTo(ul);
-    },
-    super_drawButton: $.ui.selectmenu.prototype._drawButton,
-    _drawButton: function() {
-      this.super_drawButton();
-      this.button.find('.ui-icon').remove();
-      if (this.options.icons?.button)
-        $("<iconify-icon>", {
-          icon: this.options.icons?.button,
-        }).appendTo(this.button);
-    },
-    superClose: $.ui.selectmenu.prototype.close,
-    close() {
-      if (!this.dontClose) this.superClose();
-      this.dontClose = false;
-    },
-    preventClose() {
-      this.dontClose = true;
-    },
-  });
   $(".columnSelector").iconsselectmenu({
-    icons: { button: "ph:gear-fill" },
+    icons: { button: "ph:text-columns" },
     select: (event, { item }) => {
       if (!event.currentTarget) return;
       selectColumn(item, !item.element.attr("data-checked"));
@@ -206,12 +173,12 @@ loadTracks().then(data => {
       "ui-selectmenu-button": "icon",
     },
   }).iconsselectmenu("menuWidget").addClass("ui-menu-icons");
-  $(".kindSelector").iconsselectmenu({
-    icons: { button: "ph:wrench-fill" },
+  $("#libraryDialog .kindSelector").iconsselectmenu({
+    icons: { button: "ph:funnel" },
     select: (event, { item }) => {
       if (!event.currentTarget) return;
-      selectKind(item, !item.element.attr("data-checked"));
-      $(".kindSelector").iconsselectmenu('preventClose');
+      selectKind(item, !item.element.attr("data-checked"), true);
+      $("#libraryDialog .kindSelector").iconsselectmenu('preventClose');
     },
     classes: {
       "ui-selectmenu-menu": "groups",
@@ -249,7 +216,7 @@ loadTracks().then(data => {
     }
     if (item.element.attr('data-role')) {
       item.element.parents('optgroup').prev().children().toArray().forEach(option => {
-        select({ value: option.value, element: $(option) }, handlers[item.element.attr('data-role')](option));
+        select({ value: option.value, element: $(option) }, handlers[item.element.attr('data-role')](option), true);
       });
       return true;
     }
@@ -312,26 +279,14 @@ loadTracks().then(data => {
     localStorage.setItem('columns', JSON.stringify(currentColumns));
   }
 
-  const DEFAULT_KINDS = {
-    track: true,
-    short: true,
-    jingle: true,
-    ambient: true,
-    story: true,
-  };
-  const currentKinds = {
-    ...DEFAULT_KINDS,
-    ...JSON.parse(localStorage.getItem('kinds') ?? '{}'),
-  };
-  const selectedKinds = Object.fromEntries(Object.keys(KIND_MAPPING).map(kind => [kind, true]));
-  function selectKind(item, selected) {
+  function selectKind(item, selected, update) {
     if (selectMultiple(item, selectKind, DEFAULT_KINDS)) return;
     toggleIcon(item, selected);
-    selectedKinds[item.value] = selected;
-    const regexp = Object.entries(selectedKinds).filter(([kind, selected]) => selected).map(([kind]) => KIND_MAPPING[kind] ?? '\\?').join('|');
-    $('#library').DataTable().column('kind:name').search(regexp === '' ? '.^' : regexp, true).draw();
     currentKinds[item.value] = selected;
-    localStorage.setItem('kinds', JSON.stringify(currentKinds));
+    const regexp = Object.entries(currentKinds).filter(([kind, selected]) => selected).map(([kind]) => KIND_MAPPING[kind] ?? '\\?').join('|');
+    $('#library').DataTable().column('kind:name').search(regexp === '' ? '.^' : regexp, true).draw();
+    if (update)
+      browserOptions.kinds = currentKinds;
   }
 
   function rowsStats(selector, zero) {
@@ -395,9 +350,15 @@ loadTracks().then(data => {
   Object.entries(currentColumns).forEach(([column, selected]) => {
     selectColumn({ value: column, element: $(`.columnSelector option[value='${column}']`) }, selected);
   });
-  Object.entries(currentKinds).forEach(([kind, selected]) => {
-    selectKind({ value: kind, element: $(`.kindSelector option[value='${kind}']`) }, selected);
-  });
+  let currentKinds;
+  function updateKinds() {
+    currentKinds = browserOptions.kinds;
+    Object.entries(currentKinds).forEach(([kind, selected]) => {
+      selectKind({ value: kind, element: $(`#libraryDialog .kindSelector option[value='${kind}']`) }, selected, false);
+    });
+  }
+  browserOptions.addEventListener('kinds', updateKinds);
+  updateKinds();
 
   player.addEventListener('entry', ({ detail: { url } }) => {
     $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active')
@@ -477,23 +438,11 @@ function setLoading(loading) {
     .toggleClass('off', !loading);
 }
 
-function loadEntry(platform, game, index) {
-  const cacheKey = `${platform}\t${game}`;
-  if (tracksCache[cacheKey]) {
-    return Promise.resolve(tracksCache[cacheKey]);
-  }
+async function loadEntry(platform, game, index) {
   setLoading(true);
-  return fetchJson(index).then(preprocessTracks(index)).then(tracks => {
-    tracksCache[cacheKey] = tracks;
-    return tracksCache[cacheKey];
-  }).finally(() => {
+  try {
+    return await loadGamesTracks(platform, game, index);
+  } finally {
     setLoading(false);
-  });
+  }
 }
-
-const preprocessTracks = baseUrl => tracks => {
-  return tracks.map(track => ({
-    ...track,
-    files: track.files.map(file => ({ ...file, url: new URL(file.url, baseUrl).href })),
-  }));
-};
