@@ -316,6 +316,7 @@ loadTracks().then(data => {
     const stats = rowsStats('.selected', false);
     $('#libraryDialog .status').text(stats == null ? '' : `Selected: ${stats}`);
   };
+  updateSelectionGlobal = updateSelection;
   updateSelection();
   const unselectAll = () => {
     $('#library').DataTable().$('tr').removeClass('selected');
@@ -449,4 +450,16 @@ async function loadEntry(platform, game, index) {
   } finally {
     setLoading(false);
   }
+}
+
+let updateSelectionGlobal = () => {};
+
+export function setSelection(tracks) {
+  $('#library').DataTable().rows().toArray().forEach(rows => {
+    rows.forEach(row => {
+      const selected = !!tracks.find(({ title }) => title === $('#library').DataTable().row(row).data().title);
+      $('#library').DataTable().row(row).nodes().to$().toggleClass('selected', selected);
+    });
+  });
+  updateSelectionGlobal();
 }

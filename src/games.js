@@ -2,7 +2,7 @@
 
 import { loadGames } from './db.js';
 import { pushState, subscribeState } from './route.js';
-import { dialogOptions, initDialog, showDialog } from './utils.js';
+import { dialogOptions, initDialog, scrollToChild, showDialog } from './utils.js';
 
 $('#gamesDialog').dialog({
   ...dialogOptions,
@@ -62,6 +62,10 @@ loadGames().then(data => {
     updateInfo();
   });
 
+  const thumbsLoaded = Promise.all($('#games img').get().map(
+    img => new Promise((resolve) => $(img).one('load', resolve))
+  ));
+
   function rowsStats(selector, zero) {
     const rows = $('#games').DataTable().rows(selector);
     return `${rows[0].length}`;
@@ -75,11 +79,14 @@ loadGames().then(data => {
     pushState({ platform: data.platform, game: data.game }, [data.platform, data.game]);
   });
 
-  subscribeState(updateState);
+  subscribeState(state => thumbsLoaded.then(() => updateState(state)));
   function updateState(state) {
     $('#games').DataTable().rows().nodes().to$().removeClass('selected');
     const row = $('#games').DataTable().rows((row, data) => data.platform === state.platform && data.game === state.game).nodes().to$();
     row.addClass('selected');
+    setTimeout(() => {
+      scrollToChild($('#games').parent().get(0), row.get(0));
+    });
   }
 
 });

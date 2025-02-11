@@ -11,9 +11,12 @@ import('./games.js').then(({ show }) => {
   show();
   import('./randomizer.js').then(({ show }) => show());
 });
-import('./info.js').then(({ show }) => {
-  show();
-  import('./library.js').then(({ show }) => show());
+export let libraryLoaded = new Promise(resolve => {
+  import('./info.js').then(({ show }) => {
+    show();
+    import('./library.js').then(({ show }) => show());
+    resolve();
+  });
 });
 
 $('#launcher .randomizer').click(() => {

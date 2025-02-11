@@ -4,13 +4,13 @@ import { loadGamesTracks, loadTracks } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
 import { pushState } from './route.js';
-import { browserOptions, DEFAULT_KINDS } from './script.js';
+import { browserOptions, DEFAULT_KINDS, libraryLoaded } from './script.js';
 import { dialogOptions, initDialog, randomInt, showDialog } from './utils.js';
 
 $('#randomizerDialog').dialog({
   ...dialogOptions,
   width: 400,
-  height: 150,
+  height: 190,
   position: { my: "left top", at: "left+10% top+5%", of: window },
 });
 initDialog($('#randomizerDialog'), { icon: 'ph:arrows-counter-clockwise' });
@@ -147,6 +147,18 @@ function updateShuffle() {
     player.loop = false;
     player.setPlaylist({ entries: pickedTracks.map(playerEntry) }, 0);
     player.load(0);
+    libraryLoaded.then(() => {
+      import('./library.js').then(({ setSelection }) => {
+        setSelection(pickedTracks);
+      });
+    });
+    const diceNumbers = ['one', 'two', 'three', 'four', 'five', 'six'];
+    $('#randomizerDialog .info').show()
+      .find('.game').text(game).end()
+      .find('.count .picked').text(pickedTracks.length).end()
+      .find('.count .total').text(filteredTracks.length).end()
+      .find('.dice1').attr('icon', `ph:dice-${diceNumbers[randomInt(diceNumbers.length)]}-bold`).end()
+      .find('.dice2').attr('icon', `ph:dice-${diceNumbers[randomInt(diceNumbers.length)]}-thin`).end();
   });
 }
 

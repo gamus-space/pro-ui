@@ -2,7 +2,7 @@
 
 import { user } from './login.js';
 import { player } from './player.js';
-import { dialogOptions, initDialog, showDialog, time, trackTitle } from './utils.js';
+import { dialogOptions, initDialog, scrollToChild, showDialog, time, trackTitle } from './utils.js';
 
 $('#playlistDialog').dialog({
   ...dialogOptions,
@@ -204,7 +204,7 @@ class PlaylistController {
     this.table.draw(false);
     this.updatePlaylist(false);
     if (scroll)
-      this.table?.row(':last').node()?.scrollIntoView();
+      scrollToChild($('#playlist').parent().get(0), this.table?.row(':last').node());
   }
   updatePlaylist(forcePlayerUpdate) {
     if (forcePlayerUpdate || player.playlist.name === 'default')

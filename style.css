@@ -617,6 +617,26 @@ body #playerDialog .miniPlayer {
       }
     }
   }
+  .info {
+    display: flex;
+    align-items: center;
+    .dice1, .dice2 {
+      font-size: 1.5rem;
+      padding: 0.5rem;
+    }
+    .game {
+      flex-grow: 1;
+      margin-right: 0.5rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .count {
+      white-space: nowrap;
+    }
+  }
 }
 
 #gamesDialog .dataTables_filter {
