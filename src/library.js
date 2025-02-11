@@ -342,7 +342,7 @@ loadTracks().then(data => {
       time: timeSec, duration: originalTimeSec ? timeSec : undefined,
       replayGain: currentTracksDb.find(
         entry => entry.platform === platform && entry.game === game && entry.title === title
-      )?.replayGain?.album,
+      )?.replayGain,
       year, artist,
     };
   }

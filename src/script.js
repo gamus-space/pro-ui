@@ -82,7 +82,7 @@ class BrowserOptions extends EventTarget {
 }
 export const browserOptions = new BrowserOptions();
 
-export function setPlayerOptions({ volume, stereo, loop }) {
+export function setPlayerOptions({ volume, stereo, loop, replayGainMode }) {
   if (loop != null) {
     player.loop = loop;
     localStorage.setItem('loop', loop);
@@ -95,10 +95,15 @@ export function setPlayerOptions({ volume, stereo, loop }) {
     player.stereo = stereo;
     localStorage.setItem('stereo', stereo);
   }
+  if (replayGainMode != null) {
+    player.replayGainMode = replayGainMode;
+    localStorage.setItem('replayGainMode', replayGainMode);
+  }
 }
 
 player.volume = localStorage.getItem('volume') == null ? 1 : parseFloat(localStorage.getItem('volume'));
-player.stereo = localStorage.getItem('stereo') == null ? 1 : parseFloat(localStorage.getItem('stereo'));;
+player.stereo = localStorage.getItem('stereo') == null ? 1 : parseFloat(localStorage.getItem('stereo'));
+player.replayGainMode = localStorage.getItem('replayGainMode') == null ? 2 : parseFloat(localStorage.getItem('replayGainMode'));
 player.loop = localStorage.getItem('loop') === 'true';
 $('body').css('background-image', localStorage.getItem('backgroundImageUrl') == null ? '' : `url(${localStorage.getItem('backgroundImageUrl')})`);
 $('body').css('background-size', localStorage.getItem('backgroundSize'));

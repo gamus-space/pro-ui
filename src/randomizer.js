@@ -170,7 +170,7 @@ function playerEntry({ platform, game, title, files, time, originalTime, replayG
   return {
     platform, game, title, url: file.url,
     time, duration: originalTime ? time : undefined,
-    replayGain: replayGain?.album,
+    replayGain,
     year, artist,
   };
 }

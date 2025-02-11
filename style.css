@@ -139,7 +139,7 @@ body #playerDialog .miniPlayer {
   height: calc(100% - 2rem);
   display: grid;
   grid-template:
-    "status plpa info vol  ster" 6rem
+    "status plpa info ster rg  " 6rem
     "entry  nav  info time time" minmax(3rem, auto)
     "seek   seek seek seek seek" 3rem
   /  3rem   6rem auto 3rem 3rem;
@@ -195,7 +195,7 @@ body #playerDialog .miniPlayer {
   }
   .vol {
     grid-area: vol;
-    display: grid;
+    display: none;
     grid-template:
       "volume max" 1fr
       "volume min" 1fr
@@ -259,6 +259,38 @@ body #playerDialog .miniPlayer {
       }
     }
   }
+  .rg {
+    grid-area: rg;
+    display: grid;
+    grid-template:
+      "rg hi" 1fr
+      "rg lo" 1fr
+      "rg no" 1fr
+    / 1fr 1fr
+  }
+  .rg .replayGain {
+    grid-area: rg;
+    height: 5rem;
+    justify-self: end;
+  }
+  .rg .none {
+    grid-area: no;
+    align-self: end;
+    line-height: 0;
+    padding: 0.1rem;
+  }
+  .rg .average {
+    grid-area: lo;
+    align-self: center;
+    line-height: 0;
+    padding: 0.1rem;
+  }
+  .rg .strong {
+    grid-area: hi;
+    align-self: start;
+    line-height: 0;
+    padding: 0.1rem;
+  }
   .entry {
     grid-area: entry;
     display: none;
@@ -307,17 +339,20 @@ body #playerDialog .miniPlayer {
     initial-letter: 0.2rem;
   }
   .volume,
-  .stereo {
+  .stereo,
+  .replayGain {
     width: 0.8rem;
   }
   .volume.ui-slider .ui-slider-handle,
-  .stereo.ui-slider .ui-slider-handle {
+  .stereo.ui-slider .ui-slider-handle,
+  .replayGain.ui-slider .ui-slider-handle {
     width: 0.8rem;
     height: 0.8rem;
     left: -1px;
   }
   .volume.ui-slider .ui-slider-range,
-  .stereo.ui-slider .ui-slider-range {
+  .stereo.ui-slider .ui-slider-range,
+  .replayGain.ui-slider .ui-slider-range {
     left: -1px;
   }
 }
@@ -394,7 +429,7 @@ body #playerDialog .miniPlayer {
     initial-letter: 0.1rem;
   }
   .vol {
-    display: grid;
+    display: none;
     grid-template:
       "volume max" 1fr
       "volume min" 1fr
@@ -459,18 +494,53 @@ body #playerDialog .miniPlayer {
       }
     }
   }
+  .rg {
+    margin-left: 0.5rem;
+    display: grid;
+    grid-template:
+      "rg hi" 1fr
+      "rg lo" 1fr
+      "rg no" 1fr
+    / 1fr 1fr
+  }
+  .rg .replayGain {
+    grid-area: rg;
+    height: 3rem;
+    justify-self: end;
+  }
+  .rg .none {
+    grid-area: no;
+    align-self: end;
+    line-height: 0;
+    padding: 0.1rem;
+  }
+  .rg .average {
+    grid-area: lo;
+    align-self: center;
+    line-height: 0;
+    padding: 0.1rem;
+  }
+  .rg .strong {
+    grid-area: hi;
+    align-self: start;
+    line-height: 0;
+    padding: 0.1rem;
+  }
   .volume,
-  .stereo {
+  .stereo,
+  .replayGain {
     width: 0.5rem;
   }
   .volume.ui-slider .ui-slider-handle,
-  .stereo.ui-slider .ui-slider-handle {
+  .stereo.ui-slider .ui-slider-handle,
+  .replayGain.ui-slider .ui-slider-handle {
     width: 0.5rem;
     height: 0.5rem;
     left: -1px;
   }
   .volume.ui-slider .ui-slider-range,
-  .stereo.ui-slider .ui-slider-range {
+  .stereo.ui-slider .ui-slider-range,
+  .replayGain.ui-slider .ui-slider-range {
     left: -1px;
   }
 }
