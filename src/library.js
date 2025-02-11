@@ -56,6 +56,7 @@ loadTracks().then(data => {
       { name: "ordinal", data: "ordinal", title: "#" },
       { name: "kind", data: "kind", title: "?" },
       { name: "title", data: "title", title: "Title" },
+      { name: "subtitle", data: "subtitle", title: "Subt." },
       { name: "artist", data: "artist", title: "Artist" },
       { name: "platform", data: "platform", title: "Platform" },
       { name: "year", data: "year", title: "Year" },
@@ -122,6 +123,7 @@ loadTracks().then(data => {
         <option value="ordinal" data-checked="checked"># sequence</option>
         <option value="kind" data-checked="checked">? kind</option>
         <option value="title" data-checked="checked">Title</option>
+        <option value="subtitle" data-checked="checked">Subtitle</option>
         <option value="artist" data-checked="checked">Artist</option>
         <option value="platform" data-checked="checked">Platform</option>
         <option value="year" data-checked="checked">Year</option>
@@ -260,6 +262,7 @@ loadTracks().then(data => {
     ordinal: true,
     kind: false,
     title: true,
+    subtitle: false,
     artist: false,
     platform: false,
     year: false,
@@ -405,6 +408,7 @@ loadTracks().then(data => {
         gameTitle: track.game.split(': ')[0],
         gameSubtitle: track.game.split(': ')[1] ?? '',
         title: track.title,
+        subtitle: track.subtitle ?? '',
         artist: track.artist,
         track: track.tracknumber,
         timeSec: track.time,

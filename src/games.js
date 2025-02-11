@@ -33,6 +33,7 @@ loadGames().then(data => {
     data: data.map(game => ({
       platform: game.platform,
       game: game.game,
+      gameSort: game.game.replaceAll(/:/g, '\t'),
       year: game.year,
       artists: game.artists.join(', '),
       thumbnail: `<img alt="" class="thumbnail" src="${game.thumbnailsUrl ? `${game.thumbnailsUrl}/list.webp` : ''}" />`,
@@ -40,7 +41,8 @@ loadGames().then(data => {
     })),
     columns: [
       { name: "thumbnail", data: "thumbnail", title: "Thumbnail", orderable: false, className: "dt-center" },
-      { name: "game", data: "game", title: "Game" },
+      { name: "game", data: "game", title: "Game", orderData: 2 },
+      { name: "gameSort", data: "gameSort", visible: false },
       { name: "platform", data: "platform", title: "Platform" },
       { name: "year", data: "year", title: "Year" },
       { name: "artists", data: "artists", title: "Artist" },
