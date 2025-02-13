@@ -56,6 +56,7 @@ loadTracks().then(data => {
       { name: "ordinal", data: "ordinal", title: "#" },
       { name: "kind", data: "kind", title: "?" },
       { name: "title", data: "title", title: "Title" },
+      { name: "subtitle", data: "subtitle", title: "Subt." },
       { name: "artist", data: "artist", title: "Artist" },
       { name: "platform", data: "platform", title: "Platform" },
       { name: "year", data: "year", title: "Year" },
@@ -122,6 +123,7 @@ loadTracks().then(data => {
         <option value="ordinal" data-checked="checked"># sequence</option>
         <option value="kind" data-checked="checked">? kind</option>
         <option value="title" data-checked="checked">Title</option>
+        <option value="subtitle" data-checked="checked">Subtitle</option>
         <option value="artist" data-checked="checked">Artist</option>
         <option value="platform" data-checked="checked">Platform</option>
         <option value="year" data-checked="checked">Year</option>
@@ -260,6 +262,7 @@ loadTracks().then(data => {
     ordinal: true,
     kind: false,
     title: true,
+    subtitle: false,
     artist: false,
     platform: false,
     year: false,
@@ -313,6 +316,7 @@ loadTracks().then(data => {
     const stats = rowsStats('.selected', false);
     $('#libraryDialog .status').text(stats == null ? '' : `Selected: ${stats}`);
   };
+  updateSelectionGlobal = updateSelection;
   updateSelection();
   const unselectAll = () => {
     $('#library').DataTable().$('tr').removeClass('selected');
@@ -342,7 +346,7 @@ loadTracks().then(data => {
       time: timeSec, duration: originalTimeSec ? timeSec : undefined,
       replayGain: currentTracksDb.find(
         entry => entry.platform === platform && entry.game === game && entry.title === title
-      )?.replayGain?.album,
+      )?.replayGain,
       year, artist,
     };
   }
@@ -405,6 +409,7 @@ loadTracks().then(data => {
         gameTitle: track.game.split(': ')[0],
         gameSubtitle: track.game.split(': ')[1] ?? '',
         title: track.title,
+        subtitle: track.subtitle ?? '',
         artist: track.artist,
         track: track.tracknumber,
         timeSec: track.time,
@@ -445,4 +450,16 @@ async function loadEntry(platform, game, index) {
   } finally {
     setLoading(false);
   }
+}
+
+let updateSelectionGlobal = () => {};
+
+export function setSelection(tracks) {
+  $('#library').DataTable().rows().toArray().forEach(rows => {
+    rows.forEach(row => {
+      const selected = !!tracks.find(({ title }) => title === $('#library').DataTable().row(row).data().title);
+      $('#library').DataTable().row(row).nodes().to$().toggleClass('selected', selected);
+    });
+  });
+  updateSelectionGlobal();
 }

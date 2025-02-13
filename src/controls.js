@@ -26,6 +26,7 @@ class Controls {
     this._loop = false;
     this._volume = 0;
     this._stereo = 0;
+    this._replayGainMode = 0;
     this.init();
     this.canplay = false;
     this.paused = true;
@@ -92,6 +93,15 @@ class Controls {
       orientation: "vertical",
     });
     this.stereo = player.stereo;
+    $('#playerDialog .replayGain').slider({
+      ...sliderSettings,
+      value: 1,
+      min: 0,
+      max: 2,
+      step: 0.01,
+      orientation: "vertical",
+    });
+    this.replayGainMode = player.replayGainMode;
     const fixSlider = (handleSize, ref) => (event) => {
       const handle = $(event.target).find('.ui-slider-handle');
       const pos = parseInt(handle[0].style[ref]);
@@ -106,9 +116,11 @@ class Controls {
     initSlider(fixSlider(0.8, 'left'), $('#playerDialog .midiPlayer .seekPlaylist'));
     initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .midiPlayer .volume'));
     initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .midiPlayer .stereo'));
+    initSlider(fixSlider(0.8, 'bottom'), $('#playerDialog .midiPlayer .replayGain'));
     initSlider(fixSlider(0.8, 'left'), $('#playerDialog .miniPlayer .seekTrack'));
     initSlider(fixSlider(0.5, 'bottom'), $('#playerDialog .miniPlayer .volume'));
     initSlider(fixSlider(0.5, 'bottom'), $('#playerDialog .miniPlayer .stereo'));
+    initSlider(fixSlider(0.5, 'bottom'), $('#playerDialog .miniPlayer .replayGain'));
   }
   get canplay() {
     return this._canplay;
@@ -165,6 +177,13 @@ class Controls {
   set stereo(v) {
     this._stereo = v;
     $('#playerDialog .stereo').slider('value', this.stereo);
+  }
+  get replayGainMode() {
+    return this._replayGainMode;
+  }
+  set replayGainMode(v) {
+    this._replayGainMode = v;
+    $('#playerDialog .replayGain').slider('value', this.replayGainMode);
   }
 }
 
@@ -226,6 +245,7 @@ player.addEventListener('update', ({ detail: updates }) => {
   if (updates.loop != null) controls.loop = updates.loop;
   if (updates.volume != null) controls.volume = updates.volume;
   if (updates.stereo != null) controls.stereo = updates.stereo;
+  if (updates.replayGainMode != null) controls.replayGainMode = updates.replayGainMode;
 });
 
 $('#playerDialog .play').click(() => {
@@ -279,6 +299,9 @@ $('#playerDialog .volume').on('slide', (e, { value }) => {
 $('#playerDialog .stereo').on('slide', (e, { value }) => {
   setPlayerOptions({ stereo: value });
 });
+$('#playerDialog .replayGain').on('slide', (e, { value }) => {
+  setPlayerOptions({ replayGainMode: value });
+});
 
 const setValue = (slider, value) => {
   $(slider).slider('value', value);
@@ -298,4 +321,13 @@ $('#playerDialog .mono').click(() => {
 });
 $('#playerDialog .stereo-full').click(() => {
   setValue($('#playerDialog .stereo'), 1);
+});
+$('#playerDialog .rg .none').click(() => {
+  setValue($('#playerDialog .replayGain'), 0);
+});
+$('#playerDialog .rg .average').click(() => {
+  setValue($('#playerDialog .replayGain'), 1);
+});
+$('#playerDialog .rg .strong').click(() => {
+  setValue($('#playerDialog .replayGain'), 2);
 });

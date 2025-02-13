@@ -2,7 +2,7 @@
 
 import { loadGames } from './db.js';
 import { pushState, subscribeState } from './route.js';
-import { dialogOptions, initDialog, showDialog } from './utils.js';
+import { dialogOptions, initDialog, scrollToChild, showDialog } from './utils.js';
 
 $('#gamesDialog').dialog({
   ...dialogOptions,
@@ -33,6 +33,7 @@ loadGames().then(data => {
     data: data.map(game => ({
       platform: game.platform,
       game: game.game,
+      gameSort: game.game.replaceAll(/:/g, '\t'),
       year: game.year,
       artists: game.artists.join(', '),
       thumbnail: `<img alt="" class="thumbnail" src="${game.thumbnailsUrl ? `${game.thumbnailsUrl}/list.webp` : ''}" />`,
@@ -40,7 +41,8 @@ loadGames().then(data => {
     })),
     columns: [
       { name: "thumbnail", data: "thumbnail", title: "Thumbnail", orderable: false, className: "dt-center" },
-      { name: "game", data: "game", title: "Game" },
+      { name: "game", data: "game", title: "Game", orderData: 2 },
+      { name: "gameSort", data: "gameSort", visible: false },
       { name: "platform", data: "platform", title: "Platform" },
       { name: "year", data: "year", title: "Year" },
       { name: "artists", data: "artists", title: "Artist" },
@@ -60,6 +62,10 @@ loadGames().then(data => {
     updateInfo();
   });
 
+  const thumbsLoaded = Promise.all($('#games img').get().map(
+    img => new Promise((resolve) => $(img).one('load', resolve))
+  ));
+
   function rowsStats(selector, zero) {
     const rows = $('#games').DataTable().rows(selector);
     return `${rows[0].length}`;
@@ -73,11 +79,14 @@ loadGames().then(data => {
     pushState({ platform: data.platform, game: data.game }, [data.platform, data.game]);
   });
 
-  subscribeState(updateState);
+  subscribeState(state => thumbsLoaded.then(() => updateState(state)));
   function updateState(state) {
     $('#games').DataTable().rows().nodes().to$().removeClass('selected');
     const row = $('#games').DataTable().rows((row, data) => data.platform === state.platform && data.game === state.game).nodes().to$();
     row.addClass('selected');
+    setTimeout(() => {
+      scrollToChild($('#games').parent().get(0), row.get(0));
+    });
   }
 
 });
