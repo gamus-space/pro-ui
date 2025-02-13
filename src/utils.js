@@ -93,3 +93,13 @@ $.widget("custom.iconsselectmenu", $.ui.selectmenu, {
     this.dontClose = true;
   },
 });
+
+export function scrollToChild(container, child) {
+  if (!container || !child) return;
+  if (container.scrollTop <= child.offsetTop && container.scrollTop + container.offsetHeight >= child.offsetTop + child.offsetHeight)
+    return;
+  container.scrollTo({
+    top: child.offsetTop + child.offsetHeight/2 - container.offsetHeight/2,
+    behavior: 'smooth',
+  });
+}

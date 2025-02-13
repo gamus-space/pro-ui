@@ -18,6 +18,7 @@ class Player extends EventTarget {
   // looped
   // fadeGainL
   // fadeGainR
+  // replayGainMode
 
   constructor() {
     super();
@@ -34,6 +35,7 @@ class Player extends EventTarget {
     this.looped = undefined;
     this.fadeGainL = undefined;
     this.fadeGainR = undefined;
+    this._replayGainMode = undefined;
     this.initialize(new Audio());
 
     const ended = () => {
@@ -103,6 +105,13 @@ class Player extends EventTarget {
   _updateLoop(middle) {
     this.audio.loop = this._duration && (middle ?? true) || this._trackLooped();
   }
+  _updateReplayGain() {
+    if (!this._track || this.replayGainMode === undefined) return;
+    this.replayGain = this.replayGainMode <= 1 ?
+      this._track.replayGain.album * this.replayGainMode :
+      this._track.replayGain.album * (2-this.replayGainMode) +
+      this._track.replayGain.track * (this.replayGainMode-1);
+  }
 
   get entry() {
     return this._entry;
@@ -139,6 +148,14 @@ class Player extends EventTarget {
     this.iteration = Math.floor(v / this.audio.duration);
     this.audio.currentTime = v - this.iteration * this.audio.duration;
     this.isSeeking = true;
+  }
+  get replayGainMode() {
+    return this._replayGainMode;
+  }
+  set replayGainMode(v) {
+    this._replayGainMode = v;
+    this._updateReplayGain();
+    this.dispatchEvent(new CustomEvent('update', { detail: { replayGainMode: this._replayGainMode } }));
   }
 
   initialize(audio) {
@@ -240,7 +257,7 @@ class Player extends EventTarget {
       });
     }).then(url => {
       this.audio.src = url;
-      this.replayGain = data.replayGain;
+      this._updateReplayGain();
       if (play) this.audio.play();
     }).finally(() => {
       this.loading = false;
