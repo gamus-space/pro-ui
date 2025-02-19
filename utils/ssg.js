@@ -1,9 +1,10 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const process = require('process');
-const { marked } = require('marked');
+import fs from 'fs';
+import path from 'path';
+import process from 'process';
+import { marked } from 'marked';
+import { customEncodeURIComponent } from '../src/common.js';
 
 const DB_URL = 'https://d1e7jf8j2bpzti.cloudfront.net';
 
@@ -12,13 +13,6 @@ if (process.argv.length < 3) {
     process.exit(1);
 }
 const [,, dir] = process.argv;
-
-function customEncodeURIComponent(str) {
-    return str.replace(/ /g, '_').replace(
-        /[^/_\w():&]/g,
-        (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
-    );
-}
 
 function time(t) {
     t = Math.floor(t)
@@ -44,7 +38,11 @@ function time(t) {
         const textHtml = text && marked.parse(text);
         const content = `
             <!DOCTYPE html>
-            <html><body>
+            <html lang="en">
+            <head>
+            <title>GAMUS pro - ${game} ${platform} soundtrack</title>
+            </head>
+            <body>
             <script type="text/javascript">
                 location = '/__' + location.pathname;
             </script>
@@ -62,17 +60,28 @@ function time(t) {
             <section>
                 ${textHtml}
             </section>
-            </body></html>
+            </body>
+            </html>
         `;
-        const contentPath = path.join(dir, platform, game, 'index.html');
         try {
             fs.mkdirSync(path.join(dir, platform));
         } catch(e) {}
+
+        const contentPath = path.join(dir, platform, customEncodeURIComponent(game), 'index.html');
         try {
-            fs.mkdirSync(path.join(dir, platform, game));
+            fs.mkdirSync(path.join(dir, platform, customEncodeURIComponent(game)));
         } catch(e) {}
         fs.writeFileSync(contentPath, content, 'utf-8');
         console.log(`written: ${contentPath}`);
+
+        if (game !== customEncodeURIComponent(game)) {
+            const contentPath2 = path.join(dir, platform, game, 'index.html');
+            try {
+                fs.mkdirSync(path.join(dir, platform, game));
+            } catch(e) {}
+            fs.writeFileSync(contentPath2, content, 'utf-8');
+            console.log(`written: ${contentPath2}`);
+        }
     };
     const gamesDb = await (await fetch(`${DB_URL}/index.json`)).json();
     const inject = `
@@ -95,4 +104,22 @@ function time(t) {
     const newIndex = index.replace('<body>', `<body>${inject}`);
     fs.writeFileSync(indexPath, newIndex, 'utf-8');
     console.log(`injected: ${indexPath}`);
+
+    const compilationsDb = await (await fetch(`${DB_URL}/thumbs/compilations/index.json`)).json();
+    try {
+        fs.mkdirSync(path.join(dir, 'assets'));
+    } catch(e) {}
+    try {
+        fs.mkdirSync(path.join(dir, 'assets', 'compilations'));
+    } catch(e) {}
+    let compilationsCount = 0;
+    for (const { url } of compilationsDb.index) {
+        const data = await (await fetch(`${DB_URL}/thumbs/compilations/${url}`)).arrayBuffer();
+        fs.writeFileSync(path.join(dir, 'assets', 'compilations', url), Buffer.from(data));
+        compilationsCount++;
+    }
+    console.log(`compilations saved: ${compilationsCount}`);
+    const compilationsIndex = path.join(dir, 'assets', 'compilations', 'index.json');
+    fs.writeFileSync(compilationsIndex, JSON.stringify(compilationsDb, null, 2));
+    console.log(`written: ${compilationsIndex}`);
 })();

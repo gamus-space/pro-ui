@@ -1,5 +1,7 @@
 'use strict';
 
+import { customEncodeURIComponent  } from './common.js';
+
 const ROOT_URL = document.getElementsByTagName('base')[0].href;
 const ROOT_PATH = document.getElementsByTagName('base')[0].attributes.href.value;
 
@@ -12,13 +14,6 @@ export function subscribeState(subscriber) {
 
 export function unsubscribeState(subscriber) {
   subscribers = subscribers.filter(s => s !== subscriber);
-}
-
-function customEncodeURIComponent(str) {
-  return str.replace(/ /g, '_').replace(
-    /[^/_\w():&']/g,
-    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
-  );
 }
 
 export function pushState(state, segments) {

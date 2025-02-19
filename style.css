@@ -1049,8 +1049,10 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-top: 5em;
 }
 #stats {
+  z-index: 1100;
   position: absolute;
   left: 10%;
   padding: 1rem 2rem;
@@ -1074,6 +1076,7 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   }
 }
 #features {
+  z-index: 1100;
   position: absolute;
   right: 10%;
   padding: 1rem 2rem;
@@ -1158,6 +1161,33 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   text-align: center;
   margin-top: 0.5rem;
   margin-bottom: -0.5rem;
+}
+
+#strip {
+  --img-count: 0;
+  --img-gap: 20px;
+  --img-height: 120px;
+  --img-width: 160px;
+  --img-strip: calc(var(--img-count) * (var(--img-width) + var(--img-gap)));
+  position: absolute;
+  top: 50px;
+  left: 0;
+  height: var(--img-height);
+  animation: strip 30s linear infinite;
+  display: flex;
+  padding: 16px 0;
+  background: black;
+  img {
+    padding-right: var(--img-gap);
+  }
+}
+@keyframes strip {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-1 * var(--img-strip)));
+  }
 }
 
 .loader {

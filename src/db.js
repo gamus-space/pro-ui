@@ -13,13 +13,15 @@ const baseUrl = new Promise((resolve, reject) => {
   });
 });
 
+const tracksLoader = baseUrl.then(({ musicUrl }) => fetchJson(`${musicUrl}/index.json`).then(
+  data => Object.fromEntries(Object.entries(data).map(([ platform, games ]) => [
+    platform,
+    Object.fromEntries(Object.entries(games).map(([game, index]) => [game, `${musicUrl}/${index}`])),
+  ]))
+));
+
 export function loadTracks() {
-  return baseUrl.then(({ musicUrl }) => fetchJson(`${musicUrl}/index.json`).then(
-    data => Object.fromEntries(Object.entries(data).map(([ platform, games ]) => [
-      platform,
-      Object.fromEntries(Object.entries(games).map(([game, index]) => [game, `${musicUrl}/${index}`])),
-    ]))
-  ));
+  return tracksLoader;
 }
 
 export function loadGames() {
