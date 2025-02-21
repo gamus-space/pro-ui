@@ -1,10 +1,11 @@
 'use strict';
 
 import { setBaseUrl } from './db.js';
-import { time } from './utils.js';
+import { fetchJson, time } from './utils.js';
 
 const dev = location.hostname === '127.0.0.1';
 const apiUrl = dev ? 'https://localhost:8000/media-priv' : 'https://d1e7jf8j2bpzti.cloudfront.net';
+const assetsUrl = dev ? '/dist/assets' : '/assets';
 const sources = {
   demo: { auth: false },
   standard: { auth: true },
@@ -40,7 +41,7 @@ fetch(`${apiUrl}/api/user`, { credentials: 'include' }).then(response =>
   if (user) loginUser(user);
   else {
     $('#login').toggle(true);
-    fetch(`${apiUrl}/stats.json`).then(response => response.json()).then(stats => {
+    fetchJson(`${apiUrl}/stats.json`).then(stats => {
       const formatter = new Intl.NumberFormat();
       $('#stats .stat.games').text(formatter.format(stats.games.games));
       $('#stats .stat.tracks').text(formatter.format(stats.music.tracks));
@@ -49,6 +50,17 @@ fetch(`${apiUrl}/api/user`, { credentials: 'include' }).then(response =>
       $('#stats .stat.articles').text(formatter.format(stats.text.articles));
       $('#stats').show('drop', { direction: 'left' }, 1000);
       $('#features').show('drop', { direction: 'right' }, 1000);
+    });
+    fetchJson(`${assetsUrl}/compilations/index.json`).then(compilations => {
+      const IMAGE_WIDTH = 160;
+      const GAP = 20;
+      new Array(Math.ceil(2 * screen.width / (IMAGE_WIDTH + GAP) / compilations.index.length) + 1).fill().forEach(() => {
+        compilations.index.forEach(({ url }) => {
+          const absoluteUrl = `${apiUrl}/thumbs/compilations/${url}`;
+          $('#strip').append($('<img>', { src: absoluteUrl }));
+        });
+      })
+      $('#strip').css('--img-count', compilations.index.length);
     });
   }
 });
