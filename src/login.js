@@ -56,7 +56,7 @@ fetch(`${apiUrl}/api/user`, { credentials: 'include' }).then(response =>
       const GAP = 20;
       new Array(Math.ceil(2 * screen.width / (IMAGE_WIDTH + GAP) / compilations.index.length) + 1).fill().forEach(() => {
         compilations.index.forEach(({ url }) => {
-          const absoluteUrl = `${apiUrl}/thumbs/compilations/${url}`;
+          const absoluteUrl = `${assetsUrl}/compilations/${url}`;
           $('#strip').append($('<img>', { src: absoluteUrl }));
         });
       })
