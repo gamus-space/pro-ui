@@ -956,7 +956,7 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   position: absolute;
   top: 2rem;
   left: 2rem;
-  padding: 1em 2em;
+  padding: 1em 1.25em;
   border: 1px solid white;
   background: black;
   box-shadow: 0px 0px 20px white;
@@ -967,9 +967,9 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   height: 2rem;
   opacity: 0.6;
   cursor: move;
-  .mode {
+  .mode, .order {
     cursor: pointer;
-    padding-top: 0.4rem;
+    line-height: 0;
   }
   .ui-selectmenu-button.text {
     width: 16rem;
