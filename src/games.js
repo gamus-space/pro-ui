@@ -63,7 +63,7 @@ loadGames().then(data => {
   });
 
   const thumbsLoaded = Promise.all($('#games img').get().map(
-    img => new Promise((resolve) => $(img).one('load', resolve))
+    img => new Promise((resolve) => $(img).one('load error', resolve))
   ));
 
   function rowsStats(selector, zero) {
