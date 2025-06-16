@@ -139,7 +139,7 @@ body #playerDialog .miniPlayer {
   height: calc(100% - 2rem);
   display: grid;
   grid-template:
-    "status plpa info ster rg  " 6rem
+    "mode   plpa info ster rg  " 6rem
     "entry  nav  info time time" minmax(3rem, auto)
     "seek   seek seek seek seek" 3rem
   /  3rem   6rem auto 3rem 3rem;
@@ -150,8 +150,8 @@ body #playerDialog .miniPlayer {
     grid-area: plpa;
   }
   .plpa .play {
-    width: 2rem;
-    height: 2rem;
+    width: 2.2rem;
+    height: 2.2rem;
     transform: scale(2);
   }
   .info {
@@ -182,12 +182,16 @@ body #playerDialog .miniPlayer {
   .time {
     grid-area: time;
   }
-  .status {
-    grid-area: status;
-  }
-  .status .loop {
-    width: 2rem;
-    height: 2rem;
+  .mode {
+    grid-area: mode;
+    text-align: center;
+    .loop, .shuffle {
+      width: 2rem;
+      height: 2rem;
+      &:not(:first-child) {
+        margin-top: 0.2rem;
+      }
+    }
   }
   .seek {
     grid-area: seek;
@@ -397,6 +401,11 @@ body #playerDialog .miniPlayer {
     display: flex;
     align-items: center;
   }
+  .controls .btns .row {
+    white-space: nowrap;
+    display: inline-block;
+    margin-bottom: 0.2rem;
+  }
   .controls .sk {
     flex-grow: 1;
     align-self: end;
@@ -580,6 +589,10 @@ body #playerDialog .miniPlayer {
     grid-area: kind;
     padding-top: 1rem;
     padding-left: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
     .ui-selectmenu-button.icon {
       width: 2rem;
       height: 2rem;
@@ -593,7 +606,14 @@ body #playerDialog .miniPlayer {
       inset: 30%;
     }
     .label {
-      margin-left: 0.5rem;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .random-order {
+      width: 2rem;
+      height: 2rem;
     }
   }
   .amount {

@@ -10,6 +10,7 @@ class Player extends EventTarget {
   // track
   // entry
   // loop
+  // shuffle
   // stream
   // lastUrl
   // duration
@@ -26,6 +27,7 @@ class Player extends EventTarget {
     this._track = null;
     this._entry = null;
     this._loop = false;
+    this._shuffle = false;
     this.loading = false;
     this.stream = true;
     this._lastUrl = undefined;
@@ -41,14 +43,8 @@ class Player extends EventTarget {
     const ended = () => {
       this.isSeeking = true;
       if (this.entry == null) return;
-      if (this.entry < this.playlist.entries.length-1) {
-        this.load(this.entry+1);
-      } else {
-        if (this.loop)
-          this.load(0);
-        else
-          this.dispatchEvent(new CustomEvent('playlistEnded'));
-      }
+      if (!this.next())
+        this.dispatchEvent(new CustomEvent('playlistEnded'));
     };
 
     ['play', 'pause'].forEach(method => {
@@ -138,6 +134,13 @@ class Player extends EventTarget {
     this._updateLoop(true);
     this.dispatchEvent(new CustomEvent('update', { detail: { loop: this._loop } }));
   }
+  get shuffle() {
+    return this._shuffle;
+  }
+  set shuffle(v) {
+    this._shuffle = v;
+    this.dispatchEvent(new CustomEvent('update', { detail: { shuffle: this._shuffle } }));
+  }
   get duration() {
     return this._duration ?? (this.audio.duration || 0);
   }
@@ -203,7 +206,7 @@ class Player extends EventTarget {
     Object.defineProperty(this, 'replayGain', {
       get() { return replayGain; },
       set(v) {
-        replayGain = v ?? 0;
+        replayGain = v || 0;
         replayGainNode.gain.value = Math.pow(10, replayGain/20);
       },
     });
@@ -262,6 +265,30 @@ class Player extends EventTarget {
     }).finally(() => {
       this.loading = false;
     });
+  }
+
+  next() {
+    if (this.shuffle) {
+      this.load(randomInt(this.playlist.entries.length));
+      return true;
+    } else if (this.entry < this.playlist.entries.length-1) {
+      this.load(this.entry+1);
+      return true;
+    } else if (this.loop) {
+      this.load(0);
+      return true;
+    }
+    return false;
+  }
+
+  previous() {
+    if (this.shuffle) {
+      return false;
+    } else if (this.entry > 0) {
+      this.load(this.entry-1);
+      return true;
+    }
+    return false;
   }
 }
 
@@ -357,4 +384,8 @@ function download(name, type) {
     a.click();
     URL.revokeObjectURL(url);
   };
+}
+
+function randomInt(range) {
+  return Math.floor(Math.random() * range);
 }

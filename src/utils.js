@@ -61,6 +61,14 @@ export function randomInt(range) {
   return Math.floor(Math.random() * range);
 }
 
+export function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = randomInt(i + 1);
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 $.widget("custom.iconsselectmenu", $.ui.selectmenu, {
   _renderItem: function(ul, item) {
     ul.addClass('icons');
