@@ -24,6 +24,7 @@ export function show() {
 class Controls {
   constructor() {
     this._loop = false;
+    this._shuffle = false;
     this._volume = 0;
     this._stereo = 0;
     this._replayGainMode = 0;
@@ -47,6 +48,10 @@ class Controls {
       icon: false,
     });
     this.loop = player.loop;
+    $('#playerDialog .shuffle input').checkboxradio({
+      icon: false,
+    });
+    this.shuffle = player.shuffle;
 
     const sliderSettings = {
       classes: { "ui-slider-range": "ui-state-active" },
@@ -164,6 +169,13 @@ class Controls {
     this._loop = v;
     $('#playerDialog .loop input').prop('checked', this.loop).checkboxradio('refresh');
   }
+  get shuffle() {
+    return this._shuffle;
+  }
+  set shuffle(v) {
+    this._shuffle = v;
+    $('#playerDialog .shuffle input').prop('checked', this.shuffle).checkboxradio('refresh');
+  }
   get volume() {
     return this._volume;
   }
@@ -232,17 +244,18 @@ function updateEntry() {
   $('#playerDialog .miniPlayer .next,.previous').toggle(player.entry != null);
   $('#playerDialog .midiPlayer .seekPlaylist').toggle(player.entry != null);
   updatePreviousDisabled();
-  $('#playerDialog .next').button('option', 'disabled', player.entry == null || player.entry >= player.playlist.entries.length-1);
+  $('#playerDialog .next').button('option', 'disabled', player.entry == null || (player.entry >= player.playlist.entries.length-1 && !player.shuffle));
 }
 function updatePlaylist() {
   playlistDurations = player.playlist.entries.map(({ time }) => time).reduce((res, time) => [...res, time + (res[res.length-1] ?? 0)], []);
   $('#playerDialog .seekPlaylist').slider('option', 'max', playlistDurations[playlistDurations.length-1] ?? 0);
 }
 function updatePreviousDisabled() {
-  $('#playerDialog .previous').button('option', 'disabled', player.currentTime <= SEEK_START_LIMIT && (player.entry == null || player.entry == 0));
+  $('#playerDialog .previous').button('option', 'disabled', player.currentTime <= SEEK_START_LIMIT && (player.entry == null || player.entry === 0 || player.shuffle));
 }
 player.addEventListener('update', ({ detail: updates }) => {
   if (updates.loop != null) controls.loop = updates.loop;
+  if (updates.shuffle != null) controls.shuffle = updates.shuffle;
   if (updates.volume != null) controls.volume = updates.volume;
   if (updates.stereo != null) controls.stereo = updates.stereo;
   if (updates.replayGainMode != null) controls.replayGainMode = updates.replayGainMode;
@@ -255,15 +268,20 @@ $('#playerDialog .play').click(() => {
 $('#playerDialog .previous').click(() => {
   if (player.entry == null) return;
   if (player.currentTime > SEEK_START_LIMIT) player.currentTime = 0;
-  else player.load(player.entry-1);
+  else player.previous();
 });
 $('#playerDialog .next').click(() => {
   if (player.entry == null) return;
-  player.load(player.entry+1);
+  player.next();
 });
 $('#playerDialog .loop').change(() => {
   controls.loop = !controls.loop;
   setPlayerOptions({ loop: controls.loop });
+});
+$('#playerDialog .shuffle').change(() => {
+  controls.shuffle = !controls.shuffle;
+  setPlayerOptions({ shuffle: controls.shuffle });
+  updateEntry();
 });
 
 $('#playerDialog .seekTrack,.seekPlaylist').on('slidestart', () => {

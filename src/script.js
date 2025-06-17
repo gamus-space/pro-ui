@@ -85,10 +85,14 @@ class BrowserOptions extends EventTarget {
 }
 export const browserOptions = new BrowserOptions();
 
-export function setPlayerOptions({ volume, stereo, loop, replayGainMode }) {
+export function setPlayerOptions({ volume, stereo, loop, shuffle, replayGainMode }) {
   if (loop != null) {
     player.loop = loop;
     localStorage.setItem('loop', loop);
+  }
+  if (shuffle != null) {
+    player.shuffle = shuffle;
+    localStorage.setItem('shuffle', shuffle);
   }
   if (volume != null) {
     player.volume = volume;
@@ -108,6 +112,7 @@ player.volume = localStorage.getItem('volume') == null ? 1 : parseFloat(localSto
 player.stereo = localStorage.getItem('stereo') == null ? 1 : parseFloat(localStorage.getItem('stereo'));
 player.replayGainMode = localStorage.getItem('replayGainMode') == null ? 2 : parseFloat(localStorage.getItem('replayGainMode'));
 player.loop = localStorage.getItem('loop') === 'true';
+player.shuffle = localStorage.getItem('shuffle') === 'true';
 $('body').css('background-image', localStorage.getItem('backgroundImageUrl') == null ? '' : `url(${localStorage.getItem('backgroundImageUrl')})`);
 $('body').css('background-size', localStorage.getItem('backgroundSize'));
 

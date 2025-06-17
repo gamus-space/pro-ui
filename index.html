@@ -15,6 +15,7 @@
   <meta charset="utf-8">
   <title>GAMUS pro</title>
   <base href="/" />
+  <link rel="icon" type="image/png" href="images/note.png">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="jquery-ui.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/dataTables.jqueryui.min.css">
@@ -158,9 +159,13 @@
           <iconify-icon icon="ph:caret-line-right-fill"></iconify-icon>
         </button>
       </div>
-      <div class="status">
+      <div class="mode">
         <label class="loop ui-button-icon-only" title="Repeat">
           <iconify-icon icon="ph:repeat"></iconify-icon>
+          <input type="checkbox" />
+        </label>
+        <label class="shuffle ui-button-icon-only" title="Shuffle">
+          <iconify-icon icon="ph:shuffle"></iconify-icon>
           <input type="checkbox" />
         </label>
       </div>
@@ -179,19 +184,27 @@
       </div>
       <div class="controls">
         <span class="btns">
-          <label class="loop ui-button-icon-only" title="Repeat">
-            <iconify-icon icon="ph:repeat"></iconify-icon>
-            <input type="checkbox" />
-          </label>
-          <button class="previous ui-button ui-button-icon-only" title="Previous" style="display: none">
-            <iconify-icon icon="ph:caret-line-left-fill"></iconify-icon>
-          </button>
-          <button class="play ui-button ui-button-icon-only" title="Play">
-            <iconify-icon icon="ph:play-fill"></iconify-icon>
-          </button>
-          <button class="next ui-button ui-button-icon-only" title="Next" style="display: none">
-            <iconify-icon icon="ph:caret-line-right-fill"></iconify-icon>
-          </button>
+          <span class="row">
+            <label class="loop ui-button-icon-only" title="Repeat">
+              <iconify-icon icon="ph:repeat"></iconify-icon>
+              <input type="checkbox" />
+            </label>
+            <label class="shuffle ui-button-icon-only" title="Shuffle">
+              <iconify-icon icon="ph:shuffle"></iconify-icon>
+              <input type="checkbox" />
+            </label>
+          </span>
+          <span class="row">
+            <button class="previous ui-button ui-button-icon-only" title="Previous" style="display: none">
+              <iconify-icon icon="ph:caret-line-left-fill"></iconify-icon>
+            </button>
+            <button class="play ui-button ui-button-icon-only" title="Play">
+              <iconify-icon icon="ph:play-fill"></iconify-icon>
+            </button>
+            <button class="next ui-button ui-button-icon-only" title="Next" style="display: none">
+              <iconify-icon icon="ph:caret-line-right-fill"></iconify-icon>
+            </button>
+          </span>
         </span>
         <span class="sk">
           <div class="seekTrack"></div>
@@ -265,6 +278,10 @@
           </optgroup>
         </select>
         <span class="label">...</span>
+        <label class="random-order ui-button-icon-only" title="Random order">
+          <iconify-icon icon="ph:shuffle"></iconify-icon>
+          <input type="checkbox" />
+        </label>
       </div>
       <div class="amount">
         <span class="min">
@@ -357,6 +374,9 @@
       <div class="title"></div>
     </div>
     <div class="controls">
+      <span class="order">
+        <iconify-icon></iconify-icon>
+      </span>
       <span class="mode">
         <iconify-icon></iconify-icon>
       </span>

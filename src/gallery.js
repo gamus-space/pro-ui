@@ -4,7 +4,7 @@ import { loadScreenshots } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
 import { subscribeState } from './route.js';
-import { dialogOptions, fetchJson, initDialog, showDialog } from './utils.js';
+import { dialogOptions, fetchJson, initDialog, randomInt, showDialog } from './utils.js';
 
 $('#galleryDialog').dialog({
   ...dialogOptions,
@@ -128,10 +128,22 @@ function loadEntry(platform, game, index) {
   });
 }
 
+let order;
+$('#galleryDialog .controls .order').on('click', () => { toggleOrder(); });
+function toggleOrder() {
+  if (order !== 'straight')
+    order = 'straight';
+  else
+    order = 'random';
+  $('#galleryDialog .controls .order').attr('title', order === 'straight' ? 'Present in order' : 'Random order')
+    .find('iconify-icon').attr('icon', order === 'straight' ? 'ph:arrow-fat-right' : 'ph:shuffle-angular');
+}
+toggleOrder();
+
 const INTERVAL_SEC = location.hostname === '127.0.0.1' ? 2 : 10;
 let galleryStatus = {
   list: null,
-  index: 0,
+  index: -1,
 };
 let galleryInterval;
 function setGallery(gallery, game) {
@@ -140,13 +152,29 @@ function setGallery(gallery, game) {
     galleryStatus.list.every((item, i) => item === gallery[i]) &&
     (galleryStatus.list.length > 0 || galleryStatus.game === game)) return;
 
-  galleryStatus = { list: gallery ?? [], index: 0, game };
+  galleryStatus = { list: gallery ?? [], index: -1, game };
   if (galleryInterval)
     clearInterval(galleryInterval);
   updateGallery();
   galleryInterval = galleryStatus.list.length > 1 ? setInterval(updateGallery, INTERVAL_SEC * 1000) : undefined;
 }
 function updateGallery() {
+  switch (order) {
+  case 'straight':
+    galleryStatus.index = (galleryStatus.index + 1) % galleryStatus.list.length;
+    break;
+  case 'random':
+    if (galleryStatus.index < 0)
+      galleryStatus.index = randomInt(galleryStatus.list.length);
+    else {
+      const roll = randomInt(galleryStatus.list.length - 1);
+      galleryStatus.index = roll + (roll >= galleryStatus.index ? 1 : 0);
+    }
+    break;
+  default:
+    throw new Error('unsupported gallery order');
+  }
+
   const previous = $('#galleryDialog .active');
   $('#galleryDialog .image.passive')
     .removeClass('passive').addClass('active')
@@ -157,7 +185,6 @@ function updateGallery() {
     .find('.game').text(galleryStatus.game ?? null).end()
     .find('.title').text(galleryStatus.list[galleryStatus.index]?.title ?? '').end();
   previous.removeClass('active').addClass('passive');
-  galleryStatus.index = (galleryStatus.index + 1) % galleryStatus.list.length;
 }
 
 let music;
