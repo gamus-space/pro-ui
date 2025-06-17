@@ -6,7 +6,7 @@ import { dialogOptions, initDialog, scrollToChild, showDialog } from './utils.js
 
 $('#gamesDialog').dialog({
   ...dialogOptions,
-  width: 600,
+  width: 640,
   height: 400,
   position: { my: "left center", at: "left+8% center+10%", of: window },
   resize: (e, { size: { height } }) => {
@@ -35,6 +35,7 @@ loadGames().then(data => {
       game: game.game,
       gameSort: game.game.replaceAll(/:/g, '\t'),
       year: game.year,
+      type: game.type?.match(/^([^,]+)(,|$)/)?.[1] ?? '',
       artists: game.artists.join(', '),
       thumbnail: `<img alt="" class="thumbnail" src="${game.thumbnailsUrl ? `${game.thumbnailsUrl}/list.webp` : ''}" />`,
       dateAdded: game.dateAdded || '',
@@ -45,7 +46,8 @@ loadGames().then(data => {
       { name: "gameSort", data: "gameSort", visible: false },
       { name: "platform", data: "platform", title: "Platform" },
       { name: "year", data: "year", title: "Year" },
-      { name: "artists", data: "artists", title: "Artist" },
+      { name: "type", data: "type", title: "Type" },
+      { name: "artists", data: "artists", title: "Artists" },
       { name: "dateAdded", data: "dateAdded", title: "Added" },
     ],
     order: [1, 'asc'],
@@ -63,7 +65,7 @@ loadGames().then(data => {
   });
 
   const thumbsLoaded = Promise.all($('#games img').get().map(
-    img => new Promise((resolve) => $(img).one('load', resolve))
+    img => new Promise((resolve) => $(img).one('load error', resolve))
   ));
 
   function rowsStats(selector, zero) {

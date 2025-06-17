@@ -15,6 +15,7 @@
   <meta charset="utf-8">
   <title>GAMUS pro</title>
   <base href="/" />
+  <link rel="icon" type="image/png" href="images/note.png">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="jquery-ui.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/dataTables.jqueryui.min.css">
@@ -55,8 +56,15 @@
 <li><a href="PC/Earthworm_Jim:_Special_Edition">Earthworm Jim: Special Edition PC</a></li>
 <li><a href="PC/Earthworm_Jim_2">Earthworm Jim 2 PC</a></li>
 <li><a href="PC/Entomorph:_Plague_of_the_Darkfall">Entomorph: Plague of the Darkfall PC</a></li>
+<li><a href="PC/Fatal_Racing">Fatal Racing PC</a></li>
 <li><a href="PC/FX_Fighter">FX Fighter PC</a></li>
 <li><a href="PC/FX_Fighter_Turbo">FX Fighter Turbo PC</a></li>
+<li><a href="PC/Gobliiins">Gobliiins PC</a></li>
+<li><a href="PC/Gobliins_2:_The_Prince_Buffoon">Gobliins 2: The Prince Buffoon PC</a></li>
+<li><a href="PC/Goblins_3">Goblins 3 PC</a></li>
+<li><a href="PC/Hexen:_Beyond_Heretic">Hexen: Beyond Heretic PC</a></li>
+<li><a href="PC/Hexen_II">Hexen II PC</a></li>
+<li><a href="PC/Hexen_II:_Portal_of_Praevus">Hexen II: Portal of Praevus PC</a></li>
 <li><a href="PC/Ignition">Ignition PC</a></li>
 <li><a href="PC/Lomax">Lomax PC</a></li>
 <li><a href="PC/Lost_Vikings_II">Lost Vikings II PC</a></li>
@@ -87,6 +95,7 @@
 <li><a href="PC/Red_Alert_2">Red Alert 2 PC</a></li>
 <li><a href="PC/Red_Alert_2:_Yuri's_Revenge">Red Alert 2: Yuri's Revenge PC</a></li>
 <li><a href="PC/Return_Fire">Return Fire PC</a></li>
+<li><a href="PC/Screamer">Screamer PC</a></li>
 <li><a href="PC/StarCraft">StarCraft PC</a></li>
 <li><a href="PC/StarCraft:_Brood_War">StarCraft: Brood War PC</a></li>
 <li><a href="PC/Street_Fighter_Alpha">Street Fighter Alpha PC</a></li>
@@ -245,9 +254,13 @@
           <iconify-icon icon="ph:caret-line-right-fill"></iconify-icon>
         </button>
       </div>
-      <div class="status">
+      <div class="mode">
         <label class="loop ui-button-icon-only" title="Repeat">
           <iconify-icon icon="ph:repeat"></iconify-icon>
+          <input type="checkbox" />
+        </label>
+        <label class="shuffle ui-button-icon-only" title="Shuffle">
+          <iconify-icon icon="ph:shuffle"></iconify-icon>
           <input type="checkbox" />
         </label>
       </div>
@@ -266,19 +279,27 @@
       </div>
       <div class="controls">
         <span class="btns">
-          <label class="loop ui-button-icon-only" title="Repeat">
-            <iconify-icon icon="ph:repeat"></iconify-icon>
-            <input type="checkbox" />
-          </label>
-          <button class="previous ui-button ui-button-icon-only" title="Previous" style="display: none">
-            <iconify-icon icon="ph:caret-line-left-fill"></iconify-icon>
-          </button>
-          <button class="play ui-button ui-button-icon-only" title="Play">
-            <iconify-icon icon="ph:play-fill"></iconify-icon>
-          </button>
-          <button class="next ui-button ui-button-icon-only" title="Next" style="display: none">
-            <iconify-icon icon="ph:caret-line-right-fill"></iconify-icon>
-          </button>
+          <span class="row">
+            <label class="loop ui-button-icon-only" title="Repeat">
+              <iconify-icon icon="ph:repeat"></iconify-icon>
+              <input type="checkbox" />
+            </label>
+            <label class="shuffle ui-button-icon-only" title="Shuffle">
+              <iconify-icon icon="ph:shuffle"></iconify-icon>
+              <input type="checkbox" />
+            </label>
+          </span>
+          <span class="row">
+            <button class="previous ui-button ui-button-icon-only" title="Previous" style="display: none">
+              <iconify-icon icon="ph:caret-line-left-fill"></iconify-icon>
+            </button>
+            <button class="play ui-button ui-button-icon-only" title="Play">
+              <iconify-icon icon="ph:play-fill"></iconify-icon>
+            </button>
+            <button class="next ui-button ui-button-icon-only" title="Next" style="display: none">
+              <iconify-icon icon="ph:caret-line-right-fill"></iconify-icon>
+            </button>
+          </span>
         </span>
         <span class="sk">
           <div class="seekTrack"></div>
@@ -352,6 +373,10 @@
           </optgroup>
         </select>
         <span class="label">...</span>
+        <label class="random-order ui-button-icon-only" title="Random order">
+          <iconify-icon icon="ph:shuffle"></iconify-icon>
+          <input type="checkbox" />
+        </label>
       </div>
       <div class="amount">
         <span class="min">
@@ -444,6 +469,9 @@
       <div class="title"></div>
     </div>
     <div class="controls">
+      <span class="order">
+        <iconify-icon></iconify-icon>
+      </span>
       <span class="mode">
         <iconify-icon></iconify-icon>
       </span>

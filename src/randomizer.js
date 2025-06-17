@@ -5,7 +5,7 @@ import { user } from './login.js';
 import { player } from './player.js';
 import { pushState } from './route.js';
 import { browserOptions, DEFAULT_KINDS, libraryLoaded } from './script.js';
-import { dialogOptions, initDialog, randomInt, showDialog } from './utils.js';
+import { dialogOptions, initDialog, randomInt, showDialog, shuffleArray } from './utils.js';
 
 $('#randomizerDialog').dialog({
   ...dialogOptions,
@@ -25,6 +25,10 @@ user.then(user => {
 });
 
 $('#randomizerDialog .shuffle input').checkboxradio({
+  icon: false,
+});
+
+$('#randomizerDialog .random-order input').checkboxradio({
   icon: false,
 });
 
@@ -77,7 +81,9 @@ function selectKind(item, selected, update) {
   toggleIcon(item, selected);
   currentKinds[item.value] = selected;
   const kinds = Object.keys(DEFAULT_KINDS).filter(kind => currentKinds[kind]);
-  $('#randomizerDialog .kind .label').text(kinds.length > 0 ? kinds.join(', ') : '(select kinds)');
+  $('#randomizerDialog .kind .label')
+    .text(kinds.length > 0 ? kinds.join(', ') : '(select kinds)')
+    .attr('title', kinds.length > 0 ? kinds.join(', ') : null);
   if (update)
     browserOptions.kinds = currentKinds;
 }
@@ -145,7 +151,9 @@ function updateShuffle() {
     const tracksAttempt = filteredTracks.filter(() => amount === 100 || Math.random() <= amount/100);
     const pickedTracks = tracksAttempt.length === 0 ? [filteredTracks[randomInt(filteredTracks.length)]] : tracksAttempt;
     player.loop = false;
-    player.setPlaylist({ entries: pickedTracks.map(playerEntry) }, 0);
+    player.shuffle = false;
+    const ordering = $('#randomizerDialog .random-order input').prop('checked') ? shuffleArray : a => a;
+    player.setPlaylist({ entries: ordering(pickedTracks.map(playerEntry)) }, 0);
     player.load(0);
     libraryLoaded.then(() => {
       import('./library.js').then(({ setSelection }) => {
