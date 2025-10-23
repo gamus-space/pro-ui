@@ -692,6 +692,12 @@ body #playerDialog .miniPlayer {
 #games tr.selected td.sorting_1 {
   box-shadow: inset 0 0 0 9999px rgb(255 255 255 / 20%);
 }
+#games td .clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
 #games .thumbnail {
   min-width: 80px;
   min-height: 48px;
