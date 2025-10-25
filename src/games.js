@@ -36,7 +36,7 @@ loadGames().then(data => {
       gameSort: game.game.replaceAll(/:/g, '\t'),
       year: game.year,
       type: game.type?.match(/^([^,]+)(,|$)/)?.[1] ?? '',
-      artists: game.artists.join(', '),
+      artists: `<span class="clamp" title="${game.artists.join(', ')}">${game.artists.join(', ')}</span>`,
       thumbnail: `<img alt="" class="thumbnail" src="${game.thumbnailsUrl ? `${game.thumbnailsUrl}/list.webp` : ''}" />`,
       dateAdded: game.dateAdded || '',
     })),

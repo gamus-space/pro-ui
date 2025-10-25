@@ -53,8 +53,8 @@ function time(t) {
             </thead>
             <tbody>
                 ${songs.map(({ ordinal, title, kind, time: t, artist }) =>
-                    `<tr><td>${ordinal}</td><td>${title}</td><td>${time(t)}</td><td>${kind}</td><td>${artist}</td></tr>\n`
-                ).join('')}
+                    `<tr><td>${ordinal}</td><td>${title}</td><td>${time(t)}</td><td>${kind}</td><td>${artist}</td></tr>`
+                ).join('\n')}
             </tbody>
             </table>
             <section>
@@ -96,8 +96,8 @@ function time(t) {
             <h1>game soundtrack</h1>
             <ul>
                 ${gamesDb.map(({ game, platform }) =>
-                    `<li><a href="${platform}/${customEncodeURIComponent(game)}">${game} ${platform}</a></li>\n`
-                ).join('')}
+                    `<li><a href="${platform}/${customEncodeURIComponent(game)}">${game} ${platform}</a></li>`
+                ).join('\n')}
             </ul>
         </section>
     `;

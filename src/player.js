@@ -176,8 +176,11 @@ class Player extends EventTarget {
     analyser.connect(volumeNode);
     const replayGainNode = this.audioContext.createGain();
     volumeNode.connect(replayGainNode);
+    const panNode = this.audioContext.createStereoPanner();
+    panNode.pan.value = 0;
+    replayGainNode.connect(panNode);
     const splitter = this.audioContext.createChannelSplitter(2);
-    replayGainNode.connect(splitter);
+    panNode.connect(splitter);
     const gainL1 = this.audioContext.createGain();
     const gainL2 = this.audioContext.createGain();
     const gainR1 = this.audioContext.createGain();
