@@ -166,3 +166,5 @@ $('#user .lock').change(event => {
     wakelock.release();
   }
 });
+
+export let libraryType = { value: undefined };
