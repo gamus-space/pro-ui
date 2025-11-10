@@ -1,10 +1,10 @@
 'use strict';
 
-import { loadGamesTracks, loadTracks } from './db.js';
+import { loadGamesTracks, loadGamesStagesTracks, loadTracks } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
 import { pushState } from './route.js';
-import { browserOptions, DEFAULT_KINDS, libraryLoaded } from './script.js';
+import { browserOptions, DEFAULT_KINDS, libraryLoaded, libraryType } from './script.js';
 import { dialogOptions, initDialog, randomInt, showDialog, shuffleArray } from './utils.js';
 
 $('#randomizerDialog').dialog({
@@ -140,7 +140,9 @@ player.addEventListener('playlistEnded', () => {
 function updateShuffle() {
   if (!games || !shuffle || !Object.values(currentKinds).some(kind => kind)) return;
   const { platform, game, index } = games[randomInt(games.length)];
-  loadEntry(platform, game, index).then(tracks => {
+  const [loader, field] = libraryType.value === 'soundtrack' || !index.stages ?
+    [loadGamesTracks, 'index'] : [loadGamesStagesTracks, 'stages'];
+  loadEntry(platform, game, index.index, index[field], loader).then(tracks => {
     pushState({ platform, game }, [platform, game]);
     const amount = $('#randomizerDialog .bar').slider('value');
     const filteredTracks = tracks.filter(({ kind }) => currentKinds[kind]);
@@ -175,20 +177,20 @@ function setLoading(loading) {
     .toggleClass('rotate', loading);
 }
 
-async function loadEntry(platform, game, index) {
+async function loadEntry(platform, game, index, secondaryIndex, loader) {
   setLoading(true);
   try {
-    return await loadGamesTracks(platform, game, index);
+    return await loader(platform, game, index, secondaryIndex);
   } finally {
     setLoading(false);
   }
 }
 
-function playerEntry({ platform, game, title, files, time, originalTime, replayGain, year, artist }) {
+function playerEntry({ platform, game, title, type, files, time, originalTime, replayGain, year, artist }) {
   const format = localStorage.getItem('format') ?? 'mp3';
   const file = files.find(({ url }) => url.endsWith(`.${format}`));
   return {
-    platform, game, title, url: file.url,
+    platform, game, title, url: file.url, type,
     time, duration: originalTime ? time : undefined,
     replayGain,
     year, artist,
