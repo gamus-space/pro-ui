@@ -29,10 +29,10 @@ function time(t) {
 
     const musicDb = await (await fetch(`${DB_URL}/music/index.json`)).json();
     const textDb = await (await fetch(`${DB_URL}/text/index.json`)).json();
-    for (const { platform, game, gameIndex } of Object.entries(musicDb).flatMap(([platform, games]) => Object.entries(games).map(([game, gameIndex]) => ({ platform, game, gameIndex })))) {
+    for (const { platform, game, index } of Object.entries(musicDb).flatMap(([platform, games]) => Object.entries(games).map(([game, { index }]) => ({ platform, game, index })))) {
         if (process.platform === 'win32' && game.match(/[:"]/))
             continue;
-        const songs = await (await fetch(`${DB_URL}/music/${gameIndex}`)).json();
+        const songs = await (await fetch(`${DB_URL}/music/${index}`)).json();
         const textPath = textDb[platform]?.[game];
         const text = textPath && await (await fetch(`${DB_URL}/text/${textPath}`)).text();
         const textHtml = text && marked.parse(text);
