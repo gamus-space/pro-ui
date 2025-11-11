@@ -1,10 +1,10 @@
 'use strict';
 
-import { loadGamesTracks, loadTracks } from './db.js';
+import { loadGamesStagesTracks, loadGamesTracks, loadTracks } from './db.js';
 import { user } from './login.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
 import { subscribeState } from './route.js';
-import { browserOptions, DEFAULT_KINDS, playlistLoaded } from './script.js';
+import { browserOptions, DEFAULT_KINDS, libraryType, playlistLoaded } from './script.js';
 import { dialogOptions, initDialog, showDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
@@ -52,6 +52,7 @@ loadTracks().then(data => {
       { name: "game", data: "game", title: "Game", orderData: [2, 3] },
       { name: "gameTitle", data: "gameTitle", visible: false },
       { name: "gameSubtitle", data: "gameSubtitle", visible: false },
+      { name: "type", data: "type", title: "type", visible: false },
       { name: "track", data: "track", title: "tr #" },
       { name: "ordinal", data: "ordinal", title: "#" },
       { name: "kind", data: "kind", title: "?" },
@@ -107,6 +108,9 @@ loadTracks().then(data => {
   });
 
   $('#libraryDialog .operations').append($(`
+    <button class="type ui-button ui-button-icon-only" title="">
+      <iconify-icon></iconify-icon>
+    </button>
     <button class="selectAll ui-button ui-button-icon-only" title="Select all">
       <iconify-icon icon="ph:check-square"></iconify-icon>
     </button>
@@ -340,9 +344,9 @@ loadTracks().then(data => {
     });
     unselectAll();
   });
-  function playerEntry({ url, platform, game, title, timeSec, originalTimeSec, year, artist }) {
+  function playerEntry({ url, platform, game, type, title, timeSec, originalTimeSec, year, artist }) {
     return {
-      url, platform, game, title,
+      url, platform, game, type, title,
       time: timeSec, duration: originalTimeSec ? timeSec : undefined,
       replayGain: currentTracksDb.find(
         entry => entry.platform === platform && entry.game === game && entry.title === title
@@ -350,6 +354,7 @@ loadTracks().then(data => {
       year, artist,
     };
   }
+  const rowMatcher = track => (row, data) => data.url === track.url && data.title === track.title && data.type === track.type;
 
   Object.entries(currentColumns).forEach(([column, selected]) => {
     selectColumn({ value: column, element: $(`.columnSelector option[value='${column}']`) }, selected);
@@ -364,12 +369,12 @@ loadTracks().then(data => {
   browserOptions.addEventListener('kinds', updateKinds);
   updateKinds();
 
-  player.addEventListener('entry', ({ detail: { url } }) => {
+  player.addEventListener('entry', ({ detail: entry }) => {
     $('#library').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active')
       .css('background-size', 0)
       .attr('title', 'Play')
       .find('iconify-icon').attr('icon', ICON_PLAY);
-    $('#library').DataTable().rows((row, data) => data.url === url).nodes().to$().find('button.listen').addClass('ui-state-active');
+    $('#library').DataTable().rows(rowMatcher(entry)).nodes().to$().find('button.listen').addClass('ui-state-active');
   });
   player.addEventListener('play', () => {
     isPlaying = true;
@@ -388,14 +393,30 @@ loadTracks().then(data => {
       .css('background-size', `${player.currentTime / player.duration * 100}%`);
   });
 
+  let currentState;
+  function toggleType() {
+    libraryType.value = libraryType.value === 'soundtrack' ? 'stage' : 'soundtrack';
+    if (currentState) {
+      updateState(currentState);
+    }
+    $('.type').attr('title', libraryType.value === 'soundtrack' ? 'Soundtrack' : 'Game stages')
+      .find('iconify-icon').attr('icon', libraryType.value === 'soundtrack' ? 'ph:file-audio-fill' : 'ph:alien-fill');
+  }
+  toggleType();
+  $('.type').on('click', toggleType);
+
   subscribeState(updateState);
   let currentTracksDb;
   function updateState(state) {
-    if (!state.game || !tracksIndex[state.platform]?.[state.game]) {
+    currentState = state;
+    const index = tracksIndex[state.platform]?.[state.game];
+    if (!state.game || !index) {
       $('#library').DataTable().rows().remove().draw();
       return;
     }
-    loadEntry(state.platform, state.game, tracksIndex[state.platform][state.game]).then(tracks => {
+    const [loader, field] = libraryType.value === 'soundtrack' || !index.stages ?
+      [loadGamesTracks, 'index'] : [loadGamesStagesTracks, 'stages'];
+    loadEntry(state.platform, state.game, index.index, index[field], loader).then(tracks => {
       currentTracksDb = tracks;
       $('#library').DataTable().rows().remove().draw();
       $('#library').DataTable().rows.add(tracks.map(track => ({
@@ -408,6 +429,7 @@ loadTracks().then(data => {
         game: track.game,
         gameTitle: track.game.split(': ')[0],
         gameSubtitle: track.game.split(': ')[1] ?? '',
+        type: track.type,
         title: track.title,
         subtitle: track.subtitle ?? '',
         artist: track.artist,
@@ -426,7 +448,7 @@ loadTracks().then(data => {
       }))).draw();
       if (player.track)
         setTimeout(() => {
-          const button = $('#library').DataTable().rows((row, data) => data.url === player.track.url).nodes().to$().find('button.listen').addClass('ui-state-active');
+          const button = $('#library').DataTable().rows(rowMatcher(player.track)).nodes().to$().find('button.listen').addClass('ui-state-active');
           if (isPlaying)
             button
               .attr('title', 'Pause')
@@ -443,10 +465,10 @@ function setLoading(loading) {
     .toggleClass('off', !loading);
 }
 
-async function loadEntry(platform, game, index) {
+async function loadEntry(platform, game, index, secondaryIndex, loader) {
   setLoading(true);
   try {
-    return await loadGamesTracks(platform, game, index);
+    return await loader(platform, game, index, secondaryIndex);
   } finally {
     setLoading(false);
   }

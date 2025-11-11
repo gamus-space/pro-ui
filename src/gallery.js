@@ -1,6 +1,6 @@
 'use strict';
 
-import { loadScreenshots } from './db.js';
+import { loadGamesScreenshots, loadScreenshots } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
 import { subscribeState } from './route.js';
@@ -27,9 +27,9 @@ user.then(user => {
   $('#galleryDialog .demo').toggle(demo);
 });
 
-let galleryIndex = undefined;
-let galleryCache = {};
+let galleryIndex;
 let currentState;
+
 loadScreenshots().then(res => {
   galleryIndex = res;
   if (currentState) {
@@ -93,14 +93,14 @@ player.addEventListener('entry', () => {
 function showTrack() {
   if (!player.track || !galleryIndex || !$('#galleryDialog').dialog('isOpen')) return;
 
-  const { platform, game, title } = player.track;
+  const { platform, game, type, title } = player.track;
   const index = galleryIndex[platform]?.[game];
   if (!index) {
     setGallery(undefined, game);
     return;
   }
   function showGallery(gameGallery) {
-    const trackGallery = gameGallery?.tracks?.find(track => track.title === title);
+    const trackGallery = gameGallery?.tracks?.find(track => track.title === title && track.type === type);
     setGallery(demo ? gameGallery?.demoScreenshots : trackGallery?.screenshots ?? gameGallery?.screenshots, game);
   }
 
@@ -112,20 +112,13 @@ function showTrack() {
   });
 }
 
-function loadEntry(platform, game, index) {
-  const cacheKey = `${platform}\t${game}`;
-  if (galleryCache[cacheKey]) {
-    return Promise.resolve(galleryCache[cacheKey]);
-  }
+async function loadEntry(platform, game, index) {
   setLoading(true);
-  return fetchJson(index).then(preprocessGallery(index)).then(gallery => {
-    gallery.forEach(entry => {
-      galleryCache[`${entry.platform}\t${entry.game}`] = entry;
-    });
-    return galleryCache[cacheKey];
-  }).finally(() => {
+  try {
+    return loadGamesScreenshots(platform, game, index);
+  } finally {
     setLoading(false);
-  });
+  }
 }
 
 let order;
@@ -230,18 +223,3 @@ $('#galleryDialog .data').draggable({
   },
 });
 $('#galleryDialog .controls').draggable();
-
-const preprocessGallery = baseUrl => data => data.map(game => {
-  const library = Object.fromEntries(game.library.map(entry => [entry.url, { ...entry, url: new URL(entry.url, baseUrl).href }]));
-  const lookup = url => {
-    if (!library[url]) console.error(`invalid gallery url: ${url}`);
-    return library[url];
-  };
-  return {
-    ...game,
-    library: game.library.map(entry => ({ ...entry, url: library[entry.url].url, relativeUrl: entry.url })),
-    screenshots: game.screenshots.map(lookup),
-    demoScreenshots: game.demoScreenshots.map(lookup),
-    tracks: game.tracks?.map(track => ({ ...track, screenshots: track.screenshots?.map(lookup) })),
-  };
-});
