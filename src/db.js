@@ -1,6 +1,6 @@
 'use strict';
 
-import { fetchJson } from './utils.js';
+import { fetchJson, matches } from './utils.js';
 
 export var setBaseUrl;
 
@@ -90,7 +90,7 @@ export async function loadGamesStagesTracks(platform, game, index, stages) {
 
 const preprocessStagesTracks = tracks => ({ derivative: { tracks: stagesTracks } }) => {
   return stagesTracks.map(({ original, overrides }) => {
-    const originalTrack = tracks.find(({ title }) => title === original.title);
+    const originalTrack = tracks.find(track => matches(track, original));
     if (!originalTrack) {
       console.error('original track not found', original);
     }

@@ -1,7 +1,7 @@
 'use strict';
 
 import { setBaseUrl } from './db.js';
-import { fetchJson, time } from './utils.js';
+import { fetchJson, randomInt, time } from './utils.js';
 
 const dev = location.hostname === '127.0.0.1';
 const apiUrl = dev ? 'https://localhost:8000/media-priv' : 'https://d1e7jf8j2bpzti.cloudfront.net';
@@ -135,3 +135,15 @@ $('#login input[type=checkbox]').click(e => {
   $('body').toggleClass('standard', source === 'standard');
   $('body').toggleClass('hifi', source === 'hifi');
 });
+
+const campaign = {
+  name: 'Kickstarter',
+  urls: [
+    'https://www.kickstarter.com/projects/krzykos/gamus-game-music-meets-memory-soundblaster-awe32-midi',
+  ],
+};
+if (campaign)
+  $('#login .campaign')
+    .css('display', '')
+    .attr('href', campaign.urls[randomInt(campaign.urls.length)])
+    .text(campaign.name);
