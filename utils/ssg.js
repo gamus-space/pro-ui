@@ -7,6 +7,7 @@ import { marked } from 'marked';
 import { customEncodeURIComponent } from '../src/common.js';
 
 const DB_URL = 'https://d1e7jf8j2bpzti.cloudfront.net';
+const ROOT_URL = 'https://pro.gamus.space';
 
 if (process.argv.length < 3) {
     console.error('usage: ssg.js dir');
@@ -21,6 +22,13 @@ function time(t) {
     const min = minHr % 60;
     const hr = Math.floor(minHr / 60);
     return `${hr === 0 ? '' : hr + ':'}${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+
+function XMLencodeURIComponent(component) {
+    return encodeURIComponent(component.replace(/ /g, '_')).replace(
+        /[']/g,
+        (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+    );
 }
 
 (async () => {
@@ -96,7 +104,7 @@ function time(t) {
             <h1>game soundtrack</h1>
             <ul>
                 ${gamesDb.map(({ game, platform }) =>
-                    `<li><a href="${platform}/${customEncodeURIComponent(game)}">${game} ${platform}</a></li>`
+                    `<li><a href="${platform}/${customEncodeURIComponent(game)}/">${game} ${platform}</a></li>`
                 ).join('\n')}
             </ul>
         </section>
@@ -122,4 +130,35 @@ function time(t) {
     const compilationsIndex = path.join(dir, 'assets', 'compilations', 'index.json');
     fs.writeFileSync(compilationsIndex, JSON.stringify(compilationsDb, null, 2));
     console.log(`written: ${compilationsIndex}`);
+
+    const sitemap =
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${ROOT_URL}/</loc>
+    <lastmod>${new Date().toISOString().substring(0, 10)}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+${gamesDb.map(({ game, platform, dateAdded }) =>
+`  <url>
+    <loc>${ROOT_URL}/${platform}/${XMLencodeURIComponent(game)}/</loc>
+    ${dateAdded ? `<lastmod>${dateAdded}</lastmod>` : ''}
+    <changefreq>yearly</changefreq>
+  </url>`
+).join('\n')}
+</urlset>`;
+    const sitemapPath = path.join(dir, 'sitemap.xml');
+    fs.writeFileSync(sitemapPath, sitemap);
+    console.log(`written: ${sitemapPath}`);
+
+    const robots =
+`User-Agent: *
+Allow: /
+
+Sitemap: ${ROOT_URL}/sitemap.xml
+`;
+    const robotsPath = path.join(dir, 'robots.txt');
+    fs.writeFileSync(robotsPath, robots);
+    console.log(`written: ${robotsPath}`);
 })();
