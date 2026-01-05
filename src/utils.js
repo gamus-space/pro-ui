@@ -69,6 +69,10 @@ export function shuffleArray(array) {
   return array;
 }
 
+export function matches(o, criteria) {
+  return Object.keys(criteria).every(key => o[key] === criteria[key]);
+}
+
 $.widget("custom.iconsselectmenu", $.ui.selectmenu, {
   _renderItem: function(ul, item) {
     ul.addClass('icons');
