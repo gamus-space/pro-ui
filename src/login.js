@@ -136,12 +136,7 @@ $('#login input[type=checkbox]').click(e => {
   $('body').toggleClass('hifi', source === 'hifi');
 });
 
-const campaign = {
-  name: 'Kickstarter',
-  urls: [
-    'https://www.kickstarter.com/projects/krzykos/gamus-game-music-meets-memory-soundblaster-awe32-midi',
-  ],
-};
+const campaign = null;
 if (campaign)
   $('#login .campaign')
     .css('display', '')
