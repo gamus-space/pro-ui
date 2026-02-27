@@ -1014,6 +1014,9 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
     font-size: 0.75rem;
   }
 }
+#galleryDialog .ui-selectmenu-button.text.effect-select {
+  width: 10em;
+}
 #galleryDialog .image.active {
   opacity: 1;
 }
@@ -1264,4 +1267,58 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
 }
 .loader.off {
   opacity: 0;
+}
+
+.blur {
+  filter: blur(0.75px);
+}
+.mono {
+  filter: grayscale(1);
+}
+.green {
+  filter: grayscale(1) brightness(1.2) contrast(1.5) sepia(1) hue-rotate(40deg) saturate(5);
+}
+.amber {
+  filter: grayscale(1) brightness(1.2) contrast(1.4) sepia(1) hue-rotate(-10deg) saturate(6);
+}
+.scanlines {
+  position: absolute;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 50%, transparent 50%);
+    background-size: 100% 2px;
+  }
+}
+.noise {
+  position: absolute;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: repeating-radial-gradient(circle, #000 0 1px, transparent 1px 2px);
+    opacity: 0.1;
+  }
+}
+.bright {
+  filter: brightness(1.2) contrast(1.1);
+}
+.bright2 {
+  filter: brightness(1.5) contrast(1.25);
+}
+.bright3 {
+  filter: brightness(2) contrast(1.5);
+}
+.warm {
+  filter: contrast(1.2) saturate(1.3) hue-rotate(-10deg);
+}
+.cold {
+  filter: contrast(1.1) saturate(1.05) hue-rotate(8deg);
+}
+.pixelated {
+  image-rendering: pixelated;
 }

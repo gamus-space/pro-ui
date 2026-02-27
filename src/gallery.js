@@ -4,7 +4,7 @@ import { loadGamesScreenshots, loadScreenshots } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
 import { subscribeState } from './route.js';
-import { dialogOptions, fetchJson, initDialog, randomInt, showDialog } from './utils.js';
+import { dialogOptions, initDialog, randomInt, showDialog } from './utils.js';
 
 $('#galleryDialog').dialog({
   ...dialogOptions,
@@ -212,6 +212,20 @@ $('#galleryDialog .groupSelector').selectmenu({
 });
 $('#galleryDialog .groupSelector').selectmenu('widget').toggle(false);
 setMusic(true);
+
+let previousEffect = '';
+$('#galleryDialog .effectSelector').selectmenu({
+  classes: {
+    'ui-selectmenu-button': 'effect-select text',
+    'ui-selectmenu-menu': 'scrollable',
+  },
+  change: (e, { item: { value }}) => {
+    $('#galleryDialog .image')
+      .removeClass(previousEffect)
+      .addClass(value);
+    previousEffect = value;
+  },
+});
 
 $('#galleryDialog .data').draggable({
   drag: event => {
