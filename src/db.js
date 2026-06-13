@@ -118,15 +118,28 @@ export function loadGamesScreenshots(platform, game, index) {
 
 const preprocessScreenshots = baseUrl => data => data.map(game => {
   const library = Object.fromEntries(game.library.map(entry => [entry.url, { ...entry, url: new URL(entry.url, baseUrl).href }]));
-  const lookup = url => {
-    if (!library[url]) console.error(`invalid gallery url: ${url}`);
-    return library[url];
+  let groups;
+  const lookup = ref => {
+    if (typeof ref === 'string') {
+      const url = ref;
+      if (!library[url]) console.error(`invalid gallery url: ${url}`);
+      return [library[url]];
+    } else if (ref.groupRef) {
+      if (groups && !groups[ref.groupRef]) console.error(`invalid group ref: ${ref.groupRef}`);
+      return groups[ref.groupRef]?.map(url => {
+        if (!library[url]) console.error(`invalid group gallery url: ${url}`);
+        return library[url];
+      }) ?? [];
+    } else {
+      console.error(`invalid gallery ref type: ${ref}`);
+    }
   };
+  groups = Object.fromEntries(game.tracks?.filter(({ type }) => type === 'group').map(({ title, screenshots }) => [title, screenshots]));
   return {
     ...game,
     library: game.library.map(entry => ({ ...entry, url: library[entry.url].url, relativeUrl: entry.url })),
-    screenshots: game.screenshots.map(lookup),
-    demoScreenshots: game.demoScreenshots.map(lookup),
-    tracks: game.tracks?.map(track => ({ ...track, screenshots: track.screenshots?.map(lookup) })),
+    screenshots: game.screenshots.flatMap(lookup),
+    demoScreenshots: game.demoScreenshots.flatMap(lookup),
+    tracks: game.tracks?.filter(({ type }) => type !== 'group').map(track => ({ ...track, screenshots: track.screenshots?.flatMap(lookup) })),
   };
 });

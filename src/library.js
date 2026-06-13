@@ -344,9 +344,9 @@ loadTracks().then(data => {
     });
     unselectAll();
   });
-  function playerEntry({ url, platform, game, type, title, timeSec, originalTimeSec, year, artist }) {
+  function playerEntry({ url, platform, game, type, title, kind, timeSec, originalTimeSec, year, artist }) {
     return {
-      url, platform, game, type, title,
+      url, platform, game, type, title, kind,
       time: timeSec, duration: originalTimeSec ? timeSec : undefined,
       replayGain: currentTracksDb.find(
         entry => entry.platform === platform && entry.game === game && entry.title === title
