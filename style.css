@@ -868,6 +868,35 @@ body .ui-selectmenu-menu.groups .ui-menu .ui-selectmenu-optgroup {
   padding-top: 0.75em;
 }
 
+#playlistDurationsDialog {
+  .row {
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    span {
+      flex: 1;
+      text-align: center;
+      .ui-selectmenu-button.ui-button, .ui-spinner {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+      .ui-selectmenu-button.ui-button .ui-selectmenu-icon {
+        margin-top: 3px;
+      }
+      .ui-spinner input {
+        width: 3rem;
+      }
+    }
+  }
+  .buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+}
+
 #playlist td {
   padding: 4px;
 }

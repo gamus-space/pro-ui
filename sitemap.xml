@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://pro.gamus.space/</loc>
-    <lastmod>2026-02-27</lastmod>
+    <lastmod>2026-06-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -22,6 +22,16 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://pro.gamus.space/PC/Broken_Sword%3A_The_Shadow_of_the_Templars/</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Broken_Sword_II%3A_The_Smoking_Mirror/</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://pro.gamus.space/PC/Carmageddon/</loc>
     <lastmod>2025-10-19</lastmod>
     <changefreq>yearly</changefreq>
@@ -29,6 +39,11 @@
   <url>
     <loc>https://pro.gamus.space/PC/Carmageddon%3A_Splat_Pack/</loc>
     <lastmod>2025-10-19</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Command_%26_Conquer%3A_Sole_Survivor/</loc>
+    <lastmod>2026-06-16</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -177,6 +192,11 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://pro.gamus.space/PC/Heretic_II/</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://pro.gamus.space/PC/Hexen%3A_Beyond_Heretic/</loc>
     <lastmod>2025-06-16</lastmod>
     <changefreq>yearly</changefreq>
@@ -214,6 +234,11 @@
   <url>
     <loc>https://pro.gamus.space/PC/Legend_of_Kyrandia_3%3A_Malcolm%27s_Revenge/</loc>
     <lastmod>2025-10-19</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Lemmings/</loc>
+    <lastmod>2026-06-16</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -377,8 +402,23 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://pro.gamus.space/PC/Screamer_Rally/</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Secret_of_Monkey_Island/</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://pro.gamus.space/PC/Shadow_Warrior/</loc>
     <lastmod>2025-10-19</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Sonic_3D_Blast/</loc>
+    <lastmod>2026-06-16</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -434,6 +474,11 @@
   <url>
     <loc>https://pro.gamus.space/PC/Tomb_Raider_III%3A_The_Lost_Artefact/</loc>
     <lastmod>2024-02-17</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Ultimate_Body_Blows/</loc>
+    <lastmod>2026-06-16</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -504,6 +549,11 @@
   <url>
     <loc>https://pro.gamus.space/PC/Worms_United/</loc>
     <lastmod>2024-06-01</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/WWF_In_Your_House/</loc>
+    <lastmod>2026-06-16</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
