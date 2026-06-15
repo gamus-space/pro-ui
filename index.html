@@ -18,13 +18,13 @@
   <link rel="icon" type="image/png" href="images/note.png">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="jquery-ui.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/dataTables.jqueryui.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.11/css/dataTables.jqueryui.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;400;700&display=swap" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.11/js/jquery.dataTables.min.js"></script>
   <script src="lib/jquery.ui.touch-punch.min.js"></script>
   <script src="https://code.iconify.design/iconify-icon/1.0.6/iconify-icon.min.js"></script>
   <script type="module" src="src/script.js"></script>
@@ -337,6 +337,31 @@
       <tbody />
     </table>
   </div>
+  <div id="playlistDurationsDialog" title="playlist durations" style="display: none">
+    <div class="container">
+    </div>
+    <div class="buttons">
+      <button class="apply ui-button">
+        Apply to current playlist
+      </button>
+    </div>
+    <template id="playlistDurationsRow">
+      <div class="row">
+        <span class="kind"></span>
+        <span>
+          <select class="method">
+            <option value="original">Original</option>
+            <option value="exact">Custom</option>
+            <option value="gte">Minimum</option>
+            <option value="lte">Maximum</option>
+          </select>
+        </span>
+        <span>
+          <input class="duration" value="" />
+        </span>
+      </div>
+    </template>
+  </div>
   <div id="backgroundDialog" title="background" style="display: none">
     <div class="controls">
       <label class="cover ui-button-icon-only" title="Stretch">
@@ -407,6 +432,8 @@
     <div class="links">
       <a href="https://www.patreon.com/krzykos" target="_blank">Patreon</a>
       <a href="https://x.com/gamus_space" target="_blank">X</a>
+      <a href="https://ko-fi.com/gamus_space" target="_blank">Ko-fi</a>
+      <a href="https://gamus-space.itch.io" target="_blank">itch</a>
       <a href="https://gamus.space/" target="_blank">GAMUS space</a>
     </div>
     <h3>credits</h3>

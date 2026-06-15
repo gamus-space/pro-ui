@@ -29,6 +29,35 @@ const ICON_PAUSE = 'ph:pause-fill';
 
 let isPlaying = false;
 
+const KINDS = ['track', 'short', 'jingle', 'ambient', 'story'];
+const KINDS_SYMBOLS = { T: 'track', S: 'short', J: 'jingle', A: 'ambient', Y: 'story' };
+const durationPrefs = JSON.parse(localStorage.getItem('playlistDurations') ?? '{}');
+const saveDurationPrefs = () => {
+  localStorage.setItem('playlistDurations', JSON.stringify(durationPrefs));
+};
+KINDS.forEach(kind => {
+  durationPrefs[kind] ??= {};
+  durationPrefs[kind].method ??= 'original';
+  durationPrefs[kind].duration ??= 60;
+});
+
+const trackDuration = track => {
+  let duration;
+  const prefs = durationPrefs[KINDS_SYMBOLS[track.kind]];
+  switch (prefs.method) {
+  case 'exact':
+    duration = prefs.duration;
+    break;
+  case 'gte':
+    duration = Math.max(prefs.duration, track.time);
+    break;
+  case 'lte':
+    duration = Math.min(prefs.duration, track.time);
+    break;
+  }
+  return { ...track, duration };
+};
+
 setTimeout(() => {
   setTimeout(() => {
     resizeTable($('#playlistDialog').parent().height());
@@ -89,6 +118,9 @@ setTimeout(() => {
     <button class="moveDown ui-button ui-button-icon-only" title="Move selected down">
       <iconify-icon icon="ph:caret-down-fill"></iconify-icon>
     </button>
+    <button class="durations ui-button ui-button-icon-only" title="Track durations...">
+      <iconify-icon icon="ph:timer"></iconify-icon>
+    </button>
   `));
 
   user.then(user => {
@@ -141,6 +173,68 @@ setTimeout(() => {
     playlistController.moveDown();
     updateSelection();
   });
+  $('#playlistDialog .durations').click(() => {
+    showDialog($('#playlistDurationsDialog'));
+  });
+
+  $('#playlistDurationsDialog').dialog({
+    ...dialogOptions,
+    width: 400,
+    height: 400,
+  });
+  initDialog($('#playlistDurationsDialog'), { icon: 'ph:timer' });
+  $.widget('ui.timespinner', $.ui.spinner, {
+    _format: value => {
+      const minutes = Math.floor(value / 60);
+      const seconds = value % 60;
+      const paddedSeconds = seconds < 10 ? '0' + seconds : seconds;
+      return `${minutes}:${paddedSeconds}`;
+    },
+    _parse: value => {
+      if (typeof value === 'number') return value;
+      const parts = value.split(':');
+      if (parts.length === 2) {
+        const minutes = parseInt(parts[0], 10);
+        const seconds = parseInt(parts[1], 10);
+        if (!isNaN(minutes) && !isNaN(seconds)) {
+          return minutes * 60 + seconds;
+        }
+      }
+    },
+  });
+
+  KINDS.forEach(kind => {
+    $('#playlistDurationsDialog .container').append(
+      $($('#playlistDurationsRow').prop('content').cloneNode(true))
+        .find('.kind').text(kind).end()
+        .find('.method').val(durationPrefs[kind].method).end()
+    );
+    $('#playlistDurationsDialog .container').children().last()
+      .find('.method').selectmenu({
+        change: (event, { item: { value } }) => {
+          durationPrefs[kind].method = value;
+          saveDurationPrefs();
+          $(event.target).closest('.row')
+            .find('.ui-spinner').css('visibility', value === 'original' ? 'hidden' : '');
+        },
+      }).end()
+      .find('.duration').timespinner({
+        step: 1,
+        min: 0,
+        stop: event => {
+          const value = $(event.target).timespinner('value');
+          durationPrefs[kind].duration = value;
+          saveDurationPrefs();
+        },
+      })
+      .end();
+    $('#playlistDurationsDialog .container').children().last()
+      .find('.duration').timespinner('value', durationPrefs[kind].duration).end()
+      .find('.ui-spinner').css('visibility', durationPrefs[kind].method === 'original' ? 'hidden' : '').end();
+  });
+  $('#playlistDurationsDialog .apply').on('click', () => {
+    playlistController.updateDurations();
+  });
 
   player.addEventListener('entry', ({ detail: { entry } }) => {
     $('#playlist').DataTable().rows().nodes().to$().find('button.ui-state-active').removeClass('ui-state-active')
@@ -187,23 +281,25 @@ class PlaylistController {
     const initialPlaylist = Array.isArray(playlist) ? { name: 'default', entries: playlist } : playlist;
     this.addPlaylist(initialPlaylist.entries, false);
   }
-  addPlaylist(playlist, scroll) {
+  addPlaylist(playlist, interactive) {
     if (!this.table) return;
     this.entry = undefined;
-    playlist.forEach(track => {
+    playlist.forEach(originalTrack => {
+      const track = interactive ? trackDuration(originalTrack) : originalTrack;
+      const timeSec = track.duration ?? track.time;
       this.playlist.push(track);
       this.table.row.add({
         play: this.play,
         no: this.playlist.length,
         title: trackTitle(track),
-        time: track.time ? time(track.time) : '',
-        timeSec: track.time,
+        time: timeSec ? time(timeSec) : '',
+        timeSec,
         url: track.url,
       });
     });
     this.table.draw(false);
     this.updatePlaylist(false);
-    if (scroll)
+    if (interactive)
       scrollToChild($('#playlist').parent().get(0), this.table?.row(':last').node());
   }
   updatePlaylist(forcePlayerUpdate) {
@@ -270,6 +366,16 @@ class PlaylistController {
       this.moveRow(i, i+1);
     });
     this.renumber();
+    this.updatePlaylist(false);
+  }
+  updateDurations() {
+    this.playlist.forEach((oldTrack, i) => {
+      const track = trackDuration(oldTrack);
+      this.playlist[i] = track;
+      const timeSec = track.duration ?? track.time;
+      this.table.cell(i, 'timeSec:name').data(timeSec);
+      this.table.cell(i, 'time:name').data(timeSec ? time(timeSec) : '');
+    });
     this.updatePlaylist(false);
   }
 }

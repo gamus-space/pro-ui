@@ -33,7 +33,7 @@ let currentState;
 loadScreenshots().then(res => {
   galleryIndex = res;
   if (currentState) {
-    loadScreenshotGroups().then(() => {
+    loadScreenshotGroups()?.then(() => {
       showTrack();
     });
   }
