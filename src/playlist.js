@@ -234,6 +234,7 @@ setTimeout(() => {
   });
   $('#playlistDurationsDialog .apply').on('click', () => {
     playlistController.updateDurations();
+    updateInfo();
   });
 
   player.addEventListener('entry', ({ detail: { entry } }) => {
