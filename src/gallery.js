@@ -61,9 +61,9 @@ function loadScreenshotGroups() {
     return;
   }
   return loadEntry(platform, game, index).then(gallery => {
-    screenshotGroups = Map.groupBy(gallery.library, screenshot => screenshot.group ?? screenshot.relativeUrl.match(/^(.+)(-\d+)\.\w+$/)?.[1] ?? screenshot.relativeUrl);
+    screenshotGroups = Map.groupBy(gallery.library, screenshot => screenshot.group ?? screenshot.relativeUrl.match(/^(.+?)(-\d+)?\.\w+$/)?.[1] ?? screenshot.relativeUrl);
     screenshotGroups.keys().forEach(key => {
-      if ((!demo || key === 'demo') && (demo || key !== 'demo')) {
+      if (demo ^ !key.match(/(^|\/)demo$/)) {
         $('#galleryDialog .groupSelector').append($('<option>', { value: key, text: screenshotGroups.get(key)[0].groupTitle ?? screenshotGroups.get(key)[0].title }));
       }
     });
@@ -229,7 +229,7 @@ $('#galleryDialog .effectSelector').selectmenu({
 
 $('#galleryDialog .data').draggable({
   drag: event => {
-    $(event.target)
+    $('#galleryDialog .data')
       .css('left', $(event.target).css('left'))
       .css('top', $(event.target).css('top'))
       .css('right', 'initial')

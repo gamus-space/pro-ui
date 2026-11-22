@@ -1,17 +1,17 @@
 'use strict';
 
-import { loadGamesTracks, loadGamesStagesTracks, loadTracks } from './db.js';
+import { loadGames, loadGamesTracks, loadGamesStagesTracks, loadTracks } from './db.js';
 import { user } from './login.js';
 import { player } from './player.js';
 import { pushState } from './route.js';
-import { browserOptions, DEFAULT_KINDS, libraryLoaded, libraryType } from './script.js';
+import { browserOptions, DEFAULT_KINDS, libraryLoaded, libraryType, libraryTypeUpdater } from './script.js';
 import { dialogOptions, initDialog, randomInt, showDialog, shuffleArray } from './utils.js';
 
 $('#randomizerDialog').dialog({
   ...dialogOptions,
   width: 400,
-  height: 190,
-  position: { my: "left top", at: "left+10% top+5%", of: window },
+  height: 480,
+  position: { my: "left top", at: "left+20% top+5%", of: window },
 });
 initDialog($('#randomizerDialog'), { icon: 'ph:arrows-counter-clockwise' });
 
@@ -24,7 +24,7 @@ user.then(user => {
     $('#randomizerDialog .shuffle').addClass('demo');
 });
 
-$('#randomizerDialog .shuffle input').checkboxradio({
+$('#randomizerDialog .repeat input').checkboxradio({
   icon: false,
 });
 
@@ -119,8 +119,20 @@ function selectMultiple(item, select, defaults) {
   return false;
 }
 
-let shuffle = false;
+const ENTRIES = 4;
+let repeat = false;
 let games = undefined;
+let gamesData = undefined;
+let selected = undefined;
+let activeEntry = 0;
+let currentGames = undefined;
+
+for (let i = 0; i < ENTRIES; i++) {
+  $('#randomizerDialog .entries').append(
+    $($('#randomizerEntry').prop('content').cloneNode(true))
+  );
+}
+$('#randomizerDialog .entries .entry').eq(activeEntry).addClass('active');
 
 loadTracks().then(response => {
   games = Object.entries(response).flatMap(([ platform, games ]) =>
@@ -128,47 +140,92 @@ loadTracks().then(response => {
   );
   updateShuffle();
 });
-$('#randomizerDialog .shuffle').change(() => {
-  shuffle = !shuffle;
+loadGames().then(data => {
+  gamesData = data;
   updateShuffle();
+});
+libraryTypeUpdater.addEventListener('value', () => {
+  updateShuffle();
+});
+$('#randomizerDialog .repeat').change(() => {
+  repeat = !repeat;
+});
+$('#randomizerDialog .shuffle').click(() => {
+  updateShuffle();
+});
+$('#randomizerDialog .entry').click(e => {
+  const index = $(e.currentTarget).index() - 1;
+  if (index === activeEntry) {
+    playSelected(index);
+    updateShuffle();
+  } else {
+    $('#randomizerDialog .entries .entry').eq(activeEntry).removeClass('active');
+    $('#randomizerDialog .entries .entry').eq(index).addClass('active');
+    activeEntry = index;
+  }
 });
 
 player.addEventListener('playlistEnded', () => {
+  if (!repeat) return;
+  playSelected(activeEntry);
   updateShuffle();
 });
 
 function updateShuffle() {
-  if (!games || !shuffle || !Object.values(currentKinds).some(kind => kind)) return;
-  const { platform, game, index } = games[randomInt(games.length)];
+  if (!games || !gamesData || !libraryType.value) return;
+  currentGames = games;
+  selected = [];
+  for (let i = 0; i < ENTRIES; i++) {
+    updateShuffleEntry(i);
+  }
+}
+
+function updateShuffleEntry(entry) {
+  if (!currentGames || !Object.values(currentKinds).some(kind => kind)) return;
+  const random = randomInt(currentGames.length);
+  const { platform, game, index } = currentGames[random];
+  currentGames.splice(random, 1);
+
   const [loader, field] = libraryType.value === 'soundtrack' || !index.stages ?
     [loadGamesTracks, 'index'] : [loadGamesStagesTracks, 'stages'];
   loadEntry(platform, game, index.index, index[field], loader).then(tracks => {
-    pushState({ platform, game }, [platform, game]);
+    const gameData = gamesData.find(g => g.platform === platform && g.game === game);
     const amount = $('#randomizerDialog .bar').slider('value');
     const filteredTracks = tracks.filter(({ kind }) => currentKinds[kind]);
     if (filteredTracks.length === 0) {
-      updateShuffle();
+      updateShuffleEntry(entry);
       return;
     }
     const tracksAttempt = filteredTracks.filter(() => amount === 100 || Math.random() <= amount/100);
     const pickedTracks = tracksAttempt.length === 0 ? [filteredTracks[randomInt(filteredTracks.length)]] : tracksAttempt;
-    player.loop = false;
-    player.shuffle = false;
     const ordering = $('#randomizerDialog .random-order input').prop('checked') ? shuffleArray : a => a;
-    player.setPlaylist({ entries: ordering(pickedTracks.map(playerEntry)) }, 0);
-    player.load(0);
-    libraryLoaded.then(() => {
-      import('./library.js').then(({ setSelection }) => {
-        setSelection(pickedTracks);
-      });
-    });
+    const entries = ordering(pickedTracks.map(playerEntry));
+    selected[entry] = { platform, game, tracks: pickedTracks, entries };
     const diceNumbers = ['one', 'two', 'three', 'four', 'five', 'six'];
-    $('#randomizerDialog .info').show()
-      .find('.game').text(game).end()
+    $('#randomizerDialog .entry').eq(entry).show()
+      .find('.title').text(game.split(': ')[0]).end()
+      .find('.subtitle').text(game.split(': ')[1] ?? ' ').end()
+      .find('.artist').text(gameData?.artists?.join(', ') ?? '').end()
+      .find('.thumbnail').attr('src', gameData.thumbnailsUrl ? `${gameData.thumbnailsUrl}/list.webp` : '').end()
       .find('.count .picked').text(pickedTracks.length).end()
       .find('.count .total').text(filteredTracks.length).end()
-      .find('.dice1').attr('icon', `ph:dice-${diceNumbers[randomInt(diceNumbers.length)]}-bold`).end()
+      .find('.dice1').attr('icon', `ph:dice-${diceNumbers[randomInt(diceNumbers.length)]}-thin`).end()
       .find('.dice2').attr('icon', `ph:dice-${diceNumbers[randomInt(diceNumbers.length)]}-thin`).end();
+  });
+}
+
+function playSelected(entry) {
+  if (!selected) return;
+  const { platform, game, tracks, entries } = selected[entry];
+  pushState({ platform, game }, [platform, game]);
+  player.loop = false;
+  player.shuffle = false;
+  player.setPlaylist({ entries }, 0);
+  player.load(0);
+  libraryLoaded.then(() => {
+    import('./library.js').then(({ setSelection }) => {
+      setSelection(tracks);
+    });
   });
 }
 

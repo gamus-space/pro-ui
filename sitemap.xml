@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://pro.gamus.space/</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -42,6 +42,11 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://pro.gamus.space/PC/Command_%26_Conquer%3A_Gold_(combined)/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://pro.gamus.space/PC/Command_%26_Conquer%3A_Sole_Survivor/</loc>
     <lastmod>2026-06-16</lastmod>
     <changefreq>yearly</changefreq>
@@ -64,6 +69,11 @@
   <url>
     <loc>https://pro.gamus.space/PC/Command_%26_Conquer%3A_Tiberian_Sun_-_Firestorm/</loc>
     <lastmod>2025-02-13</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Command_%26_Conquer%3A_Tiberian_Sun_(combined)/</loc>
+    <lastmod>2026-11-23</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -97,6 +107,11 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://pro.gamus.space/PC/Diablo_(combined)/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://pro.gamus.space/PC/Diablo_II/</loc>
     <lastmod>2025-02-13</lastmod>
     <changefreq>yearly</changefreq>
@@ -104,6 +119,16 @@
   <url>
     <loc>https://pro.gamus.space/PC/Diablo_II%3A_Lord_of_Destruction/</loc>
     <lastmod>2025-02-13</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Diablo_II_(combined)/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Disney%27s_Hercules/</loc>
+    <lastmod>2026-11-23</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -129,6 +154,11 @@
   <url>
     <loc>https://pro.gamus.space/PC/Earthworm_Jim_2/</loc>
     <lastmod>2023-11-25</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Earthworm_Jim_3D/</loc>
+    <lastmod>2026-11-23</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -212,6 +242,11 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://pro.gamus.space/PC/Hexplore/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://pro.gamus.space/PC/Ignition/</loc>
     <lastmod>2023-05-08</lastmod>
     <changefreq>yearly</changefreq>
@@ -242,6 +277,11 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://pro.gamus.space/PC/Lemmings_Chronicles/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://pro.gamus.space/PC/Lomax/</loc>
     <lastmod>2024-08-12</lastmod>
     <changefreq>yearly</changefreq>
@@ -254,6 +294,11 @@
   <url>
     <loc>https://pro.gamus.space/PC/MDK/</loc>
     <lastmod>2024-02-17</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/MDK2/</loc>
+    <lastmod>2026-11-23</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -289,6 +334,11 @@
   <url>
     <loc>https://pro.gamus.space/PC/Mortal_Kombat_Trilogy/</loc>
     <lastmod>2023-11-25</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Moto_Racer/</loc>
+    <lastmod>2026-11-23</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -377,6 +427,11 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://pro.gamus.space/PC/Red_Alert_(combined)/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://pro.gamus.space/PC/Red_Alert_2/</loc>
     <lastmod>2025-02-13</lastmod>
     <changefreq>yearly</changefreq>
@@ -387,8 +442,18 @@
     <changefreq>yearly</changefreq>
   </url>
   <url>
+    <loc>https://pro.gamus.space/PC/Red_Alert_2_(combined)/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
     <loc>https://pro.gamus.space/PC/Return_Fire/</loc>
     <lastmod>2024-02-17</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Return_Fire_2/</loc>
+    <lastmod>2026-11-23</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
@@ -549,6 +614,11 @@
   <url>
     <loc>https://pro.gamus.space/PC/Worms_United/</loc>
     <lastmod>2024-06-01</lastmod>
+    <changefreq>yearly</changefreq>
+  </url>
+  <url>
+    <loc>https://pro.gamus.space/PC/Worms_World_Party/</loc>
+    <lastmod>2026-11-23</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
