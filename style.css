@@ -30,6 +30,9 @@ body .ui-widget {
 .ui-dialog.ui-widget.ui-widget-content {
   border: 1px solid black;
 }
+.ui-dialog table.dataTable.display>tbody>tr.selected+tr.selected>td {
+  border-top-color: transparent;
+}
 .ui-dialog .dataTables_scrollBody,
 .ui-dialog .scrollable,
 .ui-selectmenu-menu.scrollable ul {
@@ -562,13 +565,13 @@ body #playerDialog .miniPlayer {
   .container {
     display: grid;
     grid-template:
-      "button kind" 3rem
-      "button amount" 3rem
+      "shuffle kind   repeat" 3rem
+      "shuffle amount repeat" 3rem
     /  4rem   auto;
     place-items: center stretch;
   }
   .shuffle {
-    grid-area: button;
+    grid-area: shuffle;
     width: 2rem;
     height: 2rem;
     transform: scale(2);
@@ -585,10 +588,18 @@ body #playerDialog .miniPlayer {
       font-size: 0.5rem;
     }
   }
+  .repeat {
+    grid-area: repeat;
+    width: 2rem;
+    height: 2rem;
+    transform: scale(2);
+    margin: 1rem;
+  }
   .kind {
     grid-area: kind;
     padding-top: 1rem;
     padding-left: 1rem;
+    padding-right: 1rem;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -597,6 +608,7 @@ body #playerDialog .miniPlayer {
       width: 2rem;
       height: 2rem;
       padding: 0;
+      border: 0;
     }
     .ui-selectmenu-button.icon .ui-selectmenu-text {
       display: none;
@@ -637,24 +649,51 @@ body #playerDialog .miniPlayer {
       }
     }
   }
-  .info {
+  .entries {
     display: flex;
-    align-items: center;
-    .dice1, .dice2 {
-      font-size: 1.5rem;
-      padding: 0.5rem;
-    }
-    .game {
-      flex-grow: 1;
-      margin-right: 0.5rem;
-      font-size: 1.2rem;
-      font-weight: bold;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-    .count {
-      white-space: nowrap;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    .entry {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 40%;
+      gap: 0.2rem;
+      min-width: 0;
+      align-items: center;
+      cursor: pointer;
+      &.active {
+        background: radial-gradient(rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 75%);
+      }
+      &:hover:not(&.active) {
+        background: radial-gradient(rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 75%);
+      }
+      .dice1, .dice2 {
+        font-size: 1.5rem;
+        vertical-align: middle;
+      }
+      .title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: -0.5rem;
+      }
+      .subtitle, .artist {
+        font-size: 1rem;
+      }
+      .title, .subtitle, .artist {
+        width: 100%;
+        text-align: center;
+        overflow: hidden;
+        white-space: pre;
+        text-overflow: ellipsis;
+      }
+      .thumbnail {
+        height: 50px;
+        background: radial-gradient(#666 0, transparent 75%);
+      }
+      .count {
+        white-space: nowrap;
+      }
     }
   }
 }

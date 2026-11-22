@@ -247,10 +247,13 @@
   </div>
   <div id="randomizerDialog" title="randomizer" style="display: none">
     <div class="container">
-      <label class="shuffle ui-button-icon-only" title="Shuffle">
+      <button class="shuffle ui-button ui-button-icon-only" title="Shuffle">
         <iconify-icon icon="ph:arrows-counter-clockwise"></iconify-icon>
-        <input type="checkbox" />
         <span class="demo">DEMO</span>
+      </button>
+      <label class="repeat ui-button-icon-only" title="Auto-play next">
+        <iconify-icon icon="ph:infinity"></iconify-icon>
+        <input type="checkbox" />
       </label>
       <div class="kind">
         <select class="kindSelector" title="Filter kinds">
@@ -284,15 +287,22 @@
         </span>
       </div>
     </div>
-    <div class="info" style="display: none">
-      <iconify-icon class="dice1" icon="ph:dice-one-bold"></iconify-icon>
-      <span class="game">...</span>
-      <span class="count">
-        <span class="picked">0</span>
-        /
-        <span class="total">0</span>
-      </span>
-      <iconify-icon class="dice2" icon="ph:dice-two-thin"></iconify-icon>
+    <div class="entries">
+      <template id="randomizerEntry">
+        <div class="entry" style="display: none">
+          <span class="title">...</span>
+          <span class="subtitle">...</span>
+          <img class="thumbnail" />
+          <span class="artist">...</span>
+          <span class="count">
+            <iconify-icon class="dice1" icon="ph:dice-two-thin"></iconify-icon>
+            <span class="picked">0</span>
+            /
+            <span class="total">0</span>
+            <iconify-icon class="dice2" icon="ph:dice-two-thin"></iconify-icon>
+          </span>
+        </div>
+      </template>
     </div>
   </div>
   <div id="gamesDialog" title="games" style="display: none">

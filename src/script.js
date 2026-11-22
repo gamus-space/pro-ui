@@ -168,3 +168,4 @@ $('#user .lock').change(event => {
 });
 
 export let libraryType = { value: undefined };
+export const libraryTypeUpdater = new EventTarget();

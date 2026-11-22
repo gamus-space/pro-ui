@@ -4,7 +4,7 @@ import { loadGamesStagesTracks, loadGamesTracks, loadTracks } from './db.js';
 import { user } from './login.js';
 import { player, downloadOriginal, downloadWav } from './player.js';
 import { subscribeState } from './route.js';
-import { browserOptions, DEFAULT_KINDS, libraryType, playlistLoaded } from './script.js';
+import { browserOptions, DEFAULT_KINDS, libraryType, libraryTypeUpdater, playlistLoaded } from './script.js';
 import { dialogOptions, initDialog, showDialog, size, time, trackTitle } from './utils.js';
 
 $('#libraryDialog').dialog({
@@ -230,7 +230,8 @@ loadTracks().then(data => {
   }
 
   let format;
-  function setFormat(format) {
+  function setFormat(_format) {
+    format = _format;
     $('#library').DataTable().rows().every(function() {
       const file = this.data().files.find(file => file.url.endsWith(`.${format}`));
       this.data({ ...this.data(), url: file?.url, size: file?.size ? size(file.size) : '' });
@@ -396,6 +397,7 @@ loadTracks().then(data => {
   let currentState;
   function toggleType() {
     libraryType.value = libraryType.value === 'soundtrack' ? 'stage' : 'soundtrack';
+    libraryTypeUpdater.dispatchEvent(new CustomEvent('value', { detail: { value: libraryType.value } }));
     if (currentState) {
       updateState(currentState);
     }
